@@ -78,9 +78,9 @@
       height: 58px;
       object-fit: contain;
       border-radius: 14px;
-      background: white;
+      background: radial-gradient(circle, #111 40%, #0b0f19 100%);
       padding: 6px;
-      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.1);
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
       border: 1px solid #eef2f7;
       flex-shrink: 0;
     }
@@ -459,11 +459,12 @@
       width: 38px;
       height: 38px;
       object-fit: contain;
-      background: white;
-      border-radius: 10px;
-      padding: 4px;
+      background: radial-gradient(circle, #111 40%, #0b0f19 100%);
+      border-radius: 12px;
+      padding: 6px;
       border: 1px solid #e5e7eb;
       flex-shrink: 0;
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
     }
 
     .team-name {
@@ -1081,6 +1082,7 @@
   .event-vs-center {
     text-align: left;
   }
+
 }
 
 
@@ -1114,6 +1116,13 @@
   pointer-events: none;
   border-radius: var(--radius);
   background: linear-gradient(180deg, rgba(214,176,106,0.05), transparent 26%);
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: #aaa;
+  font-size: 14px;
 }
 
 #standingsTable tbody tr {
@@ -1238,6 +1247,7 @@
         </div>
      
         <div class="events-list" id="eventsGrid"></div>
+          <div class="loading">Cargando fechas...</div>
       </div>
     </section>
 
@@ -1266,7 +1276,11 @@
                   <th class="num">Pts</th>
                 </tr>
               </thead>
-              <tbody></tbody>
+              <tbody id="standingsTableBody">
+                <tr>
+                  <td colspan="9" class="loading">Cargando tabla...</td>
+                </tr>
+              </tbody>
             </table>
           </div>
         </div>
@@ -1287,7 +1301,7 @@
       1: "/assets/logos/espacio-active.png",
       2: "/assets/logos/propadel.png",
       3: "/assets/logos/arena.png",
-      4: "/assets/logos/vespucio.png"
+      4: "/assets/logos/Revueltas.PNG"
     };
 
     function formatDateTime(dateString) {
