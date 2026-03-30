@@ -1216,7 +1216,7 @@
 
   <section class="hero">
     <div class="hero-inner">
-      <div class="hero-eyebrow">🏆 Próxima jornada</div>
+      <div class="hero-eyebrow" id="nextRoundBadge">🏆 Próxima jornada</div>
       <h1>La liga interclubes ya está en juego</h1>
       <p>
         Sigue las fechas, los cruces, la tabla oficial y el rendimiento de los equipos.
@@ -1565,9 +1565,34 @@ if (!orderedEvents.length) {
     });
   }
 
+async function loadNextRound() {
+  const badge = document.getElementById("nextRoundBadge");
+  if (!badge) return;
+
+  try {
+    const response = await fetch(API + "/next-round");
+    const data = await response.json();
+
+    if (!data.date) {
+      badge.textContent = "🏆 Próxima jornada";
+      return;
+    }
+
+    const nextDate = new Date(data.date);
+    const formatted = nextDate.toLocaleDateString("es-CL", {
+      day: "2-digit",
+      month: "long"
+    });
+
+    badge.textContent = `🏆 Próxima jornada · ${formatted}`;
+  } catch (error) {
+    badge.textContent = "🏆 Próxima jornada";
+  }
+}
+
 loadStandings().catch(err => console.error("Error cargando standings:", err));
 loadMatches().catch(err => console.error("Error cargando matches:", err));
-
+loadNextRound().catch(err => console.error("Error cargando próxima jornada:", err));
   </script>
 </body>
 </html>

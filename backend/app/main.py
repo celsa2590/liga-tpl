@@ -18,6 +18,31 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/next-round")
+def get_next_round():
+    query = text("""
+        SELECT
+            round_number,
+            MIN(scheduled_at) AS next_date
+        FROM match_schedule
+        WHERE season_name = 'Liga San Miguel 2026'
+          AND scheduled_at >= NOW()
+        GROUP BY round_number
+        ORDER BY next_date
+        LIMIT 1
+    """)
+
+    with engine.connect() as conn:
+        result = conn.execute(query).fetchone()
+
+    if not result:
+        return {"round_number": None, "date": None}
+
+    return {
+        "round_number": result.round_number,
+        "date": result.next_date.isoformat() if result.next_date else None
+    }
+
 @app.get("/")
 def root():
     return {"message": "API de la Liga San Miguel funcionando"}
