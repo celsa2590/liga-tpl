@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict eN9f0ZMqlGqCgcmisYmjWVvQ7bYHNXnSDk7hAvYEOckSSd5HbXWd0KmvBfujenG
+\restrict E0TRUEX5mAHAARsTm4ZLuBwNXZSoJMJR8NPLM47R1QHXvVEn1cXui0lxM5kMtJf
 
 -- Dumped from database version 16.13 (Debian 16.13-1.pgdg13+1)
 -- Dumped by pg_dump version 16.13 (Debian 16.13-1.pgdg13+1)
@@ -23,7 +23,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: clubs; Type: TABLE; Schema: public; Owner: liga_user
+-- Name: clubs; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.clubs (
@@ -34,10 +34,8 @@ CREATE TABLE public.clubs (
 );
 
 
-ALTER TABLE public.clubs OWNER TO liga_user;
-
 --
--- Name: clubs_id_seq; Type: SEQUENCE; Schema: public; Owner: liga_user
+-- Name: clubs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.clubs_id_seq
@@ -49,17 +47,15 @@ CREATE SEQUENCE public.clubs_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.clubs_id_seq OWNER TO liga_user;
-
 --
--- Name: clubs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: liga_user
+-- Name: clubs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.clubs_id_seq OWNED BY public.clubs.id;
 
 
 --
--- Name: match_game_sets; Type: TABLE; Schema: public; Owner: liga_user
+-- Name: match_game_sets; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.match_game_sets (
@@ -72,10 +68,8 @@ CREATE TABLE public.match_game_sets (
 );
 
 
-ALTER TABLE public.match_game_sets OWNER TO liga_user;
-
 --
--- Name: match_game_sets_id_seq; Type: SEQUENCE; Schema: public; Owner: liga_user
+-- Name: match_game_sets_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.match_game_sets_id_seq
@@ -87,17 +81,15 @@ CREATE SEQUENCE public.match_game_sets_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.match_game_sets_id_seq OWNER TO liga_user;
-
 --
--- Name: match_game_sets_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: liga_user
+-- Name: match_game_sets_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.match_game_sets_id_seq OWNED BY public.match_game_sets.id;
 
 
 --
--- Name: match_games; Type: TABLE; Schema: public; Owner: liga_user
+-- Name: match_games; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.match_games (
@@ -117,10 +109,8 @@ CREATE TABLE public.match_games (
 );
 
 
-ALTER TABLE public.match_games OWNER TO liga_user;
-
 --
--- Name: match_games_backup; Type: TABLE; Schema: public; Owner: liga_user
+-- Name: match_games_backup; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.match_games_backup (
@@ -139,10 +129,8 @@ CREATE TABLE public.match_games_backup (
 );
 
 
-ALTER TABLE public.match_games_backup OWNER TO liga_user;
-
 --
--- Name: match_games_id_seq; Type: SEQUENCE; Schema: public; Owner: liga_user
+-- Name: match_games_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.match_games_id_seq
@@ -154,17 +142,15 @@ CREATE SEQUENCE public.match_games_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.match_games_id_seq OWNER TO liga_user;
-
 --
--- Name: match_games_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: liga_user
+-- Name: match_games_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.match_games_id_seq OWNED BY public.match_games.id;
 
 
 --
--- Name: matches; Type: TABLE; Schema: public; Owner: liga_user
+-- Name: matches; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.matches (
@@ -180,10 +166,8 @@ CREATE TABLE public.matches (
 );
 
 
-ALTER TABLE public.matches OWNER TO liga_user;
-
 --
--- Name: players; Type: TABLE; Schema: public; Owner: liga_user
+-- Name: players; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.players (
@@ -197,10 +181,8 @@ CREATE TABLE public.players (
 );
 
 
-ALTER TABLE public.players OWNER TO liga_user;
-
 --
--- Name: teams; Type: TABLE; Schema: public; Owner: liga_user
+-- Name: teams; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.teams (
@@ -212,10 +194,8 @@ CREATE TABLE public.teams (
 );
 
 
-ALTER TABLE public.teams OWNER TO liga_user;
-
 --
--- Name: match_schedule; Type: VIEW; Schema: public; Owner: liga_user
+-- Name: match_schedule; Type: VIEW; Schema: public; Owner: -
 --
 
 CREATE VIEW public.match_schedule AS
@@ -252,10 +232,8 @@ CREATE VIEW public.match_schedule AS
      LEFT JOIN public.players ap2 ON ((ap2.id = mg.away_player_2_id)));
 
 
-ALTER VIEW public.match_schedule OWNER TO liga_user;
-
 --
--- Name: matches_id_seq; Type: SEQUENCE; Schema: public; Owner: liga_user
+-- Name: matches_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.matches_id_seq
@@ -267,17 +245,15 @@ CREATE SEQUENCE public.matches_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.matches_id_seq OWNER TO liga_user;
-
 --
--- Name: matches_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: liga_user
+-- Name: matches_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.matches_id_seq OWNED BY public.matches.id;
 
 
 --
--- Name: players_id_seq; Type: SEQUENCE; Schema: public; Owner: liga_user
+-- Name: players_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.players_id_seq
@@ -289,17 +265,15 @@ CREATE SEQUENCE public.players_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.players_id_seq OWNER TO liga_user;
-
 --
--- Name: players_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: liga_user
+-- Name: players_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.players_id_seq OWNED BY public.players.id;
 
 
 --
--- Name: standings; Type: VIEW; Schema: public; Owner: liga_user
+-- Name: standings; Type: VIEW; Schema: public; Owner: -
 --
 
 CREATE VIEW public.standings AS
@@ -397,10 +371,8 @@ CREATE VIEW public.standings AS
      LEFT JOIN bonus_total bt ON ((bt.team_id = ts.team_id)));
 
 
-ALTER VIEW public.standings OWNER TO liga_user;
-
 --
--- Name: team_players; Type: TABLE; Schema: public; Owner: liga_user
+-- Name: team_players; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.team_players (
@@ -412,10 +384,8 @@ CREATE TABLE public.team_players (
 );
 
 
-ALTER TABLE public.team_players OWNER TO liga_user;
-
 --
--- Name: team_players_id_seq; Type: SEQUENCE; Schema: public; Owner: liga_user
+-- Name: team_players_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.team_players_id_seq
@@ -427,17 +397,15 @@ CREATE SEQUENCE public.team_players_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.team_players_id_seq OWNER TO liga_user;
-
 --
--- Name: team_players_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: liga_user
+-- Name: team_players_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.team_players_id_seq OWNED BY public.team_players.id;
 
 
 --
--- Name: teams_id_seq; Type: SEQUENCE; Schema: public; Owner: liga_user
+-- Name: teams_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.teams_id_seq
@@ -449,66 +417,64 @@ CREATE SEQUENCE public.teams_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.teams_id_seq OWNER TO liga_user;
-
 --
--- Name: teams_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: liga_user
+-- Name: teams_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.teams_id_seq OWNED BY public.teams.id;
 
 
 --
--- Name: clubs id; Type: DEFAULT; Schema: public; Owner: liga_user
+-- Name: clubs id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.clubs ALTER COLUMN id SET DEFAULT nextval('public.clubs_id_seq'::regclass);
 
 
 --
--- Name: match_game_sets id; Type: DEFAULT; Schema: public; Owner: liga_user
+-- Name: match_game_sets id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.match_game_sets ALTER COLUMN id SET DEFAULT nextval('public.match_game_sets_id_seq'::regclass);
 
 
 --
--- Name: match_games id; Type: DEFAULT; Schema: public; Owner: liga_user
+-- Name: match_games id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.match_games ALTER COLUMN id SET DEFAULT nextval('public.match_games_id_seq'::regclass);
 
 
 --
--- Name: matches id; Type: DEFAULT; Schema: public; Owner: liga_user
+-- Name: matches id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.matches ALTER COLUMN id SET DEFAULT nextval('public.matches_id_seq'::regclass);
 
 
 --
--- Name: players id; Type: DEFAULT; Schema: public; Owner: liga_user
+-- Name: players id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.players ALTER COLUMN id SET DEFAULT nextval('public.players_id_seq'::regclass);
 
 
 --
--- Name: team_players id; Type: DEFAULT; Schema: public; Owner: liga_user
+-- Name: team_players id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.team_players ALTER COLUMN id SET DEFAULT nextval('public.team_players_id_seq'::regclass);
 
 
 --
--- Name: teams id; Type: DEFAULT; Schema: public; Owner: liga_user
+-- Name: teams id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.teams ALTER COLUMN id SET DEFAULT nextval('public.teams_id_seq'::regclass);
 
 
 --
--- Data for Name: clubs; Type: TABLE DATA; Schema: public; Owner: liga_user
+-- Data for Name: clubs; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.clubs (id, name, commune, created_at) FROM stdin;
@@ -520,7 +486,7 @@ COPY public.clubs (id, name, commune, created_at) FROM stdin;
 
 
 --
--- Data for Name: match_game_sets; Type: TABLE DATA; Schema: public; Owner: liga_user
+-- Data for Name: match_game_sets; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.match_game_sets (id, match_game_id, set_number, home_games, away_games) FROM stdin;
@@ -528,54 +494,54 @@ COPY public.match_game_sets (id, match_game_id, set_number, home_games, away_gam
 
 
 --
--- Data for Name: match_games; Type: TABLE DATA; Schema: public; Owner: liga_user
+-- Data for Name: match_games; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.match_games (id, match_id, game_number, venue_club_id, scheduled_at, home_player_1_id, home_player_2_id, away_player_1_id, away_player_2_id, home_sets, away_sets, created_at) FROM stdin;
-1	1	1	2	2026-05-20 14:30:00	9	10	1	2	\N	\N	2026-03-27 16:15:51.383748
-2	1	2	2	2026-05-20 14:30:00	11	12	3	4	\N	\N	2026-03-27 16:15:51.383748
-3	2	1	4	2026-05-20 14:30:00	5	6	13	14	\N	\N	2026-03-27 16:15:51.383748
-4	2	2	4	2026-05-20 14:30:00	7	8	15	16	\N	\N	2026-03-27 16:15:51.383748
-5	3	1	1	2026-05-23 14:30:00	1	2	5	6	\N	\N	2026-03-27 16:15:51.383748
-6	3	2	1	2026-05-23 14:30:00	3	4	7	8	\N	\N	2026-03-27 16:15:51.383748
-7	4	1	2	2026-05-23 14:30:00	13	14	9	10	\N	\N	2026-03-27 16:15:51.383748
-8	4	2	2	2026-05-23 14:30:00	15	16	11	12	\N	\N	2026-03-27 16:15:51.383748
-9	5	1	3	2026-06-21 14:30:00	9	10	5	6	\N	\N	2026-03-27 16:15:51.383748
-10	5	2	3	2026-06-21 14:30:00	11	12	7	8	\N	\N	2026-03-27 16:15:51.383748
-11	6	1	4	2026-06-21 14:30:00	13	14	1	2	\N	\N	2026-03-27 16:15:51.383748
-12	6	2	4	2026-06-21 14:30:00	15	16	3	4	\N	\N	2026-03-27 16:15:51.383748
-13	7	1	1	2026-07-11 14:30:00	9	10	1	2	\N	\N	2026-03-27 16:15:51.383748
-14	7	2	1	2026-07-11 14:30:00	11	12	3	4	\N	\N	2026-03-27 16:15:51.383748
-15	8	1	3	2026-07-11 14:30:00	5	6	13	14	\N	\N	2026-03-27 16:15:51.383748
-16	8	2	3	2026-07-11 14:30:00	7	8	15	16	\N	\N	2026-03-27 16:15:51.383748
-17	9	1	4	2026-07-18 14:30:00	1	2	5	6	\N	\N	2026-03-27 16:15:51.383748
-18	9	2	4	2026-07-18 14:30:00	3	4	7	8	\N	\N	2026-03-27 16:15:51.383748
-19	10	1	3	2026-07-18 14:30:00	13	14	9	10	\N	\N	2026-03-27 16:15:51.383748
-20	10	2	3	2026-07-18 14:30:00	15	16	11	12	\N	\N	2026-03-27 16:15:51.383748
-21	11	1	1	2026-07-25 14:30:00	9	10	5	6	\N	\N	2026-03-27 16:15:51.383748
-22	11	2	1	2026-07-25 14:30:00	11	12	7	8	\N	\N	2026-03-27 16:15:51.383748
-23	12	1	2	2026-07-25 14:30:00	13	14	1	2	\N	\N	2026-03-27 16:15:51.383748
-24	12	2	2	2026-07-25 14:30:00	15	16	3	4	\N	\N	2026-03-27 16:15:51.383748
-25	13	1	1	2026-08-01 20:30:00	1	2	9	10	\N	\N	2026-03-27 16:15:51.383748
-26	13	2	1	2026-08-01 20:30:00	3	4	11	12	\N	\N	2026-03-27 16:15:51.383748
-27	2	3	4	2026-05-20 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
-28	3	3	1	2026-05-23 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
-29	4	3	2	2026-05-23 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
-30	5	3	3	2026-06-21 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
-31	6	3	4	2026-06-21 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
-32	7	3	1	2026-07-11 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
-33	8	3	3	2026-07-11 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
-34	9	3	4	2026-07-18 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
-35	10	3	3	2026-07-18 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
-36	11	3	1	2026-07-25 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
-37	12	3	2	2026-07-25 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+1	1	1	2	2026-05-23 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+2	1	2	2	2026-05-23 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+3	2	1	4	2026-05-23 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+4	2	2	4	2026-05-23 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+5	3	1	3	2026-05-30 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+6	3	2	3	2026-05-30 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+7	4	1	4	2026-05-30 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+8	4	2	4	2026-05-30 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+9	5	1	1	2026-06-13 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+10	5	2	1	2026-06-13 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+11	6	1	2	2026-06-13 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+12	6	2	2	2026-06-13 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+13	7	1	1	2026-07-04 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+14	7	2	1	2026-07-04 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+15	8	1	3	2026-07-04 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+16	8	2	3	2026-07-04 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+17	9	1	1	2026-07-18 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+18	9	2	1	2026-07-18 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+19	10	1	2	2026-07-18 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+20	10	2	2	2026-07-18 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+21	11	1	4	2026-07-26 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+22	11	2	4	2026-07-26 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+25	13	1	1	2026-08-01 20:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+26	13	2	1	2026-08-01 20:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
 38	13	3	1	2026-08-01 20:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
-39	1	3	2	2026-05-20 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+39	1	3	2	2026-05-23 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+27	2	3	4	2026-05-23 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+28	3	3	3	2026-05-30 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+29	4	3	4	2026-05-30 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+30	5	3	1	2026-06-13 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+31	6	3	2	2026-06-13 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+32	7	3	1	2026-07-04 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+33	8	3	3	2026-07-04 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+34	9	3	1	2026-07-18 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+35	10	3	2	2026-07-18 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+36	11	3	4	2026-07-26 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+23	12	1	3	2026-07-26 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+24	12	2	3	2026-07-26 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
+37	12	3	3	2026-07-26 14:30:00	\N	\N	\N	\N	\N	\N	2026-03-27 16:15:51.383748
 \.
 
 
 --
--- Data for Name: match_games_backup; Type: TABLE DATA; Schema: public; Owner: liga_user
+-- Data for Name: match_games_backup; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.match_games_backup (id, match_id, game_number, venue_club_id, scheduled_at, home_player_1_id, home_player_2_id, away_player_1_id, away_player_2_id, home_sets, away_sets, created_at) FROM stdin;
@@ -622,7 +588,7 @@ COPY public.match_games_backup (id, match_id, game_number, venue_club_id, schedu
 
 
 --
--- Data for Name: matches; Type: TABLE DATA; Schema: public; Owner: liga_user
+-- Data for Name: matches; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.matches (id, season_name, round_number, home_team_id, away_team_id, scheduled_date, status, created_at) FROM stdin;
@@ -643,7 +609,7 @@ COPY public.matches (id, season_name, round_number, home_team_id, away_team_id, 
 
 
 --
--- Data for Name: players; Type: TABLE DATA; Schema: public; Owner: liga_user
+-- Data for Name: players; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.players (id, first_name, last_name, nickname, category, ranking_points, created_at) FROM stdin;
@@ -667,7 +633,7 @@ COPY public.players (id, first_name, last_name, nickname, category, ranking_poin
 
 
 --
--- Data for Name: team_players; Type: TABLE DATA; Schema: public; Owner: liga_user
+-- Data for Name: team_players; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.team_players (id, team_id, player_id, joined_at, active) FROM stdin;
@@ -675,7 +641,7 @@ COPY public.team_players (id, team_id, player_id, joined_at, active) FROM stdin;
 
 
 --
--- Data for Name: teams; Type: TABLE DATA; Schema: public; Owner: liga_user
+-- Data for Name: teams; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.teams (id, club_id, name, logo_url, created_at) FROM stdin;
@@ -687,56 +653,56 @@ COPY public.teams (id, club_id, name, logo_url, created_at) FROM stdin;
 
 
 --
--- Name: clubs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: liga_user
+-- Name: clubs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.clubs_id_seq', 4, true);
 
 
 --
--- Name: match_game_sets_id_seq; Type: SEQUENCE SET; Schema: public; Owner: liga_user
+-- Name: match_game_sets_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.match_game_sets_id_seq', 25, true);
 
 
 --
--- Name: match_games_id_seq; Type: SEQUENCE SET; Schema: public; Owner: liga_user
+-- Name: match_games_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.match_games_id_seq', 39, true);
 
 
 --
--- Name: matches_id_seq; Type: SEQUENCE SET; Schema: public; Owner: liga_user
+-- Name: matches_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.matches_id_seq', 13, true);
 
 
 --
--- Name: players_id_seq; Type: SEQUENCE SET; Schema: public; Owner: liga_user
+-- Name: players_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.players_id_seq', 16, true);
 
 
 --
--- Name: team_players_id_seq; Type: SEQUENCE SET; Schema: public; Owner: liga_user
+-- Name: team_players_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.team_players_id_seq', 1, false);
 
 
 --
--- Name: teams_id_seq; Type: SEQUENCE SET; Schema: public; Owner: liga_user
+-- Name: teams_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.teams_id_seq', 4, true);
 
 
 --
--- Name: clubs clubs_name_key; Type: CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: clubs clubs_name_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.clubs
@@ -744,7 +710,7 @@ ALTER TABLE ONLY public.clubs
 
 
 --
--- Name: clubs clubs_pkey; Type: CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: clubs clubs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.clubs
@@ -752,7 +718,7 @@ ALTER TABLE ONLY public.clubs
 
 
 --
--- Name: match_game_sets match_game_sets_match_game_id_set_number_key; Type: CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: match_game_sets match_game_sets_match_game_id_set_number_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.match_game_sets
@@ -760,7 +726,7 @@ ALTER TABLE ONLY public.match_game_sets
 
 
 --
--- Name: match_game_sets match_game_sets_pkey; Type: CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: match_game_sets match_game_sets_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.match_game_sets
@@ -768,7 +734,7 @@ ALTER TABLE ONLY public.match_game_sets
 
 
 --
--- Name: match_games match_games_match_id_game_number_key; Type: CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: match_games match_games_match_id_game_number_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.match_games
@@ -776,7 +742,7 @@ ALTER TABLE ONLY public.match_games
 
 
 --
--- Name: match_games match_games_pkey; Type: CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: match_games match_games_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.match_games
@@ -784,7 +750,7 @@ ALTER TABLE ONLY public.match_games
 
 
 --
--- Name: matches matches_pkey; Type: CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: matches matches_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.matches
@@ -792,7 +758,7 @@ ALTER TABLE ONLY public.matches
 
 
 --
--- Name: players players_pkey; Type: CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: players players_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.players
@@ -800,7 +766,7 @@ ALTER TABLE ONLY public.players
 
 
 --
--- Name: team_players team_players_pkey; Type: CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: team_players team_players_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.team_players
@@ -808,7 +774,7 @@ ALTER TABLE ONLY public.team_players
 
 
 --
--- Name: team_players team_players_team_id_player_id_key; Type: CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: team_players team_players_team_id_player_id_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.team_players
@@ -816,7 +782,7 @@ ALTER TABLE ONLY public.team_players
 
 
 --
--- Name: teams teams_club_id_name_key; Type: CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: teams teams_club_id_name_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.teams
@@ -824,7 +790,7 @@ ALTER TABLE ONLY public.teams
 
 
 --
--- Name: teams teams_pkey; Type: CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: teams teams_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.teams
@@ -832,7 +798,7 @@ ALTER TABLE ONLY public.teams
 
 
 --
--- Name: match_game_sets match_game_sets_match_game_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: match_game_sets match_game_sets_match_game_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.match_game_sets
@@ -840,7 +806,7 @@ ALTER TABLE ONLY public.match_game_sets
 
 
 --
--- Name: match_games match_games_away_player_1_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: match_games match_games_away_player_1_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.match_games
@@ -848,7 +814,7 @@ ALTER TABLE ONLY public.match_games
 
 
 --
--- Name: match_games match_games_away_player_2_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: match_games match_games_away_player_2_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.match_games
@@ -856,7 +822,7 @@ ALTER TABLE ONLY public.match_games
 
 
 --
--- Name: match_games match_games_home_player_1_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: match_games match_games_home_player_1_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.match_games
@@ -864,7 +830,7 @@ ALTER TABLE ONLY public.match_games
 
 
 --
--- Name: match_games match_games_home_player_2_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: match_games match_games_home_player_2_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.match_games
@@ -872,7 +838,7 @@ ALTER TABLE ONLY public.match_games
 
 
 --
--- Name: match_games match_games_match_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: match_games match_games_match_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.match_games
@@ -880,7 +846,7 @@ ALTER TABLE ONLY public.match_games
 
 
 --
--- Name: match_games match_games_venue_club_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: match_games match_games_venue_club_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.match_games
@@ -888,7 +854,7 @@ ALTER TABLE ONLY public.match_games
 
 
 --
--- Name: matches matches_away_team_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: matches matches_away_team_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.matches
@@ -896,7 +862,7 @@ ALTER TABLE ONLY public.matches
 
 
 --
--- Name: matches matches_home_team_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: matches matches_home_team_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.matches
@@ -904,7 +870,7 @@ ALTER TABLE ONLY public.matches
 
 
 --
--- Name: team_players team_players_player_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: team_players team_players_player_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.team_players
@@ -912,7 +878,7 @@ ALTER TABLE ONLY public.team_players
 
 
 --
--- Name: team_players team_players_team_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: team_players team_players_team_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.team_players
@@ -920,7 +886,7 @@ ALTER TABLE ONLY public.team_players
 
 
 --
--- Name: teams teams_club_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: liga_user
+-- Name: teams teams_club_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.teams
@@ -931,5 +897,5 @@ ALTER TABLE ONLY public.teams
 -- PostgreSQL database dump complete
 --
 
-\unrestrict eN9f0ZMqlGqCgcmisYmjWVvQ7bYHNXnSDk7hAvYEOckSSd5HbXWd0KmvBfujenG
+\unrestrict E0TRUEX5mAHAARsTm4ZLuBwNXZSoJMJR8NPLM47R1QHXvVEn1cXui0lxM5kMtJf
 
