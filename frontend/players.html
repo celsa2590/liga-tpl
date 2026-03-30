@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jugadoras - Liga San Miguel</title>
+  <style>
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background: #f5f7fb;
+      margin: 0;
+      padding: 24px;
+      color: #18212f;
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      color: white;
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+    }
+
+    .team {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .club {
+      opacity: 0.9;
+      margin-bottom: 14px;
+    }
+
+    .player {
+      padding: 10px 0;
+      border-top: 1px solid rgba(255,255,255,0.18);
+    }
+
+    .player:first-of-type {
+      border-top: 0;
+    }
+
+    .name {
+      font-weight: 700;
+    }
+
+    .meta {
+      opacity: 0.9;
+      font-size: 0.92rem;
+      margin-top: 2px;
+    }
+
+/* Espacio Active */
+.team-1 {
+  background: linear-gradient(135deg, #0f172a, #334155);
+}
+
+/* Propadel */
+.team-2 {
+  background: linear-gradient(135deg, #0f3b2e, #1f7a5c);
+}
+
+/* Arena */
+.team-3 {
+  background: linear-gradient(135deg, #1e3a8a, #2563eb);
+}
+
+/* Vespucio */
+.team-4 {
+  background: linear-gradient(135deg, #312e81, #6366f1);
+}
+
+    .team-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .team-logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 14px;
+      object-fit: cover;
+      background: rgba(255,255,255,0.9);
+      padding: 6px;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.14);
+    }
+  </style>
+</head>
+<body>
+  <h1>Jugadoras por equipo</h1>
+  <div class="grid" id="teamsGrid"></div>
+
+  <script>
+   const teamLogos = {
+     1: "/assets/logos/espacio-active.png",
+     2: "/assets/logos/propadel.png",
+     3: "/assets/logos/arena.png",
+     4: "/assets/logos/vespucio.png"
+   };
+
+    const API = "http://localhost:8000";
+
+    function groupPlayers(data) {
+      const map = new Map();
+
+      data.forEach(row => {
+        if (!map.has(row.team_id)) {
+          map.set(row.team_id, {
+            team_id: row.team_id,
+            team_name: row.team_name,
+            club_name: row.club_name,
+            players: []
+          });
+        }
+
+        map.get(row.team_id).players.push(row);
+      });
+
+      return Array.from(map.values());
+    }
+
+    async function loadPlayers() {
+      const res = await fetch(API + "/players");
+      const data = await res.json();
+      const teams = groupPlayers(data);
+
+      const grid = document.getElementById("teamsGrid");
+      grid.innerHTML = "";
+
+      teams.forEach(team => {
+        const card = document.createElement("div");
+        card.className = `card team-${team.team_id}`;
+
+        const playersHtml = team.players.map(player => `
+          <div class="player">
+            <div class="name">${player.first_name} ${player.last_name}</div>
+            <div class="meta">
+              ${player.nickname || "Sin apodo"} · Categoría ${player.category || "-"} · ${player.ranking_points ?? 0} pts
+            </div>
+          </div>
+        `).join("");
+
+        card.innerHTML = `
+          <div class="team-head">
+            <img class="team-logo" src="${teamLogos[team.team_id] || ''}" alt="Logo ${team.team_name}">
+            <div>
+              <div class="team">${team.team_name}</div>
+              <div class="club">${team.club_name}</div>
+            </div>
+          </div>        
+        ${playersHtml}
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    loadPlayers().catch(console.error);
+  </script>
+</body>
+</html>

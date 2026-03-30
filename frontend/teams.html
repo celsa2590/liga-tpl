@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Equipos - Liga San Miguel</title>
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --text: #18212f;
+      --muted: #64748b;
+      --line: #e6ebf2;
+      --card: #ffffff;
+      --shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 32px));
+      margin: 24px auto 40px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+    }
+
+    .sub {
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    select {
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      background: white;
+      font-size: 0.96rem;
+      min-width: 220px;
+    }
+
+    .hero {
+      color: white;
+      border-radius: 24px;
+      padding: 26px;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.15);
+      margin-bottom: 26px;
+    }
+
+/* Espacio Active */
+.team-1 {
+  background: linear-gradient(135deg, #0f172a, #334155);
+}
+
+/* Propadel */
+.team-2 {
+  background: linear-gradient(135deg, #0f3b2e, #1f7a5c);
+}
+
+/* Arena */
+.team-3 {
+  background: linear-gradient(135deg, #1e3a8a, #2563eb);
+}
+
+/* Vespucio */
+.team-4 {
+  background: linear-gradient(135deg, #312e81, #6366f1);
+}
+
+    .hero-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+      font-size: 0.86rem;
+      margin-bottom: 12px;
+    }
+
+    .hero h2 {
+      margin: 0 0 8px;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.05;
+    }
+
+    .hero p {
+      margin: 0;
+      color: rgba(255,255,255,0.88);
+      max-width: 700px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .stat {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      opacity: 0.82;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: 800;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 20px 20px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    .panel-subtitle {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .roster {
+      padding: 0 18px 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .player-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      background: #ffffff;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .player-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(15,23,42,0.08);
+    }
+
+    .player-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .player-name {
+      font-weight: 800;
+    }
+
+    .player-meta {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      background: #eef2ff;
+      color: #3730a3;
+      white-space: nowrap;
+    }
+
+    .schedule-wrap {
+      padding: 0 18px 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .match-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      background: #ffffff;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .match-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+    }
+
+    .match-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .match-title {
+      font-weight: 800;
+    }
+
+    .match-meta {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .mini-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #f8fafc;
+      margin-top: 10px;
+      align-items: center;
+    }
+
+    .mini-left {
+      min-width: 0;
+    }
+
+    .mini-label {
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .mini-players {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .mini-score {
+      font-weight: 900;
+      font-size: 1.05rem;
+      min-width: 40px;
+      text-align: right;
+    }
+
+    .empty {
+      padding: 18px;
+      color: var(--muted);
+    }
+
+    .team-links {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .team-link {
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.08);
+      color: white;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .team-link.active {
+      background: rgba(255,255,255,0.2);
+      border-color: rgba(255,255,255,0.35);
+    }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 620px) {
+      .container { width: min(100% - 18px, 1180px); }
+      .hero { padding: 18px; }
+      .stats { grid-template-columns: 1fr 1fr; }
+    }
+
+    .hero-brand {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .hero-logo {
+      width: 96px;
+      height: 96px;
+      border-radius: 18px;
+      object-fit: cover;
+      background: rgba(255,255,255,0.92);
+      padding: 8px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+    }
+
+    .player-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: white;
+      background: linear-gradient(135deg,#0f172a,#334155);
+      flex-shrink: 0;
+    }
+
+    .player-main {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div>
+        <h1>Equipos</h1>
+        <div class="sub">Explora el roster, los próximos partidos y los resultados recientes de cada equipo.</div>
+      </div>
+      <div class="toolbar">
+        <select id="teamSelect"></select>
+      </div>
+    </div>
+
+    <section id="teamHero" class="hero team-1"></section>
+
+    <section class="grid">
+      <div class="panel">
+        <div class="panel-header">
+          <h3 class="panel-title">Roster del equipo</h3>
+          <p class="panel-subtitle">Jugadoras inscritas para la temporada actual.</p>
+        </div>
+        <div class="roster" id="roster"></div>
+      </div>
+
+      <div style="display:grid; gap:22px;">
+        <div class="panel">
+          <div class="panel-header">
+            <h3 class="panel-title">Próximos matches</h3>
+            <p class="panel-subtitle">Fechas programadas para este equipo.</p>
+          </div>
+          <div class="schedule-wrap" id="upcoming"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h3 class="panel-title">Resultados recientes</h3>
+            <p class="panel-subtitle">Últimos enfrentamientos ya disputados.</p>
+          </div>
+          <div class="schedule-wrap" id="results"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const API = "http://localhost:8000";
+    let playersData = [];
+    let matchesData = [];
+    let standingsData = [];
+    let selectedTeamId = null;
+
+    const teamThemes = {
+      1: "team-1",
+      2: "team-2",
+      3: "team-3",
+      4: "team-4"
+    };
+
+    const teamLogos = {
+      1: "/assets/logos/espacio-active.png",
+      2: "/assets/logos/propadel.png",
+      3: "/assets/logos/arena.png",
+      4: "/assets/logos/vespucio.png"
+    };
+
+    function groupPlayers(data) {
+      const map = new Map();
+      data.forEach(row => {
+        if (!map.has(row.team_id)) {
+          map.set(row.team_id, {
+            team_id: row.team_id,
+            team_name: row.team_name,
+            club_name: row.club_name,
+            players: []
+          });
+        }
+        map.get(row.team_id).players.push(row);
+      });
+      return Array.from(map.values());
+    }
+
+    function groupMatchesByTie(matches) {
+      const grouped = new Map();
+      matches.forEach(match => {
+        const key = `${match.match_id}`;
+        if (!grouped.has(key)) {
+          grouped.set(key, {
+            match_id: match.match_id,
+            season_name: match.season_name,
+            round_number: match.round_number,
+            home_team_id: match.home_team_id,
+            home_team_name: match.home_team_name,
+            away_team_id: match.away_team_id,
+            away_team_name: match.away_team_name,
+            scheduled_at: match.scheduled_at,
+            venue_club: match.venue_club,
+            games: []
+          });
+        }
+        const tie = grouped.get(key);
+        tie.games.push(match);
+        if (match.scheduled_at && new Date(match.scheduled_at) < new Date(tie.scheduled_at)) {
+          tie.scheduled_at = match.scheduled_at;
+        }
+      });
+
+      return Array.from(grouped.values()).map(tie => {
+        tie.games.sort((a, b) => a.game_number - b.game_number);
+        tie.isFinished = tie.games.every(g => g.home_sets != null && g.away_sets != null);
+        tie.homeGamesWon = tie.games.filter(g => g.home_sets != null && g.away_sets != null && g.home_sets > g.away_sets).length;
+        tie.awayGamesWon = tie.games.filter(g => g.home_sets != null && g.away_sets != null && g.away_sets > g.home_sets).length;
+        return tie;
+      });
+    }
+
+    function formatDateTime(dateString) {
+      if (!dateString) return "Fecha por definir";
+      return new Date(dateString).toLocaleString("es-CL", {
+        dateStyle: "medium",
+        timeStyle: "short"
+      });
+    }
+
+    function getOpponentName(tie, teamId) {
+      return tie.home_team_id === teamId ? tie.away_team_name : tie.home_team_name;
+    }
+
+    function getTeamPlayersForGame(game, teamId, tie) {
+      if (tie.home_team_id === teamId) {
+        return [game.home_player_1, game.home_player_2].filter(Boolean).join(" / ") || "Pareja por confirmar";
+      }
+      return [game.away_player_1, game.away_player_2].filter(Boolean).join(" / ") || "Pareja por confirmar";
+    }
+
+    function getTeamGamesWon(tie, teamId) {
+      return tie.home_team_id === teamId ? tie.homeGamesWon : tie.awayGamesWon;
+    }
+
+    function getOpponentGamesWon(tie, teamId) {
+      return tie.home_team_id === teamId ? tie.awayGamesWon : tie.homeGamesWon;
+    }
+
+    function populateSelect(teams) {
+      const select = document.getElementById("teamSelect");
+      select.innerHTML = teams.map(team => `
+        <option value="${team.team_id}">${team.team_name}</option>
+      `).join("");
+
+      select.value = selectedTeamId || teams[0]?.team_id || "";
+      select.addEventListener("change", e => {
+        selectedTeamId = parseInt(e.target.value, 10);
+        renderTeamPage();
+      });
+    }
+
+    function renderHero(team, standing, ties) {
+      const hero = document.getElementById("teamHero");
+      hero.className = `hero ${teamThemes[team.team_id] || 'team-1'}`;
+
+      const nextTie = ties
+        .filter(t => !t.isFinished)
+        .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at))[0];
+
+      const logo = teamLogos[team.team_id] || "";
+
+
+      hero.innerHTML = `
+        <div class="hero-head">
+          <div class="hero-brand">
+            <img class="hero-logo" src="${logo}" alt="Logo ${team.team_name}">
+            <div>
+              <div class="eyebrow">🎾 Club · ${team.club_name}</div>
+              <h2>${team.team_name}</h2>
+              <p>Equipo participante de la Liga San Miguel. Aquí puedes revisar sus jugadoras, próximos enfrentamientos y rendimiento en la temporada.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-label">Posición</div>
+            <div class="stat-value">${standing?.position ?? '—'}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Puntos</div>
+            <div class="stat-value">${standing?.total_points ?? 0}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Jugadoras</div>
+            <div class="stat-value">${team.players.length}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Próximo match</div>
+            <div class="stat-value">${nextTie ? new Date(nextTie.scheduled_at).toLocaleDateString('es-CL', { day: '2-digit', month: 'short' }) : '—'}</div>
+          </div>
+        </div>
+
+        <div class="team-links" id="teamLinks"></div>
+      `;
+
+      const links = document.getElementById("teamLinks");
+      groupPlayers(playersData).forEach(item => {
+        const button = document.createElement("button");
+        button.className = `team-link ${item.team_id === team.team_id ? 'active' : ''}`;
+        button.textContent = item.team_name;
+        button.onclick = () => {
+          selectedTeamId = item.team_id;
+          document.getElementById('teamSelect').value = String(item.team_id);
+          renderTeamPage();
+        };
+        links.appendChild(button);
+      });
+    }
+
+    function initials(firstName, lastName) {
+      return `${firstName?.[0] || ""}${lastName?.[0] || ""}`.toUpperCase();
+    }
+
+    function renderRoster(team) {
+      const roster = document.getElementById("roster");
+      roster.innerHTML = team.players.map(player => `
+        <article class="player-card">
+          <div class="player-head">
+            <div class="player-main">
+              <div class="player-avatar">${initials(player.first_name, player.last_name)}</div>
+              <div>
+                <div class="player-name">${player.first_name} ${player.last_name}</div>
+                <div class="player-meta">${player.nickname || 'Sin apodo'} · Categoría ${player.category || '-'} · ${player.ranking_points ?? 0} pts</div>
+              </div>
+            </div>
+            <div class="pill">ID ${player.player_id}</div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function renderTieCard(tie, teamId) {
+      const opponent = getOpponentName(tie, teamId);
+      const ownWins = getTeamGamesWon(tie, teamId);
+      const rivalWins = getOpponentGamesWon(tie, teamId);
+
+      const gamesHtml = tie.games.map(game => `
+        <div class="mini-row">
+          <div class="mini-left">
+            <div class="mini-label">Partido ${game.game_number}</div>
+            <div class="mini-players">${getTeamPlayersForGame(game, teamId, tie)}</div>
+          </div>
+          <div class="mini-score">${tie.home_team_id === teamId ? (game.home_sets ?? '—') + ' - ' + (game.away_sets ?? '—') : (game.away_sets ?? '—') + ' - ' + (game.home_sets ?? '—')}</div>
+        </div>
+      `).join("");
+
+      return `
+        <article class="match-card">
+          <div class="match-head">
+            <div>
+              <div class="match-title">vs ${opponent}</div>
+              <div class="match-meta">Ronda ${tie.round_number} · 📍 ${tie.venue_club} · 🕒 ${formatDateTime(tie.scheduled_at)}</div>
+            </div>
+            <div class="pill">${ownWins} - ${rivalWins}</div>
+          </div>
+          ${gamesHtml}
+        </article>
+      `;
+    }
+
+    function renderSchedules(teamId) {
+      const ties = groupMatchesByTie(matchesData)
+        .filter(tie => tie.home_team_id === teamId || tie.away_team_id === teamId);
+
+      const upcoming = ties
+        .filter(tie => !tie.isFinished)
+        .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
+
+      const results = ties
+        .filter(tie => tie.isFinished)
+        .sort((a, b) => new Date(b.scheduled_at) - new Date(a.scheduled_at));
+
+      const upcomingEl = document.getElementById("upcoming");
+      const resultsEl = document.getElementById("results");
+
+      upcomingEl.innerHTML = upcoming.length
+        ? upcoming.map(tie => renderTieCard(tie, teamId)).join("")
+        : '<div class="empty">No hay próximos matches para este equipo.</div>';
+
+      resultsEl.innerHTML = results.length
+        ? results.map(tie => renderTieCard(tie, teamId)).join("")
+        : '<div class="empty">Aún no hay resultados para este equipo.</div>';
+
+      return ties;
+    }
+
+    function renderTeamPage() {
+      const teams = groupPlayers(playersData);
+      const team = teams.find(t => t.team_id === selectedTeamId) || teams[0];
+      if (!team) return;
+
+      selectedTeamId = team.team_id;
+      const standing = standingsData.find(item => item.team_id === team.team_id);
+      const ties = renderSchedules(team.team_id);
+      renderHero(team, standing, ties);
+      renderRoster(team);
+    }
+
+    async function loadData() {
+      const [playersRes, matchesRes, standingsRes] = await Promise.all([
+        fetch(API + "/players"),
+        fetch(API + "/matches"),
+        fetch(API + "/standings")
+      ]);
+
+      playersData = await playersRes.json();
+      matchesData = await matchesRes.json();
+      standingsData = await standingsRes.json();
+
+      const teams = groupPlayers(playersData);
+      selectedTeamId = teams[0]?.team_id || null;
+      populateSelect(teams);
+      renderTeamPage();
+    }
+
+    loadData().catch(console.error);
+  </script>
+</body>
+</html>

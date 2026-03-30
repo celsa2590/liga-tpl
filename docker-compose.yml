@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:16
+    container_name: liga_db
+    restart: always
+    environment:
+      POSTGRES_DB: liga
+      POSTGRES_USER: liga_user
+      POSTGRES_PASSWORD: liga_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - liga_pgdata:/var/lib/postgresql/data
+
+volumes:
+  liga_pgdata:
