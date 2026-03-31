@@ -703,7 +703,7 @@ th.num, td.num {
           </div>
           <div class="stat">
             <div class="stat-label">Jugadores</div>
-            <div class="stat-value">${team.players.length}</div>
+            <div class="stat-value">${team.players?.length ?? 0}</div>
           </div>
           <div class="stat">
             <div class="stat-label">Próximo match</div>
@@ -806,20 +806,33 @@ th.num, td.num {
 
 
 function renderTeamPage() {
-  const teams = groupPlayers(playersData);
-  const team = teams.find(t => t.team_id === selectedTeamId) || teams[0];
+  const team = standingsData.find(t => t.team_id === selectedTeamId) || standingsData[0];
   if (!team) return;
 
   selectedTeamId = team.team_id;
-  const standing = standingsData.find(item => item.team_id === team.team_id);
+
   const ties = groupMatchesByTie(matchesData)
     .filter(tie => tie.home_team_id === team.team_id || tie.away_team_id === team.team_id)
     .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
 
-  renderHero(team, standing, ties);
-  renderTeamLinks(teams, team.team_id);
+  renderHero({
+    team_id: team.team_id,
+    team_name: team.team_name,
+    club_name: team.club_name,
+    players: playersData.filter(p => p.team_id === team.team_id)
+  }, team, ties);
+
+  renderTeamLinks(
+    standingsData.map(item => ({
+      team_id: item.team_id,
+      team_name: item.team_name
+    })),
+    team.team_id
+  );
+
   renderClubSummary(team.team_id, ties);
 }
+
 
 function renderTeamLinks(teams, activeTeamId) {
   const links = document.getElementById("teamLinks");
@@ -950,23 +963,44 @@ function renderStandingsTable(standings) {
 </div>
 
 async function loadData() {
-  const [playersRes, matchesRes, standingsRes] = await Promise.all([
-    fetch(API + "/players"),
-    fetch(API + "/matches"),
-    fetch(API + "/standings")
-  ]);
+  try {
+    const [standingsRes, matchesRes, playersRes] = await Promise.all([
+      fetch(API + "/standings"),
+      fetch(API + "/matches"),
+      fetch(API + "/players")
+    ]);
 
-  playersData = await playersRes.json();
-  matchesData = await matchesRes.json();
-  standingsData = await standingsRes.json();
+    if (!standingsRes.ok) throw new Error(`/standings -> ${standingsRes.status}`);
+    if (!matchesRes.ok) throw new Error(`/matches -> ${matchesRes.status}`);
+    if (!playersRes.ok) throw new Error(`/players -> ${playersRes.status}`);
 
-  renderStandingsTable(standingsData);
+    standingsData = await standingsRes.json();
+    matchesData = await matchesRes.json();
+    playersData = await playersRes.json();
 
-  const teams = groupPlayers(playersData);
-  selectedTeamId = teams[0]?.team_id || null;
-  renderTeamPage();
+    // 1) La tabla se renderiza SIEMPRE con standings
+    renderStandingsTable(standingsData);
+
+    // 2) El club seleccionado se toma desde standings, no desde players
+    selectedTeamId = standingsData[0]?.team_id || null;
+
+    // 3) Solo renderizamos resumen si existe al menos un equipo en standings
+    if (selectedTeamId) {
+      renderTeamPage();
+    }
+  } catch (error) {
+    console.error("Error cargando teams.html:", error);
+
+    const tbody = document.querySelector("#teamsStandingsTable tbody");
+    if (tbody) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="10" class="loading">No se pudo cargar la tabla.</td>
+        </tr>
+      `;
+    }
+  }
 }
-
     loadData().catch(console.error);
   </script>
 </body>
