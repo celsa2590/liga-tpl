@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Equipos - Liga San Miguel</title>
+  <title>Equipos - Team Padel League</title>
   <style>
     :root {
       --bg: #f1f5f9;
@@ -71,6 +71,48 @@
       box-shadow: 0 14px 40px rgba(0,0,0,0.15);
       margin-bottom: 26px;
     }
+.table-wrap {
+  overflow-x: auto;
+  padding: 0 18px 18px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+th.num, td.num {
+  text-align: center;
+}
+
+.team-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.team-logo-mini {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  border-radius: 10px;
+  padding: 4px;
+  background: #0b0f19;
+  flex-shrink: 0;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: var(--muted);
+}
+
 
 /* Espacio Active */
 .team-1 {
@@ -379,7 +421,7 @@
     <div class="topbar">
       <div>
         <h1>Equipos</h1>
-        <div class="sub">Explora el roster, los próximos partidos y los resultados recientes de cada equipo.</div>
+        <div class="sub">Explora las estadísticas por club, los próximos partidos y los resultados más recientes.</div>
       </div>
       <div class="toolbar">
         <select id="teamSelect"></select>
@@ -389,31 +431,38 @@
     <section id="teamHero" class="hero team-1"></section>
 
     <section class="grid">
-      <div class="panel">
-        <div class="panel-header">
-          <h3 class="panel-title">Roster del equipo</h3>
-          <p class="panel-subtitle">Jugadoras inscritas para la temporada actual.</p>
-        </div>
-        <div class="roster" id="roster"></div>
-      </div>
 
-      <div style="display:grid; gap:22px;">
-        <div class="panel">
-          <div class="panel-header">
-            <h3 class="panel-title">Próximos matches</h3>
-            <p class="panel-subtitle">Fechas programadas para este equipo.</p>
-          </div>
-          <div class="schedule-wrap" id="upcoming"></div>
-        </div>
+<div class="panel">
+  <div class="panel-header">
+    <h3 class="panel-title">Tabla completa</h3>
+    <p class="panel-subtitle">Detalle de rendimiento por club.</p>
+  </div>
 
-        <div class="panel">
-          <div class="panel-header">
-            <h3 class="panel-title">Resultados recientes</h3>
-            <p class="panel-subtitle">Últimos enfrentamientos ya disputados.</p>
-          </div>
-          <div class="schedule-wrap" id="results"></div>
-        </div>
-      </div>
+  <div class="table-wrap">
+    <table id="teamsStandingsTable">
+      <thead>
+        <tr>
+          <th class="num">Pos</th>
+          <th>Equipo</th>
+          <th class="num">PJ</th>
+          <th class="num">PG</th>
+          <th class="num">PP</th>
+          <th class="num">PF</th>
+          <th class="num">PC</th>
+          <th class="num">Dif</th>
+          <th class="num">Bonus</th>
+          <th class="num">Pts</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="10" class="loading">Cargando tabla...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
     </section>
   </div>
 
@@ -546,7 +595,7 @@
             <div>
               <div class="eyebrow">🎾 Club · ${team.club_name}</div>
               <h2>${team.team_name}</h2>
-              <p>Equipo participante de la Liga San Miguel. Aquí puedes revisar sus jugadoras, próximos enfrentamientos y rendimiento en la temporada.</p>
+              <p>Equipo participante de la TPL. Aquí puedes revisar su plantel y rendimiento en la temporada.</p>
             </div>
           </div>
         </div>
@@ -561,7 +610,7 @@
             <div class="stat-value">${standing?.total_points ?? 0}</div>
           </div>
           <div class="stat">
-            <div class="stat-label">Jugadoras</div>
+            <div class="stat-label">Jugadores</div>
             <div class="stat-value">${team.players.length}</div>
           </div>
           <div class="stat">
@@ -617,7 +666,7 @@
       const gamesHtml = tie.games.map(game => `
         <div class="mini-row">
           <div class="mini-left">
-            <div class="mini-label">Partido ${game.game_number}</div>
+            <div class="mini-label">Categoría ${game.category || game.game_number}</div>
             <div class="mini-players">${getTeamPlayersForGame(game, teamId, tie)}</div>
           </div>
           <div class="mini-score">${tie.home_team_id === teamId ? (game.home_sets ?? '—') + ' - ' + (game.away_sets ?? '—') : (game.away_sets ?? '—') + ' - ' + (game.home_sets ?? '—')}</div>
@@ -664,17 +713,62 @@
       return ties;
     }
 
-    function renderTeamPage() {
-      const teams = groupPlayers(playersData);
-      const team = teams.find(t => t.team_id === selectedTeamId) || teams[0];
-      if (!team) return;
 
-      selectedTeamId = team.team_id;
-      const standing = standingsData.find(item => item.team_id === team.team_id);
-      const ties = renderSchedules(team.team_id);
-      renderHero(team, standing, ties);
-      renderRoster(team);
-    }
+function renderTeamPage() {
+  const teams = groupPlayers(playersData);
+  const team = teams.find(t => t.team_id === selectedTeamId) || teams[0];
+  if (!team) return;
+
+  selectedTeamId = team.team_id;
+  const standing = standingsData.find(item => item.team_id === team.team_id);
+  const ties = groupMatchesByTie(matchesData)
+    .filter(tie => tie.home_team_id === team.team_id || tie.away_team_id === team.team_id);
+
+  renderHero(team, standing, ties);
+}
+
+
+function renderStandingsTable(standings) {
+  const tbody = document.querySelector("#teamsStandingsTable tbody");
+  if (!tbody) return;
+
+  tbody.innerHTML = "";
+
+  const teamLogos = {
+    1: "/assets/logos/espacio-active.png",
+    2: "/assets/logos/propadel.png",
+    3: "/assets/logos/arena.png",
+    4: "/assets/logos/Revueltas.PNG"
+  };
+
+  standings.forEach((team, index) => {
+    const row = document.createElement("tr");
+    const logo = teamLogos[team.team_id] || "";
+
+    row.innerHTML = `
+      <td class="num">${index + 1}</td>
+      <td>
+        <div class="team-cell">
+          <img class="team-logo-mini" src="${logo}" alt="Logo ${team.team_name}">
+          <div>
+            <div><strong>${team.team_name}</strong></div>
+            <div style="color: var(--muted); font-size: 0.9rem;">${team.club_name}</div>
+          </div>
+        </div>
+      </td>
+      <td class="num">${team.played_games ?? 0}</td>
+      <td class="num">${team.won_games ?? 0}</td>
+      <td class="num">${team.lost_games ?? 0}</td>
+      <td class="num">${team.sets_for ?? 0}</td>
+      <td class="num">${team.sets_against ?? 0}</td>
+      <td class="num">${team.sets_diff ?? 0}</td>
+      <td class="num">${team.bonus_points ?? 0}</td>
+      <td class="num"><strong>${team.total_points ?? 0}</strong></td>
+    `;
+
+    tbody.appendChild(row);
+  });
+}
 
     async function loadData() {
       const [playersRes, matchesRes, standingsRes] = await Promise.all([
@@ -687,11 +781,14 @@
       matchesData = await matchesRes.json();
       standingsData = await standingsRes.json();
 
+      renderStandingsTable(standingsData);
+
       const teams = groupPlayers(playersData);
       selectedTeamId = teams[0]?.team_id || null;
       populateSelect(teams);
       renderTeamPage();
-    }
+
+   }
 
     loadData().catch(console.error);
   </script>
