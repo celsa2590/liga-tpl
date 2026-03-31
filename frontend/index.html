@@ -1388,7 +1388,7 @@ function eventCard(tie) {
     return `
       <div class="event-game">
         <div class="event-game-title">
-          Partido ${game.game_number} ${game.home_sets != null && game.away_sets != null ? `· ${gameScore}` : ""}
+          Categoría ${game.category || game.game_number} ${game.home_sets != null && game.away_sets != null ? `· ${gameScore}` : ""}
         </div>
         <div class="event-pairing">
           <div class="event-side">
@@ -1521,7 +1521,7 @@ row.innerHTML = `
   <td class="num ${posClass}">${index + 1}</td>
   <td>
     <div class="team-cell">
-      ${logo ? `<img src="${logo}" class="team-logo">` : ""}
+      ${logo ? `<img src="${logo}" class="team-logo-mini">` : ""}
       <div>
         <div class="team-name">${team.team_name} ${medal}</div>
       </div>
