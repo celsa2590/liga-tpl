@@ -816,18 +816,25 @@
 }
 
 .event-side {
-  display: grid;
+  display: flex;
   gap: 3px;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
 }
 
 .event-pair-name {
   font-weight: 800;
   color: #ffffff;
+  text-align: center;
 }
 
 .event-club-name {
   font-size: 0.88rem;
-  color: #94a3b8;
+  text-align: center;
+  color: rgba(255,255,255,0.7);
+  margin-top: 4px;
 }
 
 .event-vs {
@@ -1371,40 +1378,62 @@ function eventCard(tie) {
   const isFinished = tie.isFinished;
   const statusLabel = isFinished ? "Finalizado" : "Programado";
   const statusClass = isFinished ? "finished" : "scheduled";
-  const scheduledDate = tie.scheduled_at ? new Date(tie.scheduled_at) : null;
-  const timeLabel = scheduledDate
-    ? scheduledDate.toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit", hour12: false })
-    : "--:--";
+  const uniqueTimes = [...new Set(
+  tie.games
+    .filter(game => game.scheduled_at)
+    .map(game =>
+      new Date(game.scheduled_at).toLocaleTimeString("es-CL", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      })
+    )
+)].sort();
+
+  const timeLabel = uniqueTimes.length ? uniqueTimes.join(" / ") : "--:--";
 
   const scoreLabel = isFinished
     ? `${tie.homeGamesWon} - ${tie.awayGamesWon}`
     : timeLabel;
 
-  const gamesHtml = tie.games.map(game => {
-    const gameScore = (game.home_sets != null && game.away_sets != null)
-      ? `${game.home_sets} - ${game.away_sets}`
-      : "vs";
 
-    return `
-      <div class="event-game">
-        <div class="event-game-title">
-          Categoría ${game.category || game.game_number} ${game.home_sets != null && game.away_sets != null ? `· ${gameScore}` : ""}
+const gamesHtml = tie.games.map(game => {
+  const gameScore = (game.home_sets != null && game.away_sets != null)
+    ? `${game.home_sets} - ${game.away_sets}`
+    : "vs";
+
+  const gameTime = game.scheduled_at
+    ? new Date(game.scheduled_at).toLocaleTimeString("es-CL", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      })
+    : "--:--";
+
+  return `
+    <div class="event-game">
+      <div class="event-game-title">
+        Categoría ${game.category || game.game_number} · ${gameTime}
+        ${game.home_sets != null && game.away_sets != null ? ` · ${gameScore}` : ""}
+      </div>
+      <div class="event-pairing">
+        <div class="event-side">
+          <div class="event-pair-name">${teamPlayers(game.home_player_1, game.home_player_2)}</div>
+          <div class="event-club-name">${tie.home_team_name}</div>
         </div>
-        <div class="event-pairing">
-          <div class="event-side">
-            <div class="event-pair-name">${teamPlayers(game.home_player_1, game.home_player_2)}</div>
-            <div class="event-club-name">${tie.home_team_name}</div>
-          </div>
 
-          <div class="event-vs">${gameScore}</div>
+        <div class="event-vs">${gameScore}</div>
 
-          <div class="event-side">
-            <div class="event-pair-name">${teamPlayers(game.away_player_1, game.away_player_2)}</div>
-            <div class="event-club-name">${tie.away_team_name}</div>
-          </div>
+        <div class="event-side">
+          <div class="event-pair-name">${teamPlayers(game.away_player_1, game.away_player_2)}</div>
+          <div class="event-club-name">${tie.away_team_name}</div>
         </div>
       </div>
-    `;
+    </div>
+  `;
+});
+
+
   }).join("");
 
   return `
