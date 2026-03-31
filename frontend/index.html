@@ -1270,11 +1270,6 @@
                   <th class="num">Pos</th>
                   <th>Equipo</th>
                   <th class="num">PJ</th>
-                  <th class="num">G</th>
-                  <th class="num">P</th>
-                  <th class="num">SF</th>
-                  <th class="num">SC</th>
-                  <th class="num">Dif</th>
                   <th class="num">Pts</th>
                 </tr>
               </thead>
@@ -1521,28 +1516,19 @@ async function loadStandings() {
       posClass = "top-2";
     }
 
-    row.innerHTML = `
-      <td class="num"><span class="pos-chip ${posClass}">${team.position}</span></td>
-      <td>
-        <div class="team-cell">
-          <img class="team-logo-mini" src="${logo}" alt="Logo ${team.team_name}">
-          <div>
-            <div class="team-name-row">
-              <div class="team-name">${team.team_name}</div>
-              ${medal ? `<span class="rank-medal">${medal}</span>` : ""}
-            </div>
-            <div class="club-name">${team.club_name}</div>
-          </div>
-        </div>
-      </td>
-      <td class="num">${team.played_games}</td>
-      <td class="num">${team.won_games}</td>
-      <td class="num">${team.lost_games}</td>
-      <td class="num">${team.sets_for}</td>
-      <td class="num">${team.sets_against}</td>
-      <td class="num">${team.sets_diff}</td>
-      <td class="num"><span class="points-badge">${team.total_points}</span></td>
-    `;
+
+row.innerHTML = `
+  <td class="num ${posClass}">${index + 1}</td>
+  <td>
+    <div class="team-cell">
+      ${logo ? `<img src="${logo}" class="team-logo">` : ""}
+      <div>
+        <div class="team-name">${team.team_name} ${medal}</div>
+      </div>
+    </div>
+  </td>
+  <td class="num pts">${team.total_points}</td>
+`;
 
     tbody.appendChild(row);
   });
