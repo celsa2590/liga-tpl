@@ -91,6 +91,7 @@ def get_matches():
             away_team_id,
             away_team_name,
             game_number,
+            category,
             venue_club,
             scheduled_at,
             home_player_1,
