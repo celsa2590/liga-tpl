@@ -1275,7 +1275,7 @@
               </thead>
               <tbody id="standingsTableBody">
                 <tr>
-                  <td colspan="9" class="loading">Cargando tabla...</td>
+                  <td colspan="4" class="loading">Cargando tabla...</td>
                 </tr>
               </tbody>
             </table>
@@ -1518,16 +1518,21 @@ async function loadStandings() {
 
 
 row.innerHTML = `
-  <td class="num ${posClass}">${index + 1}</td>
+  <td class="num"><span class="pos-chip ${posClass}">${team.position}</span></td>
   <td>
     <div class="team-cell">
-      ${logo ? `<img src="${logo}" class="team-logo-mini">` : ""}
+      <img class="team-logo-mini" src="${logo}" alt="Logo ${team.team_name}">
       <div>
-        <div class="team-name">${team.team_name} ${medal}</div>
+        <div class="team-name-row">
+          <div class="team-name">${team.team_name}</div>
+          ${medal ? `<span class="rank-medal">${medal}</span>` : ""}
+        </div>
+        <div class="club-name">${team.club_name}</div>
       </div>
     </div>
   </td>
-  <td class="num pts">${team.total_points}</td>
+  <td class="num">${team.played_games}</td>
+  <td class="num"><strong>${team.total_points}</strong></td>
 `;
 
     tbody.appendChild(row);
