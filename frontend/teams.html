@@ -6,12 +6,12 @@
   <title>Equipos - Team Padel League</title>
   <style>
     :root {
-      --bg: #f1f5f9;
-      --text: #18212f;
-      --muted: #64748b;
-      --line: #e6ebf2;
-      --card: #ffffff;
-      --shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+      --bg: #05080f;
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.68);
+      --line: rgba(255,255,255,0.08);
+      --card: rgba(255,255,255,0.03);
+      --shadow: 0 14px 34px rgba(0,0,0,0.22);
       --radius: 18px;
     }
 
@@ -20,8 +20,8 @@
     body {
       margin: 0;
       font-family: Inter, system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      background: #05080f;
+      color: #ffffff;
     }
 
     .container {
@@ -37,6 +37,79 @@
       margin-bottom: 20px;
       flex-wrap: wrap;
     }
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  background: rgba(5, 8, 15, 0.92);
+  border-bottom: 1px solid rgba(214,176,106, 0.12);
+}
+
+.site-header-inner {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  min-height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.brand-logo {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  border-radius: 14px;
+  background: white;
+  padding: 6px;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.1);
+  border: 1px solid #eef2f7;
+  flex-shrink: 0;
+}
+
+.brand-title {
+  font-size: 1.1rem;
+  font-weight: 900;
+  line-height: 1.1;
+  color: #ffffff;
+}
+
+.brand-subtitle {
+  color: rgba(255,255,255,0.68);
+  font-size: 0.86rem;
+  margin-top: 3px;
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.nav-link {
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #ffffff;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.nav-link:hover {
+  background: rgba(214,176,106,0.12);
+  color: #e8c98a;
+}
 
     h1 {
       margin: 0;
@@ -74,6 +147,12 @@
 .table-wrap {
   overflow-x: auto;
   padding: 0 18px 18px;
+  width: 100%;
+}
+
+#teamsStandingsTable {
+  width: 100%;
+  min-width: 980px;
 }
 
 table {
@@ -194,7 +273,7 @@ th.num, td.num {
 
     .grid {
       display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
+      grid-template-columns: 1fr;
       gap: 22px;
       align-items: start;
     }
@@ -205,6 +284,7 @@ th.num, td.num {
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow: hidden;
+      width: 100%;
     }
 
     .panel-header {
@@ -417,14 +497,31 @@ th.num, td.num {
   </style>
 </head>
 <body>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="/">
+      <img class="brand-logo" src="/assets/logos/tpl_logo_trans.png" alt="Team Padel League">
+      <div>
+        <div class="brand-title">Team Padel League</div>
+        <div class="brand-subtitle">Interclub de pádel</div>
+      </div>
+    </a>
+
+    <nav class="main-nav">
+      <a class="nav-link" href="/">Inicio</a>
+      <a class="nav-link" href="/teams.html">Equipos</a>
+      <a class="nav-link" href="/players.html">Jugadores</a>
+      <a class="nav-link" href="/admin.html">Admin</a>
+    </nav>
+  </div>
+</header>
+
   <div class="container">
     <div class="topbar">
       <div>
         <h1>Equipos</h1>
         <div class="sub">Explora las estadísticas por club, los próximos partidos y los resultados más recientes.</div>
-      </div>
-      <div class="toolbar">
-        <select id="teamSelect"></select>
       </div>
     </div>
 
@@ -564,11 +661,6 @@ th.num, td.num {
       return tie.home_team_id === teamId ? tie.awayGamesWon : tie.homeGamesWon;
     }
 
-    function populateSelect(teams) {
-      const select = document.getElementById("teamSelect");
-      select.innerHTML = teams.map(team => `
-        <option value="${team.team_id}">${team.team_name}</option>
-      `).join("");
 
       select.value = selectedTeamId || teams[0]?.team_id || "";
       select.addEventListener("change", e => {
@@ -629,7 +721,6 @@ th.num, td.num {
         button.textContent = item.team_name;
         button.onclick = () => {
           selectedTeamId = item.team_id;
-          document.getElementById('teamSelect').value = String(item.team_id);
           renderTeamPage();
         };
         links.appendChild(button);
@@ -722,11 +813,89 @@ function renderTeamPage() {
   selectedTeamId = team.team_id;
   const standing = standingsData.find(item => item.team_id === team.team_id);
   const ties = groupMatchesByTie(matchesData)
-    .filter(tie => tie.home_team_id === team.team_id || tie.away_team_id === team.team_id);
+    .filter(tie => tie.home_team_id === team.team_id || tie.away_team_id === team.team_id)
+    .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
 
   renderHero(team, standing, ties);
+  renderTeamLinks(teams, team.team_id);
+  renderClubSummary(team.team_id, ties);
 }
 
+function renderTeamLinks(teams, activeTeamId) {
+  const links = document.getElementById("teamLinks");
+  if (!links) return;
+
+  links.innerHTML = "";
+
+  teams.forEach(item => {
+    const button = document.createElement("button");
+    button.className = `team-link ${item.team_id === activeTeamId ? 'active' : ''}`;
+    button.textContent = item.team_name;
+    button.onclick = () => {
+      selectedTeamId = item.team_id;
+      renderTeamPage();
+    };
+    links.appendChild(button);
+  });
+}
+
+function renderClubSummary(teamId, ties) {
+  const summary = document.getElementById("clubSummary");
+  if (!summary) return;
+
+  if (!ties.length) {
+    summary.innerHTML = '<div class="empty">No hay fechas asociadas a este club.</div>';
+    return;
+  }
+
+  summary.innerHTML = ties.map(tie => {
+    const opponent = getOpponentName(tie, teamId);
+
+    const uniqueTimes = [...new Set(
+      tie.games
+        .filter(game => game.scheduled_at)
+        .map(game =>
+          new Date(game.scheduled_at).toLocaleTimeString("es-CL", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false
+          })
+        )
+    )].sort();
+
+    const timeLabel = uniqueTimes.length ? uniqueTimes.join(" / ") : "--:--";
+
+    return `
+      <article class="match-card">
+        <div class="match-head">
+          <div>
+            <div class="match-title">vs ${opponent}</div>
+            <div class="match-meta">
+              Ronda ${tie.round_number} · 📍 ${tie.venue_club} · 🗓 ${formatDateTime(tie.scheduled_at)} · 🕒 ${timeLabel}
+            </div>
+          </div>
+          <div class="pill">${tie.isFinished ? `${getTeamGamesWon(tie, teamId)} - ${getOpponentGamesWon(tie, teamId)}` : "Programado"}</div>
+        </div>
+
+        ${tie.games.map(game => `
+          <div class="mini-row">
+            <div class="mini-left">
+              <div class="mini-label">Categoría ${game.category || game.game_number}</div>
+              <div class="mini-players">${getTeamPlayersForGame(game, teamId, tie)}</div>
+            </div>
+            <div class="mini-score">
+              ${game.scheduled_at ? new Date(game.scheduled_at).toLocaleTimeString("es-CL", {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false
+              }) : "--:--"}
+            </div>
+          </div>
+        `).join("")}
+      </article>
+    `;
+  }).join("");
+}
 
 function renderStandingsTable(standings) {
   const tbody = document.querySelector("#teamsStandingsTable tbody");
@@ -770,25 +939,33 @@ function renderStandingsTable(standings) {
   });
 }
 
-    async function loadData() {
-      const [playersRes, matchesRes, standingsRes] = await Promise.all([
-        fetch(API + "/players"),
-        fetch(API + "/matches"),
-        fetch(API + "/standings")
-      ]);
+<div class="panel">
+  <div class="panel-header">
+    <h3 class="panel-title">Resumen por club</h3>
+    <p class="panel-subtitle">Selecciona un club para ver sus fechas y resultados.</p>
+  </div>
 
-      playersData = await playersRes.json();
-      matchesData = await matchesRes.json();
-      standingsData = await standingsRes.json();
+  <div id="teamLinks" class="team-links" style="padding: 18px;"></div>
+  <div id="clubSummary" class="schedule-wrap"></div>
+</div>
 
-      renderStandingsTable(standingsData);
+async function loadData() {
+  const [playersRes, matchesRes, standingsRes] = await Promise.all([
+    fetch(API + "/players"),
+    fetch(API + "/matches"),
+    fetch(API + "/standings")
+  ]);
 
-      const teams = groupPlayers(playersData);
-      selectedTeamId = teams[0]?.team_id || null;
-      populateSelect(teams);
-      renderTeamPage();
+  playersData = await playersRes.json();
+  matchesData = await matchesRes.json();
+  standingsData = await standingsRes.json();
 
-   }
+  renderStandingsTable(standingsData);
+
+  const teams = groupPlayers(playersData);
+  selectedTeamId = teams[0]?.team_id || null;
+  renderTeamPage();
+}
 
     loadData().catch(console.error);
   </script>
