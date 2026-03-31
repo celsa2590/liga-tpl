@@ -1151,6 +1151,7 @@
 .pos-chip.top-1 {
   background: #fef3c7;
   color: #92400e;
+  border-left: 3px solid gold;
 }
 
 .pos-chip.top-2 {
@@ -1158,9 +1159,10 @@
   color: #334155;
 }
 
-.pos-chip.top-3 {
-  background: #fed7aa;
-  color: #9a3412;
+.pts {
+  font-weight: bold;
+  font-size: 18px;
+  color: #f5c542;
 }
 
 .team-name-row {
@@ -1504,9 +1506,8 @@ async function loadStandings() {
   data.forEach((team, index) => {
     const row = document.createElement("tr");
 
-    if (index === 0) row.classList.add("leader", "top-1");
-    if (index === 1) row.classList.add("top-2");
-    if (index === 2) row.classList.add("top-3");
+    if (index === 0) row.classList.add("leader", "top-1", "finalist");
+    if (index === 1) row.classList.add("top-2", "finalist");
 
     const logo = teamLogos[team.team_id] || "";
 
@@ -1518,9 +1519,6 @@ async function loadStandings() {
     } else if (index === 1) {
       medal = "🥈";
       posClass = "top-2";
-    } else if (index === 2) {
-      medal = "🥉";
-      posClass = "top-3";
     }
 
     row.innerHTML = `
