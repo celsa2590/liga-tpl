@@ -324,10 +324,14 @@ def get_players_stats():
         mg.away_sets,
         m.home_team_id,
         m.away_team_id,
+        ms.round_number,
         mg.home_player_1_id AS player_id,
         'home' AS side
       FROM match_games mg
       JOIN matches m ON m.id = mg.match_id
+      LEFT JOIN match_schedule ms
+        ON ms.match_id = mg.match_id
+       AND ms.game_number = mg.game_number
       WHERE mg.home_player_1_id IS NOT NULL
 
       UNION ALL
@@ -341,10 +345,14 @@ def get_players_stats():
         mg.away_sets,
         m.home_team_id,
         m.away_team_id,
+        ms.round_number,
         mg.home_player_2_id AS player_id,
         'home' AS side
       FROM match_games mg
       JOIN matches m ON m.id = mg.match_id
+      LEFT JOIN match_schedule ms
+        ON ms.match_id = mg.match_id
+       AND ms.game_number = mg.game_number
       WHERE mg.home_player_2_id IS NOT NULL
 
       UNION ALL
@@ -358,10 +366,14 @@ def get_players_stats():
         mg.away_sets,
         m.home_team_id,
         m.away_team_id,
+        ms.round_number,
         mg.away_player_1_id AS player_id,
         'away' AS side
       FROM match_games mg
       JOIN matches m ON m.id = mg.match_id
+      LEFT JOIN match_schedule ms
+        ON ms.match_id = mg.match_id
+       AND ms.game_number = mg.game_number
       WHERE mg.away_player_1_id IS NOT NULL
 
       UNION ALL
@@ -375,10 +387,14 @@ def get_players_stats():
         mg.away_sets,
         m.home_team_id,
         m.away_team_id,
+        ms.round_number,
         mg.away_player_2_id AS player_id,
         'away' AS side
       FROM match_games mg
       JOIN matches m ON m.id = mg.match_id
+      LEFT JOIN match_schedule ms
+        ON ms.match_id = mg.match_id
+       AND ms.game_number = mg.game_number
       WHERE mg.away_player_2_id IS NOT NULL
     ),
     player_games_with_team AS (
@@ -497,6 +513,32 @@ def get_players_stats():
 
       FROM player_games_with_team pg
       GROUP BY pg.player_id
+    ),
+    player_points AS (
+      SELECT
+        pg.player_id,
+        COALESCE(SUM(
+          CASE
+            WHEN pg.home_sets IS NULL OR pg.away_sets IS NULL THEN 0
+
+            WHEN (
+              (pg.side = 'home' AND pg.home_sets > pg.away_sets) OR
+              (pg.side = 'away' AND pg.away_sets > pg.home_sets)
+            )
+            THEN
+              CASE
+                WHEN pg.round_number = 7 AND pg.player_team_id = pg.home_team_id THEN 12
+                WHEN pg.round_number = 7 AND pg.player_team_id = pg.away_team_id THEN 14
+                WHEN pg.player_team_id = pg.home_team_id THEN 6
+                WHEN pg.player_team_id = pg.away_team_id THEN 8
+                ELSE 0
+              END
+
+            ELSE 0
+          END
+        ), 0) AS ranking_points
+      FROM player_games_with_team pg
+      GROUP BY pg.player_id
     )
 
     SELECT
@@ -505,7 +547,7 @@ def get_players_stats():
       p.last_name,
       p.nickname,
       p.category,
-      p.ranking_points,
+      COALESCE(pp.ranking_points, 0) AS ranking_points,
       pt.team_id,
       t.name AS team_name,
       c.name AS club_name,
@@ -536,11 +578,13 @@ def get_players_stats():
       ON c.id = t.club_id
     LEFT JOIN player_stats ps
       ON ps.player_id = p.id
+    LEFT JOIN player_points pp
+      ON pp.player_id = p.id
     ORDER BY
       p.category NULLS LAST,
-      p.ranking_points DESC,
+      COALESCE(pp.ranking_points, 0) DESC,
       p.last_name,
-      p.first_name;
+      p.first_name
     """)
 
     try:
@@ -550,6 +594,11 @@ def get_players_stats():
         return rows
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error obteniendo estadísticas de jugadores: {str(e)}")
+
+
+
+
+
 
 @app.post("/registration")
 def create_registration(payload: dict = Body(...)):

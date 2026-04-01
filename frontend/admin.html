@@ -735,6 +735,17 @@ function getPlayersByTeam(teamId, category = null) {
   });
 }
 
+function normalizeCategory(value) {
+  const v = (value || "").toString().trim().toLowerCase().replace(/\s+/g, "");
+
+  if (v.includes("4")) return "4ta";
+  if (v.includes("5")) return "5ta";
+  if (v === "c") return "c";
+  if (v === "d") return "d";
+
+  return v;
+}
+
 function renderPlayerOptions(players, selectedId) {
   return '<option value="">Selecciona</option>' + players.map(player => `
     <option value="${player.player_id}" ${Number(selectedId) === Number(player.player_id) ? 'selected' : ''}>
