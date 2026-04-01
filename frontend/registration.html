@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inscripción de jugadores - Team Padel League</title>
+  <style>
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background: #05080f;
+      color: #fff;
+      margin: 0;
+      padding: 24px;
+    }
+
+    .container {
+      width: min(760px, 100%);
+      margin: 0 auto;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 24px;
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+
+    .sub {
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      box-sizing: border-box;
+    }
+
+    select option {
+      background: #0f172a;
+      color: #fff;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    button {
+      margin-top: 20px;
+      background: #d6b06a;
+      color: #081120;
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .msg {
+      margin-top: 16px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 720px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Inscripción de jugadores</h1>
+      <div class="sub">
+        Completa los datos del jugador que representará a tu equipo. La inscripción será revisada antes de ser aprobada.
+      </div>
+
+      <form id="registrationForm">
+        <div class="grid">
+          <div class="full">
+            <label for="team_id">Equipo</label>
+            <select id="team_id" required>
+              <option value="">Cargando equipos...</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="contact_name">Responsable</label>
+            <input id="contact_name" type="text" />
+          </div>
+
+          <div>
+            <label for="contact_phone">Teléfono</label>
+            <input id="contact_phone" type="text" />
+          </div>
+
+          <div class="full">
+            <label for="contact_email">Correo</label>
+            <input id="contact_email" type="email" />
+          </div>
+
+          <div>
+            <label for="first_name">Nombre</label>
+            <input id="first_name" type="text" required />
+          </div>
+
+          <div>
+            <label for="last_name">Apellido</label>
+            <input id="last_name" type="text" required />
+          </div>
+
+          <div>
+            <label for="nickname">Apodo</label>
+            <input id="nickname" type="text" />
+          </div>
+
+          <div>
+            <label for="category">Categoría</label>
+            <select id="category" required>
+              <option value="">Selecciona</option>
+              <option value="4ta">4ta</option>
+              <option value="5ta">5ta</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="position">Posición</label>
+            <select id="position">
+              <option value="">Selecciona</option>
+              <option value="Drive">Drive</option>
+              <option value="Revés">Revés</option>
+              <option value="Ambos">Ambos</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="photo_url">URL de foto</label>
+            <input id="photo_url" type="text" placeholder="https://..." />
+          </div>
+
+          <div class="full">
+            <label for="notes">Observaciones</label>
+            <textarea id="notes"></textarea>
+          </div>
+        </div>
+
+        <button type="submit">Enviar inscripción</button>
+        <div id="msg" class="msg"></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const API = "https://liga-backend-f08y.onrender.com";
+
+    async function loadTeams() {
+      const res = await fetch(API + "/teams");
+      const teams = await res.json();
+
+      const select = document.getElementById("team_id");
+      select.innerHTML = '<option value="">Selecciona un equipo</option>' +
+        teams.map(team => `
+          <option value="${team.id}">
+            ${team.name} - ${team.club_name}
+          </option>
+        `).join("");
+    }
+
+    document.getElementById("registrationForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        team_id: Number(document.getElementById("team_id").value),
+        contact_name: document.getElementById("contact_name").value,
+        contact_email: document.getElementById("contact_email").value,
+        contact_phone: document.getElementById("contact_phone").value,
+        first_name: document.getElementById("first_name").value,
+        last_name: document.getElementById("last_name").value,
+        nickname: document.getElementById("nickname").value,
+        category: document.getElementById("category").value,
+        position: document.getElementById("position").value,
+        photo_url: document.getElementById("photo_url").value,
+        notes: document.getElementById("notes").value
+      };
+
+      const msg = document.getElementById("msg");
+      msg.textContent = "Enviando...";
+
+      try {
+        const res = await fetch(API + "/registration", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.detail || "No se pudo enviar la inscripción");
+        }
+
+        msg.textContent = "Inscripción enviada correctamente.";
+        document.getElementById("registrationForm").reset();
+      } catch (error) {
+        msg.textContent = "Error: " + error.message;
+      }
+    });
+
+    loadTeams().catch(console.error);
+  </script>
+</body>
+</html>

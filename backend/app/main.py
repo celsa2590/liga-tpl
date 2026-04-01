@@ -540,3 +540,75 @@ def get_players_stats():
         return rows
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error obteniendo estadísticas de jugadores: {str(e)}")
+
+@app.post("/registration")
+def create_registration(payload: dict = Body(...)):
+    query = text("""
+        INSERT INTO pending_players (
+            team_id,
+            contact_name,
+            contact_email,
+            contact_phone,
+            first_name,
+            last_name,
+            nickname,
+            category,
+            position,
+            photo_url,
+            notes
+        ) VALUES (
+            :team_id,
+            :contact_name,
+            :contact_email,
+            :contact_phone,
+            :first_name,
+            :last_name,
+            :nickname,
+            :category,
+            :position,
+            :photo_url,
+            :notes
+        )
+        RETURNING id
+    """)
+
+    try:
+        with engine.connect() as conn:
+            result = conn.execute(query, {
+                "team_id": payload.get("team_id"),
+                "contact_name": payload.get("contact_name"),
+                "contact_email": payload.get("contact_email"),
+                "contact_phone": payload.get("contact_phone"),
+                "first_name": payload.get("first_name"),
+                "last_name": payload.get("last_name"),
+                "nickname": payload.get("nickname"),
+                "category": payload.get("category"),
+                "position": payload.get("position"),
+                "photo_url": payload.get("photo_url"),
+                "notes": payload.get("notes"),
+            })
+            row = result.fetchone()
+            conn.commit()
+
+        return {"status": "ok", "pending_player_id": row.id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error creando inscripción: {str(e)}")
+
+
+@app.get("/teams")
+def get_teams():
+    query = text("""
+        SELECT
+            t.id,
+            t.name,
+            c.name AS club_name
+        FROM teams t
+        JOIN clubs c ON c.id = t.club_id
+        ORDER BY t.name
+    """)
+
+    with engine.connect() as conn:
+        result = conn.execute(query)
+        rows = [dict(row._mapping) for row in result]
+
+    return rows
