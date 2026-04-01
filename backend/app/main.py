@@ -1,15 +1,8 @@
 
-from fastapi import FastAPI, Body
+from fastapi import FastAPI, Body, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from .db import engine
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import text
-from .db import engine
-from fastapi import APIRouter, HTTPException
-from psycopg2.extras import RealDictCursor
-from .db import engine, get_db_connection
 
 app = FastAPI(title="Liga San Miguel API")
 
@@ -302,7 +295,7 @@ def update_match(match_id: int, payload: dict = Body(...)):
 
 @app.get("/players/stats")
 def get_players_stats():
-    query = """
+    query = text("""
     WITH player_team AS (
       SELECT DISTINCT ON (tp.player_id)
         tp.player_id,
@@ -538,15 +531,12 @@ def get_players_stats():
       p.ranking_points DESC,
       p.last_name,
       p.first_name;
-    """
+    """)
 
     try:
-        conn = get_db_connection()
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute(query)
-        data = cur.fetchall()
-        cur.close()
-        conn.close()
-        return data
+        with engine.connect() as conn:
+            result = conn.execute(query)
+            rows = [dict(row._mapping) for row in result]
+        return rows
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error obteniendo estadísticas de jugadores: {str(e)}")
