@@ -69,9 +69,9 @@
   height: 58px;
   object-fit: contain;
   border-radius: 14px;
-  background: white;
+  background: radial-gradient(circle, #111 40%, #0b0f19 100%);
   padding: 6px;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.1);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
   border: 1px solid #eef2f7;
   flex-shrink: 0;
 }
@@ -195,22 +195,22 @@ th.num, td.num {
 
 /* Espacio Active */
 .team-1 {
-  background: linear-gradient(135deg, #0f172a, #334155);
+  background: linear-gradient(135deg, #111827, #1f2937);
 }
 
 /* Propadel */
 .team-2 {
-  background: linear-gradient(135deg, #0f3b2e, #1f7a5c);
+  background: linear-gradient(135deg, #14281f, #2d4a3a);
 }
 
 /* Arena */
 .team-3 {
-  background: linear-gradient(135deg, #1e3a8a, #2563eb);
+  background: linear-gradient(135deg, #172033, #243b55);
 }
 
 /* Revueltas */
 .team-4 {
-  background: linear-gradient(135deg, #312e81, #6366f1);
+  background: linear-gradient(135deg, #231942, #3d2c6b);
 }
 
     .hero-head {
@@ -362,13 +362,13 @@ th.num, td.num {
       border: 1px solid var(--line);
       border-radius: 14px;
       padding: 14px;
-      background: #ffffff;
+      background: rgba(255,255,255,0.03);
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
     .match-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.18);
     }
 
     .match-head {
@@ -381,10 +381,11 @@ th.num, td.num {
 
     .match-title {
       font-weight: 800;
+      color: #ffffff;
     }
 
     .match-meta {
-      color: var(--muted);
+      color: rgba(255,255,255,0.68);
       font-size: 0.9rem;
     }
 
@@ -394,7 +395,7 @@ th.num, td.num {
       gap: 10px;
       padding: 10px 12px;
       border-radius: 12px;
-      background: #f8fafc;
+      background: rgba(255,255,255,0.04);
       margin-top: 10px;
       align-items: center;
     }
@@ -406,10 +407,11 @@ th.num, td.num {
     .mini-label {
       font-weight: 700;
       margin-bottom: 2px;
+      color: #ffffff;
     }
 
     .mini-players {
-      color: var(--muted);
+      color: rgba(255,255,255,0.68);
       font-size: 0.88rem;
     }
 
@@ -418,6 +420,7 @@ th.num, td.num {
       font-size: 1.05rem;
       min-width: 40px;
       text-align: right;
+      color: #e8c98a;
     }
 
     .empty {
@@ -470,10 +473,10 @@ th.num, td.num {
       width: 96px;
       height: 96px;
       border-radius: 18px;
-      object-fit: cover;
-      background: rgba(255,255,255,0.92);
-      padding: 8px;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+      object-fit: contain;
+      background: rgba(255,255,255,0.04);
+      padding: 6px;
+      box-shadow: none;
     }
 
     .player-avatar {
@@ -494,6 +497,51 @@ th.num, td.num {
       align-items: center;
       gap: 12px;
     }
+
+.club-address-card {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
+  background: rgba(255,255,255,0.03);
+  margin-bottom: 14px;
+}
+
+.club-address-label {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.58);
+  margin-bottom: 8px;
+}
+
+.club-address-text {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.5;
+}
+
+.maps-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: rgba(214,176,106,0.15);
+  border: 1px solid rgba(214,176,106,0.35);
+  color: #e8c98a;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.maps-button:hover {
+  background: rgba(214,176,106,0.25);
+  transform: translateY(-1px);
+}
+
   </style>
 </head>
 <body>
@@ -590,9 +638,30 @@ th.num, td.num {
     const teamLogos = {
       1: "/assets/logos/espacio-active.png",
       2: "/assets/logos/propadel.png",
-      3: "/assets/logos/arena.png",
+      3: "/assets/logos/2.png",
       4: "/assets/logos/Revueltas.PNG"
     };
+
+
+const teamAddresses = {
+  1: {
+    text: "Espacio Active, La Reina, Santiago",
+    maps: "https://www.google.com/maps/place/ESPACIO+ACTIVE/@-33.4778274,-70.6458673,17z/data=!3m1!4b1!4m6!3m5!1s0x9662c51863eacc1f:0xd1849634fc30f3ae!8m2!3d-33.4778274!4d-70.6432924!16s%2Fg%2F11jyz173br?entry=ttu&g_ep=EgoyMDI2MDMyOS4wIKXMDSoASAFQAw%3D%3D"
+  },
+  2: {
+    text: "Propadel, Providencia, Santiago",
+    maps: "https://www.google.com/maps/place/Propadel/@-33.5035678,-70.6616943,17z/data=!3m1!4b1!4m6!3m5!1s0x9662dbad0efdb12f:0xdb4195c6cb47b079!8m2!3d-33.5035679!4d-70.6568234!16s%2Fg%2F11sd_x4w3l?entry=ttu&g_ep=EgoyMDI2MDMyOS4wIKXMDSoASAFQAw%3D%3D"
+  },
+  3: {
+    text: "Arena Padel, Las Condes, Santiago",
+    maps: "https://www.google.com/maps/place/Arena+Padel+Club/@-33.5078002,-70.6657071,17z/data=!3m1!4b1!4m6!3m5!1s0x9662db00374944ab:0x8bb9dba9b2ae859d!8m2!3d-33.5078002!4d-70.6631322!16s%2Fg%2F11wy5yw0sp?entry=ttu&g_ep=EgoyMDI2MDMyOS4wIKXMDSoASAFQAw%3D%3D"
+  },
+  4: {
+    text: "Maiclub, Maipú, Santiago",
+    maps: "https://www.google.com/maps/place/Maiclub+Padel+Club+H%C3%ADpico/@-33.458395,-70.6677458,17z/data=!3m1!4b1!4m6!3m5!1s0x9662c54d8d5c6ec3:0x8caeabb0dac91b9a!8m2!3d-33.458395!4d-70.6651709!16s%2Fg%2F11wfskyktl?entry=ttu&g_ep=EgoyMDI2MDMyOS4wIKXMDSoASAFQAw%3D%3D"
+  }
+};
+
 
     function groupPlayers(data) {
       const map = new Map();
@@ -715,7 +784,6 @@ th.num, td.num {
           </div>
         </div>
 
-        <div class="team-links" id="teamLinks"></div>
       `;
 
       const links = document.getElementById("teamLinks");
@@ -856,63 +924,99 @@ function renderTeamLinks(teams, activeTeamId) {
   });
 }
 
+
+
+
 function renderClubSummary(teamId, ties) {
   const summary = document.getElementById("clubSummary");
   if (!summary) return;
 
+  const team = standingsData.find(t => t.team_id === teamId);
+
+
+const team = standingsData.find(t => t.team_id === teamId);
+const addressData = teamAddresses[teamId] || {
+  text: "Dirección por confirmar",
+  maps: "#"
+};
+
+const addressBlock = `
+  <div class="club-address-card">
+    <div class="club-address-label">Ubicación del club</div>
+    <div class="club-address-text">📍 ${addressData.text}</div>
+
+    <a 
+      href="${addressData.maps}" 
+      target="_blank" 
+      class="maps-button"
+    >
+      📍 Ver en Google Maps
+    </a>
+  </div>
+`;
+
+
   if (!ties.length) {
-    summary.innerHTML = '<div class="empty">No hay fechas asociadas a este club.</div>';
+    summary.innerHTML = `
+      ${addressBlock}
+      <div class="empty">No hay fechas asociadas a este club.</div>
+    `;
     return;
   }
 
-  summary.innerHTML = ties.map(tie => {
-    const opponent = getOpponentName(tie, teamId);
+  summary.innerHTML = `
+    ${addressBlock}
+    ${ties.map(tie => {
+      const opponent = getOpponentName(tie, teamId);
 
-    const uniqueTimes = [...new Set(
-      tie.games
-        .filter(game => game.scheduled_at)
-        .map(game =>
-          new Date(game.scheduled_at).toLocaleTimeString("es-CL", {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false
-          })
-        )
-    )].sort();
+      const uniqueTimes = [...new Set(
+        tie.games
+          .filter(game => game.scheduled_at)
+          .map(game =>
+            new Date(game.scheduled_at).toLocaleTimeString("es-CL", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false
+            })
+          )
+      )].sort();
 
-    const timeLabel = uniqueTimes.length ? uniqueTimes.join(" / ") : "--:--";
+      const timeLabel = uniqueTimes.length ? uniqueTimes.join(" / ") : "--:--";
 
-    return `
-      <article class="match-card">
-        <div class="match-head">
-          <div>
-            <div class="match-title">vs ${opponent}</div>
-            <div class="match-meta">
-              Ronda ${tie.round_number} · 📍 ${tie.venue_club} · 🗓 ${formatDateTime(tie.scheduled_at)} · 🕒 ${timeLabel}
+      return `
+        <article class="match-card">
+          <div class="match-head">
+            <div>
+              <div class="match-title">vs ${opponent}</div>
+              <div class="match-meta">
+                Ronda ${tie.round_number} · 📍 ${tie.venue_club} · 🗓 ${formatDateTime(tie.scheduled_at)} · 🕒 ${timeLabel}
+              </div>
             </div>
+            <div class="pill">${tie.isFinished ? `${getTeamGamesWon(tie, teamId)} - ${getOpponentGamesWon(tie, teamId)}` : "Programado"}</div>
           </div>
-          <div class="pill">${tie.isFinished ? `${getTeamGamesWon(tie, teamId)} - ${getOpponentGamesWon(tie, teamId)}` : "Programado"}</div>
-        </div>
 
-        ${tie.games.map(game => `
-          <div class="mini-row">
-            <div class="mini-left">
-              <div class="mini-label">Categoría ${game.category || game.game_number}</div>
-              <div class="mini-players">${getTeamPlayersForGame(game, teamId, tie)}</div>
+          ${tie.games.map(game => `
+            <div class="mini-row">
+              <div class="mini-left">
+                <div class="mini-label">Categoría ${game.category || game.game_number}</div>
+                <div class="mini-players">${getTeamPlayersForGame(game, teamId, tie)}</div>
+              </div>
+              <div class="mini-score">
+                ${game.scheduled_at ? new Date(game.scheduled_at).toLocaleTimeString("es-CL", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: false
+                }) : "--:--"}
+              </div>
             </div>
-            <div class="mini-score">
-              ${game.scheduled_at ? new Date(game.scheduled_at).toLocaleTimeString("es-CL", {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: false
-              }) : "--:--"}
-            </div>
-          </div>
-        `).join("")}
-      </article>
-    `;
-  }).join("");
+          `).join("")}
+        </article>
+      `;
+    }).join("")}
+  `;
 }
+
+
 
 function renderStandingsTable(standings) {
   const tbody = document.querySelector("#teamsStandingsTable tbody");
@@ -923,7 +1027,7 @@ function renderStandingsTable(standings) {
   const teamLogos = {
     1: "/assets/logos/espacio-active.png",
     2: "/assets/logos/propadel.png",
-    3: "/assets/logos/arena.png",
+    3: "/assets/logos/2.png",
     4: "/assets/logos/Revueltas.PNG"
   };
 
