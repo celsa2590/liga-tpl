@@ -177,6 +177,8 @@ def get_admin_matches():
             ms.scheduled_at,
             ms.game_number,
             ms.category,
+            m.home_team_id,
+            m.away_team_id,
             ms.home_player_1,
             ms.home_player_2,
             ms.away_player_1,
