@@ -612,3 +612,142 @@ def get_teams():
         rows = [dict(row._mapping) for row in result]
 
     return rows
+
+
+@app.post("/admin/pending-player/{pending_id}/approve")
+def approve_pending_player(pending_id: int):
+    get_pending_query = text("""
+        SELECT *
+        FROM pending_players
+        WHERE id = :pending_id
+          AND status = 'pending'
+    """)
+
+    insert_player_query = text("""
+        INSERT INTO players (
+            first_name,
+            last_name,
+            nickname,
+            category,
+            ranking_points
+        ) VALUES (
+            :first_name,
+            :last_name,
+            :nickname,
+            :category,
+            0
+        )
+        RETURNING id
+    """)
+
+    insert_team_player_query = text("""
+        INSERT INTO team_players (
+            team_id,
+            player_id,
+            active
+        ) VALUES (
+            :team_id,
+            :player_id,
+            true
+        )
+    """)
+
+    update_pending_query = text("""
+        UPDATE pending_players
+        SET status = 'approved',
+            reviewed_at = CURRENT_TIMESTAMP
+        WHERE id = :pending_id
+    """)
+
+    try:
+        with engine.connect() as conn:
+            pending = conn.execute(
+                get_pending_query,
+                {"pending_id": pending_id}
+            ).fetchone()
+
+            if not pending:
+                raise HTTPException(status_code=404, detail="Inscripción pendiente no encontrada")
+
+            player = conn.execute(
+                insert_player_query,
+                {
+                    "first_name": pending.first_name,
+                    "last_name": pending.last_name,
+                    "nickname": pending.nickname,
+                    "category": pending.category,
+                }
+            ).fetchone()
+
+            conn.execute(
+                insert_team_player_query,
+                {
+                    "team_id": pending.team_id,
+                    "player_id": player.id
+                }
+            )
+
+            conn.execute(
+                update_pending_query,
+                {"pending_id": pending_id}
+            )
+
+            conn.commit()
+
+        return {"status": "ok", "player_id": player.id}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error aprobando inscripción: {str(e)}")
+
+
+@app.get("/admin/pending-players")
+def get_pending_players():
+    query = text("""
+        SELECT
+            pp.id,
+            pp.team_id,
+            t.name AS team_name,
+            c.name AS club_name,
+            pp.contact_name,
+            pp.contact_email,
+            pp.contact_phone,
+            pp.first_name,
+            pp.last_name,
+            pp.nickname,
+            pp.category,
+            pp.position,
+            pp.photo_url,
+            pp.notes,
+            pp.status,
+            pp.submitted_at,
+            pp.reviewed_at
+        FROM pending_players pp
+        JOIN teams t ON t.id = pp.team_id
+        JOIN clubs c ON c.id = t.club_id
+        ORDER BY pp.submitted_at DESC
+    """)
+
+    with engine.connect() as conn:
+        result = conn.execute(query)
+        rows = [dict(row._mapping) for row in result]
+
+    return rows
+
+
+
+@app.post("/admin/pending-player/{pending_id}/reject")
+def reject_pending_player(pending_id: int):
+    query = text("""
+        UPDATE pending_players
+        SET status = 'rejected',
+            reviewed_at = CURRENT_TIMESTAMP
+        WHERE id = :pending_id
+          AND status = 'pending'
+    """)
+
+    with engine.connect() as conn:
+        result = conn.execute(query, {"pending_id": pending_id})
+        conn.commit()
+
+    return {"status": "ok", "pending_id": pending_id}
