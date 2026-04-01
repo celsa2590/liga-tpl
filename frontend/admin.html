@@ -727,13 +727,6 @@ function fullPlayerName(player) {
   return `${player.first_name} ${player.last_name}`.trim();
 }
 
-function getPlayersByTeam(teamId, category = null) {
-  return teamPlayersData.filter(player => {
-    const sameTeam = Number(player.team_id) === Number(teamId);
-    const sameCategory = !category || player.category === category;
-    return sameTeam && sameCategory;
-  });
-}
 
 function normalizeCategory(value) {
   const v = (value || "").toString().trim().toLowerCase().replace(/\s+/g, "");
@@ -744,6 +737,18 @@ function normalizeCategory(value) {
   if (v === "d") return "d";
 
   return v;
+}
+
+function getPlayersByTeam(teamId, category = null) {
+  return teamPlayersData.filter(player => {
+    const sameTeam = Number(player.team_id) === Number(teamId);
+
+    const playerCategory = normalizeCategory(player.category);
+    const gameCategory = normalizeCategory(category);
+
+    const sameCategory = !category || playerCategory === gameCategory;
+    return sameTeam && sameCategory;
+  });
 }
 
 function renderPlayerOptions(players, selectedId) {
