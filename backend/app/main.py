@@ -7,6 +7,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from .db import engine
+from fastapi import APIRouter, HTTPException
+from psycopg2.extras import RealDictCursor
 
 app = FastAPI(title="Liga San Miguel API")
 
@@ -293,3 +295,257 @@ def update_match(match_id: int, payload: dict = Body(...)):
         conn.commit()
 
     return {"status": "ok", "match_id": match_id}
+
+
+router = APIRouter()
+
+@router.get("/players/stats")
+def get_players_stats():
+    query = """
+    WITH player_team AS (
+      SELECT DISTINCT ON (tp.player_id)
+        tp.player_id,
+        tp.team_id
+      FROM team_players tp
+      WHERE tp.active = true
+      ORDER BY tp.player_id, tp.joined_at DESC, tp.id DESC
+    ),
+    player_games AS (
+      SELECT
+        mg.match_id,
+        mg.id AS match_game_id,
+        mg.game_number,
+        mg.category,
+        mg.home_sets,
+        mg.away_sets,
+        m.home_team_id,
+        m.away_team_id,
+        mg.home_player_1_id AS player_id,
+        'home' AS side
+      FROM match_games mg
+      JOIN matches m ON m.id = mg.match_id
+      WHERE mg.home_player_1_id IS NOT NULL
+
+      UNION ALL
+
+      SELECT
+        mg.match_id,
+        mg.id AS match_game_id,
+        mg.game_number,
+        mg.category,
+        mg.home_sets,
+        mg.away_sets,
+        m.home_team_id,
+        m.away_team_id,
+        mg.home_player_2_id AS player_id,
+        'home' AS side
+      FROM match_games mg
+      JOIN matches m ON m.id = mg.match_id
+      WHERE mg.home_player_2_id IS NOT NULL
+
+      UNION ALL
+
+      SELECT
+        mg.match_id,
+        mg.id AS match_game_id,
+        mg.game_number,
+        mg.category,
+        mg.home_sets,
+        mg.away_sets,
+        m.home_team_id,
+        m.away_team_id,
+        mg.away_player_1_id AS player_id,
+        'away' AS side
+      FROM match_games mg
+      JOIN matches m ON m.id = mg.match_id
+      WHERE mg.away_player_1_id IS NOT NULL
+
+      UNION ALL
+
+      SELECT
+        mg.match_id,
+        mg.id AS match_game_id,
+        mg.game_number,
+        mg.category,
+        mg.home_sets,
+        mg.away_sets,
+        m.home_team_id,
+        m.away_team_id,
+        mg.away_player_2_id AS player_id,
+        'away' AS side
+      FROM match_games mg
+      JOIN matches m ON m.id = mg.match_id
+      WHERE mg.away_player_2_id IS NOT NULL
+    ),
+    player_games_with_team AS (
+      SELECT
+        pg.*,
+        pt.team_id AS player_team_id
+      FROM player_games pg
+      LEFT JOIN player_team pt
+        ON pt.player_id = pg.player_id
+    ),
+    player_stats AS (
+      SELECT
+        pg.player_id,
+
+        COUNT(CASE
+          WHEN pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL THEN 1
+        END) AS matches_played,
+
+        COUNT(CASE
+          WHEN pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
+           AND (
+             (pg.side = 'home' AND pg.home_sets > pg.away_sets) OR
+             (pg.side = 'away' AND pg.away_sets > pg.home_sets)
+           )
+          THEN 1
+        END) AS wins,
+
+        COUNT(CASE
+          WHEN pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
+           AND (
+             (pg.side = 'home' AND pg.home_sets < pg.away_sets) OR
+             (pg.side = 'away' AND pg.away_sets < pg.home_sets)
+           )
+          THEN 1
+        END) AS losses,
+
+        COALESCE(SUM(CASE
+          WHEN pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
+          THEN CASE WHEN pg.side = 'home' THEN pg.home_sets ELSE pg.away_sets END
+          ELSE 0
+        END), 0) AS sets_won,
+
+        COALESCE(SUM(CASE
+          WHEN pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
+          THEN CASE WHEN pg.side = 'home' THEN pg.away_sets ELSE pg.home_sets END
+          ELSE 0
+        END), 0) AS sets_lost,
+
+        AVG(CASE
+          WHEN pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
+          THEN CASE WHEN pg.side = 'home' THEN pg.home_sets ELSE pg.away_sets END
+        END) AS avg_sets_won,
+
+        AVG(CASE
+          WHEN pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
+          THEN CASE WHEN pg.side = 'home' THEN pg.away_sets ELSE pg.home_sets END
+        END) AS avg_sets_lost,
+
+        COUNT(CASE
+          WHEN pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
+           AND pg.player_team_id = pg.home_team_id
+          THEN 1
+        END) AS home_matches,
+
+        COUNT(CASE
+          WHEN pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
+           AND pg.player_team_id = pg.away_team_id
+          THEN 1
+        END) AS away_matches,
+
+        COUNT(CASE
+          WHEN pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
+           AND pg.player_team_id = pg.home_team_id
+           AND (
+             (pg.side = 'home' AND pg.home_sets > pg.away_sets) OR
+             (pg.side = 'away' AND pg.away_sets > pg.home_sets)
+           )
+          THEN 1
+        END) AS home_wins,
+
+        COUNT(CASE
+          WHEN pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
+           AND pg.player_team_id = pg.away_team_id
+           AND (
+             (pg.side = 'home' AND pg.home_sets > pg.away_sets) OR
+             (pg.side = 'away' AND pg.away_sets > pg.home_sets)
+           )
+          THEN 1
+        END) AS away_wins,
+
+        COUNT(CASE
+          WHEN pg.game_number = 3
+           AND pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
+          THEN 1
+        END) AS super_tiebreak_played,
+
+        COUNT(CASE
+          WHEN pg.game_number = 3
+           AND pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
+           AND (
+             (pg.side = 'home' AND pg.home_sets > pg.away_sets) OR
+             (pg.side = 'away' AND pg.away_sets > pg.home_sets)
+           )
+          THEN 1
+        END) AS super_tiebreak_won,
+
+        COUNT(CASE
+          WHEN pg.game_number = 3
+           AND pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
+           AND (
+             (pg.side = 'home' AND pg.home_sets < pg.away_sets) OR
+             (pg.side = 'away' AND pg.away_sets < pg.home_sets)
+           )
+          THEN 1
+        END) AS super_tiebreak_lost
+
+      FROM player_games_with_team pg
+      GROUP BY pg.player_id
+    )
+
+    SELECT
+      p.id AS player_id,
+      p.first_name,
+      p.last_name,
+      p.nickname,
+      p.category,
+      p.ranking_points,
+      pt.team_id,
+      t.name AS team_name,
+      c.name AS club_name,
+      COALESCE(ps.matches_played, 0) AS matches_played,
+      COALESCE(ps.wins, 0) AS wins,
+      COALESCE(ps.losses, 0) AS losses,
+      COALESCE(ps.sets_won, 0) AS sets_won,
+      COALESCE(ps.sets_lost, 0) AS sets_lost,
+      COALESCE(ROUND(ps.avg_sets_won::numeric, 2), 0) AS avg_sets_won,
+      COALESCE(ROUND(ps.avg_sets_lost::numeric, 2), 0) AS avg_sets_lost,
+      CASE
+        WHEN COALESCE(ps.home_matches, 0) = 0 THEN 0
+        ELSE ROUND((ps.home_wins::numeric / ps.home_matches::numeric) * 100, 1)
+      END AS home_win_pct,
+      CASE
+        WHEN COALESCE(ps.away_matches, 0) = 0 THEN 0
+        ELSE ROUND((ps.away_wins::numeric / ps.away_matches::numeric) * 100, 1)
+      END AS away_win_pct,
+      COALESCE(ps.super_tiebreak_played, 0) AS super_tiebreak_played,
+      COALESCE(ps.super_tiebreak_won, 0) AS super_tiebreak_won,
+      COALESCE(ps.super_tiebreak_lost, 0) AS super_tiebreak_lost
+    FROM players p
+    LEFT JOIN player_team pt
+      ON pt.player_id = p.id
+    LEFT JOIN teams t
+      ON t.id = pt.team_id
+    LEFT JOIN clubs c
+      ON c.id = t.club_id
+    LEFT JOIN player_stats ps
+      ON ps.player_id = p.id
+    ORDER BY
+      p.category NULLS LAST,
+      p.ranking_points DESC,
+      p.last_name,
+      p.first_name;
+    """
+
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        cur.execute(query)
+        data = cur.fetchall()
+        cur.close()
+        conn.close()
+        return data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error obteniendo estadísticas de jugadores: {str(e)}")
