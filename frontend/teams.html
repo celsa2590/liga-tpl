@@ -786,17 +786,6 @@ const teamAddresses = {
 
       `;
 
-      const links = document.getElementById("teamLinks");
-      groupPlayers(playersData).forEach(item => {
-        const button = document.createElement("button");
-        button.className = `team-link ${item.team_id === team.team_id ? 'active' : ''}`;
-        button.textContent = item.team_name;
-        button.onclick = () => {
-          selectedTeamId = item.team_id;
-          renderTeamPage();
-        };
-        links.appendChild(button);
-      });
     }
 
     function initials(firstName, lastName) {
@@ -932,29 +921,26 @@ function renderClubSummary(teamId, ties) {
   if (!summary) return;
 
   const team = standingsData.find(t => t.team_id === teamId);
+  const addressData = teamAddresses[teamId] || {
+    text: "Dirección por confirmar",
+    maps: "#"
+  };
 
+  const addressBlock = `
+    <div class="club-address-card">
+      <div class="club-address-label">Ubicación del club</div>
+      <div class="club-address-text">📍 ${addressData.text}</div>
 
-const team = standingsData.find(t => t.team_id === teamId);
-const addressData = teamAddresses[teamId] || {
-  text: "Dirección por confirmar",
-  maps: "#"
-};
-
-const addressBlock = `
-  <div class="club-address-card">
-    <div class="club-address-label">Ubicación del club</div>
-    <div class="club-address-text">📍 ${addressData.text}</div>
-
-    <a 
-      href="${addressData.maps}" 
-      target="_blank" 
-      class="maps-button"
-    >
-      📍 Ver en Google Maps
-    </a>
-  </div>
-`;
-
+      <a 
+        href="${addressData.maps}" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="maps-button"
+      >
+        📍 Ver en Google Maps
+      </a>
+    </div>
+  `;
 
   if (!ties.length) {
     summary.innerHTML = `
@@ -992,7 +978,9 @@ const addressBlock = `
                 Ronda ${tie.round_number} · 📍 ${tie.venue_club} · 🗓 ${formatDateTime(tie.scheduled_at)} · 🕒 ${timeLabel}
               </div>
             </div>
-            <div class="pill">${tie.isFinished ? `${getTeamGamesWon(tie, teamId)} - ${getOpponentGamesWon(tie, teamId)}` : "Programado"}</div>
+            <div class="pill">
+              ${tie.isFinished ? `${getTeamGamesWon(tie, teamId)} - ${getOpponentGamesWon(tie, teamId)}` : "Programado"}
+            </div>
           </div>
 
           ${tie.games.map(game => `
