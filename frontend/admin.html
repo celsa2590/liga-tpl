@@ -351,53 +351,6 @@ function getGameWinner(matchId, gameNumber) {
   return null;
 }
 
-function evaluateTiebreakState(matchId) {
-  const winner1 = getGameWinner(matchId, 1);
-  const winner2 = getGameWinner(matchId, 2);
-
-  const game3Card = document.getElementById(`game_${matchId}_3`);
-  if (!game3Card) return;
-
-  const inputs = [
-    `s1h_${matchId}_3`, `s1a_${matchId}_3`,
-    `s2h_${matchId}_3`, `s2a_${matchId}_3`,
-    `s3h_${matchId}_3`, `s3a_${matchId}_3`
-  ].map(id => document.getElementById(id));
-
-  const note = document.getElementById(`game_note_${matchId}_3`);
-
-  const enableTiebreak = winner1 && winner2 && winner1 !== winner2;
-
-  if (enableTiebreak) {
-    game3Card.classList.remove("disabled");
-    inputs.forEach(input => {
-      if (input) input.disabled = false;
-    });
-    if (note) {
-      note.textContent = "Mixto habilitado: los partidos 1 y 2 quedaron 1-1.";
-      note.classList.add("active");
-    }
-  } else {
-    game3Card.classList.add("disabled");
-    inputs.forEach(input => {
-      if (input) {
-        input.disabled = true;
-        input.value = "";
-      }
-    });
-
-    if (note) {
-      note.textContent = "El mixto solo se juega si los partidos 1 y 2 quedan 1-1.";
-      note.classList.remove("active");
-    }
-
-    const resultEl = document.getElementById(`result_${matchId}_3`);
-    if (resultEl) {
-      resultEl.className = "result-box";
-      resultEl.textContent = "Mixto deshabilitado por ahora.";
-    }
-  }
-}
 
     function updateResultBox(matchId, gameNumber, homeTeam, awayTeam) {
       const resultEl = document.getElementById(`result_${matchId}_${gameNumber}`);
@@ -437,13 +390,13 @@ function bindResultInputs(matchId, gameNumber, homeTeam, awayTeam) {
     if (el) {
       el.addEventListener("input", () => {
         updateResultBox(matchId, gameNumber, homeTeam, awayTeam);
-        evaluateTiebreakState(matchId);
       });
     }
   });
 
   updateResultBox(matchId, gameNumber, homeTeam, awayTeam);
 }
+
 
     async function loadAdminMatches() {
       const res = await fetch(API + "/admin/matches");
@@ -466,66 +419,74 @@ function bindResultInputs(matchId, gameNumber, homeTeam, awayTeam) {
       }
 
       filtered.forEach(match => {
-        const gamesHtml = match.games.map(game => `
-          <div class="game" id="game_${match.match_id}_${game.game_number}">
-            <div class="game-title">Partido ${game.game_number}</div>
 
-            <div class="team-block">
-              <div class="team-name">${match.home_team_name}</div>
-              <div class="players">${game.home_player_1 || "Por definir"} / ${game.home_player_2 || "Por definir"}</div>
-            </div>
 
-            <div class="team-block">
-              <div class="team-name">${match.away_team_name}</div>
-              <div class="players">${game.away_player_1 || "Por definir"} / ${game.away_player_2 || "Por definir"}</div>
-            </div>
+const gamesHtml = match.games.map(game => `
+  <div class="game" id="game_${match.match_id}_${game.game_number}">
+    <div class="game-title">${game.category || `Partido ${game.game_number}`}</div>
 
-            <div class="section-label">Resultado por set</div>
-            <div class="sets-grid">
-              <div class="set-box">
-                <label>Set 1</label>
-                <div class="score-pair">
-                  <input type="number" min="0" id="s1h_${match.match_id}_${game.game_number}" value="${setValue(game.set1_home_games)}" placeholder="Local" />
-                  <span>-</span>
-                  <input type="number" min="0" id="s1a_${match.match_id}_${game.game_number}" value="${setValue(game.set1_away_games)}" placeholder="Visita" />
-                </div>
-              </div>
+    <div class="team-block">
+      <div class="team-name">${match.home_team_name}</div>
+      <div class="players">${game.home_player_1 || "Por definir"} / ${game.home_player_2 || "Por definir"}</div>
+    </div>
 
-              <div class="set-box">
-                <label>Set 2</label>
-                <div class="score-pair">
-                  <input type="number" min="0" id="s2h_${match.match_id}_${game.game_number}" value="${setValue(game.set2_home_games)}" placeholder="Local" />
-                  <span>-</span>
-                  <input type="number" min="0" id="s2a_${match.match_id}_${game.game_number}" value="${setValue(game.set2_away_games)}" placeholder="Visita" />
-                </div>
-              </div>
+    <div class="team-block">
+      <div class="team-name">${match.away_team_name}</div>
+      <div class="players">${game.away_player_1 || "Por definir"} / ${game.away_player_2 || "Por definir"}</div>
+    </div>
 
-              <div class="set-box">
-                <label>Set 3</label>
-                <div class="score-pair">
-                  <input type="number" min="0" id="s3h_${match.match_id}_${game.game_number}" value="${setValue(game.set3_home_games)}" placeholder="Local" />
-                  <span>-</span>
-                  <input type="number" min="0" id="s3a_${match.match_id}_${game.game_number}" value="${setValue(game.set3_away_games)}" placeholder="Visita" />
-                </div>
-              </div>
-            </div>
+    <div class="section-label">Resultado por set</div>
+    <div class="sets-grid">
+      <div class="set-box">
+        <label>Set 1</label>
+        <div class="score-pair">
+          <input type="number" min="0" id="s1h_${match.match_id}_${game.game_number}" value="${setValue(game.set1_home_games)}" placeholder="Local" />
+          <span>-</span>
+          <input type="number" min="0" id="s1a_${match.match_id}_${game.game_number}" value="${setValue(game.set1_away_games)}" placeholder="Visita" />
+        </div>
+      </div>
 
-            <div id="result_${match.match_id}_${game.game_number}" class="result-box">
-              Ingresa los games de cada set para ver el resultado automático.
-            </div>
+      <div class="set-box">
+        <label>Set 2</label>
+        <div class="score-pair">
+          <input type="number" min="0" id="s2h_${match.match_id}_${game.game_number}" value="${setValue(game.set2_home_games)}" placeholder="Local" />
+          <span>-</span>
+          <input type="number" min="0" id="s2a_${match.match_id}_${game.game_number}" value="${setValue(game.set2_away_games)}" placeholder="Visita" />
+        </div>
+      </div>
 
-            <div id="game_note_${match.match_id}_${game.game_number}" class="game-note">
-              ${game.game_number === 3 ? "El mixto solo se juega si los partidos 1 y 2 quedan 1-1." : ""}
-            </div>
-          </div>
-        `).join("");
+      <div class="set-box">
+        <label>Set 3</label>
+        <div class="score-pair">
+          <input type="number" min="0" id="s3h_${match.match_id}_${game.game_number}" value="${setValue(game.set3_home_games)}" placeholder="Local" />
+          <span>-</span>
+          <input type="number" min="0" id="s3a_${match.match_id}_${game.game_number}" value="${setValue(game.set3_away_games)}" placeholder="Visita" />
+        </div>
+      </div>
+    </div>
+
+    <div id="result_${match.match_id}_${game.game_number}" class="result-box">
+      Ingresa los games de cada set para ver el resultado automático.
+    </div>
+
+    <div id="game_note_${match.match_id}_${game.game_number}" class="game-note">
+      ${game.category ? `Categoría ${game.category}` : ""}
+    </div>
+  </div>
+`).join("");
+
+
+
 
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
           <div class="head">
             <div>
-              <div class="match-title">Ronda ${match.round_number} · ${match.home_team_name} vs ${match.away_team_name}</div>
+              <div class="match-title">
+                ${Number(match.round_number) === 7 ? "Final" : `Ronda ${match.round_number}`} ·
+                ${match.home_team_name} vs ${match.away_team_name}
+              </div>
               <div class="meta">📍 ${match.venue_club} · 🕒 ${new Date(match.scheduled_at).toLocaleString("es-CL")}</div>
             </div>
           </div>
@@ -546,7 +507,7 @@ function bindResultInputs(matchId, gameNumber, homeTeam, awayTeam) {
             match.away_team_name
           );
         });
-evaluateTiebreakState(match.match_id);
+
       });
     }
 
@@ -601,7 +562,7 @@ function renderRoundTabs(grouped) {
   rounds.forEach(r => {
     const tab = document.createElement("div");
     tab.className = "round-tab" + (currentRound == r ? " active" : "");
-    tab.textContent = `Ronda ${r}`;
+    tab.textContent = Number(r) === 7 ? "Final" : `Ronda ${r}`;
     tab.onclick = () => {
       currentRound = String(r);
       loadAdminMatches();

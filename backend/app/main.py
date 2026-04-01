@@ -9,6 +9,7 @@ from sqlalchemy import text
 from .db import engine
 from fastapi import APIRouter, HTTPException
 from psycopg2.extras import RealDictCursor
+from .db import engine, get_db_connection
 
 app = FastAPI(title="Liga San Miguel API")
 
@@ -178,6 +179,7 @@ def get_admin_matches():
             ms.venue_club,
             ms.scheduled_at,
             ms.game_number,
+            ms.category,
             ms.home_player_1,
             ms.home_player_2,
             ms.away_player_1,
@@ -297,9 +299,8 @@ def update_match(match_id: int, payload: dict = Body(...)):
     return {"status": "ok", "match_id": match_id}
 
 
-router = APIRouter()
 
-@router.get("/players/stats")
+@app.get("/players/stats")
 def get_players_stats():
     query = """
     WITH player_team AS (
