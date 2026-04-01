@@ -164,6 +164,10 @@ def get_admin_matches():
     query = text("""
         SELECT
             mg.id AS match_game_id,
+            mg.home_player_1_id,
+            mg.home_player_2_id,
+            mg.away_player_1_id,
+            mg.away_player_2_id,
             ms.match_id,
             ms.season_name,
             ms.round_number,
@@ -189,6 +193,10 @@ def get_admin_matches():
         JOIN match_games mg
           ON mg.match_id = ms.match_id
          AND mg.game_number = ms.game_number
+
+        JOIN matches m
+          ON m.id = ms.match_id
+
         LEFT JOIN match_game_sets s1
           ON s1.match_game_id = mg.id AND s1.set_number = 1
         LEFT JOIN match_game_sets s2
@@ -751,3 +759,58 @@ def reject_pending_player(pending_id: int):
         conn.commit()
 
     return {"status": "ok", "pending_id": pending_id}
+
+@app.get("/admin/team-players")
+def get_admin_team_players():
+    query = text("""
+        SELECT
+            tp.team_id,
+            t.name AS team_name,
+            p.id AS player_id,
+            p.first_name,
+            p.last_name,
+            p.nickname,
+            p.category,
+            p.position
+        FROM team_players tp
+        JOIN teams t ON t.id = tp.team_id
+        JOIN players p ON p.id = tp.player_id
+        WHERE tp.active = true
+        ORDER BY t.name, p.category, p.first_name, p.last_name
+    """)
+
+    with engine.connect() as conn:
+        result = conn.execute(query)
+        rows = [dict(row._mapping) for row in result]
+
+    return rows
+
+
+@app.put("/admin/match-game/{match_id}/{game_number}/players")
+def update_match_game_players(match_id: int, game_number: int, payload: dict = Body(...)):
+    query = text("""
+        UPDATE match_games
+        SET
+            home_player_1_id = :home_player_1_id,
+            home_player_2_id = :home_player_2_id,
+            away_player_1_id = :away_player_1_id,
+            away_player_2_id = :away_player_2_id
+        WHERE match_id = :match_id
+          AND game_number = :game_number
+    """)
+
+    with engine.connect() as conn:
+        conn.execute(query, {
+            "match_id": match_id,
+            "game_number": game_number,
+            "home_player_1_id": payload.get("home_player_1_id"),
+            "home_player_2_id": payload.get("home_player_2_id"),
+            "away_player_1_id": payload.get("away_player_1_id"),
+            "away_player_2_id": payload.get("away_player_2_id"),
+        })
+        conn.commit()
+
+    return {"status": "ok", "match_id": match_id, "game_number": game_number}
+
+
+
