@@ -3,6 +3,47 @@ from fastapi import FastAPI, Body, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from .db import engine
+from fastapi import Header
+from passlib.context import CryptContext
+from jose import jwt, JWTError
+from datetime import datetime, timedelta
+import os
+
+ADMIN_TOKEN = "tpl-admin-2026"  # puedes cambiarlo
+
+def verify_admin(x_admin_token: str = Header(None)):
+    if x_admin_token != ADMIN_TOKEN:
+        raise HTTPException(status_code=401, detail="No autorizado")
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+SECRET_KEY = os.getenv("ADMIN_SECRET_KEY", "cambia-esto-por-una-clave-larga-y-secreta")
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_HOURS = 12
+
+def verify_password(plain_password: str, password_hash: str) -> bool:
+    return pwd_context.verify(plain_password, password_hash)
+
+def create_access_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(hours=ACCESS_TOKEN_EXPIRE_HOURS)
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+def verify_admin_jwt(authorization: str = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="No autorizado")
+
+    token = authorization.replace("Bearer ", "").strip()
+
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username = payload.get("sub")
+        if not username:
+            raise HTTPException(status_code=401, detail="Token inválido")
+        return username
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Token inválido o expirado")
 
 app = FastAPI(title="Liga San Miguel API")
 
@@ -43,6 +84,42 @@ def get_next_round():
 def root():
     return {"message": "API de la Liga San Miguel funcionando"}
 
+
+@app.post("/admin/login")
+def admin_login(payload: dict = Body(...)):
+    query = text("""
+        SELECT id, username, password_hash, is_active
+        FROM admin_users
+        WHERE username = :username
+        LIMIT 1
+    """)
+
+    username = payload.get("username")
+    password = payload.get("password")
+
+    if not username or not password:
+        raise HTTPException(status_code=400, detail="Usuario y contraseña son obligatorios")
+
+    with engine.connect() as conn:
+        result = conn.execute(query, {"username": username}).fetchone()
+
+    if not result:
+        raise HTTPException(status_code=401, detail="Credenciales inválidas")
+
+    if not result.is_active:
+        raise HTTPException(status_code=403, detail="Usuario inactivo")
+
+    if not verify_password(password, result.password_hash):
+        raise HTTPException(status_code=401, detail="Credenciales inválidas")
+
+    token = create_access_token({"sub": result.username})
+
+    return {
+        "status": "ok",
+        "access_token": token,
+        "token_type": "bearer",
+        "username": result.username
+    }
 
 @app.get("/standings")
 def get_standings():
@@ -160,7 +237,8 @@ def get_players():
 
 
 @app.get("/admin/matches")
-def get_admin_matches():
+def get_admin_matches(x_admin_token: str = Header(None)):
+    verify_admin(x_admin_token)
     query = text("""
         SELECT
             mg.id AS match_game_id,
@@ -215,7 +293,8 @@ def get_admin_matches():
     return rows
 
 @app.put("/admin/match/{match_id}")
-def update_match(match_id: int, payload: dict = Body(...)):
+def update_match(match_id: int, payload: dict = Body(...), x_admin_token: str = Header(None)):
+    verify_admin(x_admin_token)
     games = payload.get("games", [])
 
     update_match_query = text("""
@@ -674,7 +753,8 @@ def get_teams():
 
 
 @app.post("/admin/pending-player/{pending_id}/approve")
-def approve_pending_player(pending_id: int):
+def approve_pending_player(pending_id: int, x_admin_token: str = Header(None)):
+    verify_admin(x_admin_token)
     get_pending_query = text("""
         SELECT *
         FROM pending_players
@@ -761,7 +841,8 @@ def approve_pending_player(pending_id: int):
 
 
 @app.get("/admin/pending-players")
-def get_pending_players():
+def get_admin_pending_players(x_admin_token: str = Header(None)):
+    verify_admin(x_admin_token)
     query = text("""
         SELECT
             pp.id,
@@ -796,7 +877,8 @@ def get_pending_players():
 
 
 @app.post("/admin/pending-player/{pending_id}/reject")
-def reject_pending_player(pending_id: int):
+def reject_pending_player(pending_id: int, x_admin_token: str = Header(None)):
+    verify_admin(x_admin_token)
     query = text("""
         UPDATE pending_players
         SET status = 'rejected',
@@ -812,7 +894,8 @@ def reject_pending_player(pending_id: int):
     return {"status": "ok", "pending_id": pending_id}
 
 @app.get("/admin/team-players")
-def get_admin_team_players():
+def get_admin_team_players(x_admin_token: str = Header(None)):
+    verify_admin(x_admin_token)
     query = text("""
         SELECT
             tp.team_id,
@@ -838,7 +921,8 @@ def get_admin_team_players():
 
 
 @app.put("/admin/match-game/{match_id}/{game_number}/players")
-def update_match_game_players(match_id: int, game_number: int, payload: dict = Body(...)):
+def update_match_game_players(match_id: int, game_number: int, payload: dict = Body(...), x_admin_token: str = Header(None)):
+    verify_admin(x_admin_token)
     query = text("""
         UPDATE match_games
         SET
