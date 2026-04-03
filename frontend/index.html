@@ -1210,6 +1210,170 @@
   border: 1px solid rgba(255,255,255,0.08);
 }
 
+/* =========================
+   MOBILE INDEX OPTIMIZATION
+   ========================= */
+
+@media (max-width: 900px) {
+
+  /* HEADER */
+  .site-header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .main-nav {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .nav-link {
+    flex: 1;
+    text-align: center;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: auto;
+    padding: 60px 0 40px;
+  }
+
+  .hero-inner {
+    align-items: flex-start;
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem, 6vw, 2.8rem);
+    line-height: 1.05;
+  }
+
+  .hero p {
+    font-size: 0.95rem;
+  }
+
+  .hero-actions {
+    width: 100%;
+  }
+
+  .hero-btn {
+    flex: 1;
+    text-align: center;
+  }
+
+  /* EVENTS */
+  .events-shell {
+    padding: 18px;
+  }
+
+  .event-button {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .event-hour {
+    text-align: left;
+  }
+
+  .event-score {
+    text-align: left;
+  }
+
+  .event-pairing {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  /* TABLA */
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    min-width: 620px;
+  }
+
+  th, td {
+    padding: 10px 8px;
+    font-size: 0.85rem;
+  }
+
+  .team-logo-mini {
+    width: 30px;
+    height: 30px;
+  }
+
+  .pos-chip {
+    width: 30px;
+    height: 30px;
+  }
+
+}
+
+@media (max-width: 640px) {
+
+  .container {
+    width: calc(100% - 16px);
+  }
+
+  /* HERO MÁS COMPACTO */
+  .hero {
+    padding: 50px 0 30px;
+  }
+
+  .hero h1 {
+    font-size: 1.8rem;
+  }
+
+  .hero p {
+    font-size: 0.9rem;
+  }
+
+  .hero-btn {
+    width: 100%;
+  }
+
+  /* TITULOS */
+  .section-title {
+    font-size: 1.3rem;
+  }
+
+  /* EVENTS HEADER */
+  .events-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  /* TARJETAS */
+  .match-card {
+    padding: 12px;
+  }
+
+  /* TABLA MÁS COMPACTA */
+  th, td {
+    padding: 8px 6px;
+  }
+
+}
+
+/* Scroll bonito */
+.table-wrap::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-wrap::-webkit-scrollbar-thumb {
+  background: rgba(214,176,106,0.4);
+  border-radius: 999px;
+}
+
+/* feedback táctil */
+.event-item:active,
+.match-card:active {
+  transform: scale(0.98);
+}
+
   </style>
 </head>
 <body>

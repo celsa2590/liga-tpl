@@ -9,11 +9,6 @@ from jose import jwt, JWTError
 from datetime import datetime, timedelta
 import os
 
-ADMIN_TOKEN = "tpl-admin-2026"  # puedes cambiarlo
-
-def verify_admin(x_admin_token: str = Header(None)):
-    if x_admin_token != ADMIN_TOKEN:
-        raise HTTPException(status_code=401, detail="No autorizado")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
