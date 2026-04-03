@@ -542,6 +542,169 @@ th.num, td.num {
   transform: translateY(-1px);
 }
 
+/* =========================
+   MOBILE TEAMS OPTIMIZATION
+   ========================= */
+
+@media (max-width: 900px) {
+
+  .site-header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .main-nav {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .nav-link {
+    flex: 1;
+    text-align: center;
+  }
+
+  .container {
+    width: calc(100% - 20px);
+  }
+
+  .hero {
+    padding: 18px;
+  }
+
+  .hero-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .hero-brand {
+    align-items: flex-start;
+  }
+
+  .hero-logo {
+    width: 74px;
+    height: 74px;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #teamsStandingsTable {
+    min-width: 760px;
+  }
+
+  th, td {
+    padding: 10px 8px;
+    font-size: 0.85rem;
+  }
+
+  .team-logo-mini {
+    width: 30px;
+    height: 30px;
+  }
+
+  .team-links {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .mini-row {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+
+  .container {
+    width: calc(100% - 16px);
+    margin: 16px auto 30px;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  .sub {
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  .hero {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .hero h2 {
+    font-size: 1.7rem;
+  }
+
+  .hero p {
+    font-size: 0.9rem;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .stat {
+    padding: 14px;
+  }
+
+  .team-links {
+    grid-template-columns: 1fr;
+  }
+
+  .team-link {
+    width: 100%;
+  }
+
+  .match-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .mini-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .mini-score {
+    text-align: left;
+    min-width: 0;
+  }
+
+  .panel-header {
+    padding: 16px 16px 12px;
+  }
+
+  .table-wrap,
+  .roster,
+  .schedule-wrap {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+.table-wrap::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-wrap::-webkit-scrollbar-thumb {
+  background: rgba(214,176,106,0.35);
+  border-radius: 999px;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
   </style>
 </head>
 <body>
