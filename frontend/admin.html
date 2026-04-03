@@ -413,7 +413,9 @@ select option {
 
 <div class="topbar">
   <h1>Panel Admin</h1>
+  <button type="button" onclick="logoutAdmin()">Cerrar sesión</button>
 </div>
+
 
 <div class="section-tabs">
   <div id="tabMatches" class="section-tab active">Partidos</div>
@@ -432,7 +434,14 @@ select option {
 
   <script>
     const API = "https://liga-backend-f08y.onrender.com";
-    const ADMIN_TOKEN = "tpl-admin-2026";
+
+const adminJwt = localStorage.getItem("admin_token");
+
+if (!adminJwt) {
+  window.location.href = "/admin-login.html";
+}
+    
+const ADMIN_TOKEN = "tpl-admin-2026";
 
 const password = prompt("Ingrese contraseña de administrador");
 
@@ -965,6 +974,12 @@ async function initAdmin() {
 }
 
 initAdmin().catch(console.error);
+
+function logoutAdmin() {
+  localStorage.removeItem("admin_token");
+  localStorage.removeItem("admin_username");
+  window.location.href = "/admin-login.html";
+}
   </script>
 </body>
 </html>
