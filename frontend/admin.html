@@ -441,18 +441,23 @@ if (!adminJwt) {
   window.location.href = "/admin-login.html";
 }
     
-const ADMIN_TOKEN = "tpl-admin-2026";
-
-const password = prompt("Ingrese contraseña de administrador");
-
-if (password !== ADMIN_TOKEN) {
-  document.body.innerHTML = `
-    <div style="color:white;text-align:center;margin-top:60px;font-family:Inter,system-ui,sans-serif;">
-      <h2>Acceso no autorizado</h2>
-    </div>
-  `;
-  throw new Error("No autorizado");
+function getAuthHeaders(extra = {}) {
+  return {
+    ...extra,
+    "Authorization": `Bearer ${adminJwt}`
+  };
 }
+
+function handleUnauthorized(res) {
+  if (res.status === 401) {
+    localStorage.removeItem("admin_token");
+    localStorage.removeItem("admin_username");
+    window.location.href = "/admin-login.html";
+    throw new Error("Sesión expirada");
+  }
+  return res;
+}
+
 
 let currentRound = "all";
 let currentSection = "matches";
@@ -573,10 +578,11 @@ function bindResultInputs(matchId, gameNumber, homeTeam, awayTeam) {
 
     async function loadAdminMatches() {
       const res = await fetch(API + "/admin/matches", {
-  headers: {
-    "x-admin-token": ADMIN_TOKEN
-  }
+  headers: getAuthHeaders()
 });
+
+handleUnauthorized(res);
+
       const data = await res.json();
       const grouped = groupMatches(data);
 
@@ -737,10 +743,9 @@ const gamesHtml = match.games.map(game => {
 
       await fetch(API + `/admin/match/${matchId}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "x-admin-token": ADMIN_TOKEN
-        },
+        headers: getAuthHeaders({
+    "Content-Type": "application/json"
+  }),
         body: JSON.stringify({ games })
 });
 
@@ -790,10 +795,11 @@ function renderPlayerOptions(players, selectedId) {
 
 async function loadTeamPlayers() {
   const res = await fetch(API + "/admin/team-players", {
-  headers: {
-    "x-admin-token": ADMIN_TOKEN
-  }
+  headers: getAuthHeaders()
 });
+
+handleUnauthorized(res);
+
   teamPlayersData = await res.json();
 }
 
@@ -807,10 +813,9 @@ async function saveGamePlayers(matchId, gameNumber) {
 
   await fetch(API + `/admin/match-game/${matchId}/${gameNumber}/players`, {
     method: "PUT",
-  headers: {
-    "Content-Type": "application/json",
-    "x-admin-token": ADMIN_TOKEN
-  },
+  headers: getAuthHeaders({
+    "Content-Type": "application/json"
+  }),
   body: JSON.stringify(payload)
 });
 
@@ -822,10 +827,11 @@ async function saveGamePlayers(matchId, gameNumber) {
 
 async function loadPendingPlayers() {
   const res = await fetch(API + "/admin/pending-players", {
-  headers: {
-    "x-admin-token": ADMIN_TOKEN
-  }
+  headers: getAuthHeaders()
 });
+
+handleUnauthorized(res);
+
   const data = await res.json();
 
   const container = document.getElementById("pendingContainer");
@@ -897,9 +903,7 @@ async function loadPendingPlayers() {
 async function approvePending(id) {
   await fetch(API + `/admin/pending-player/${id}/approve`, {
     method: "POST",
-  headers: {
-    "x-admin-token": ADMIN_TOKEN
-  }
+  headers: getAuthHeaders()
   });
   await loadPendingPlayers();
   await loadTeamPlayers();
@@ -908,9 +912,7 @@ async function approvePending(id) {
 async function rejectPending(id) {
   await fetch(API + `/admin/pending-player/${id}/reject`, {
     method: "POST",
-  headers: {
-    "x-admin-token": ADMIN_TOKEN
-  }
+  headers: getAuthHeaders()
   });
   await loadPendingPlayers();
 }

@@ -237,8 +237,8 @@ def get_players():
 
 
 @app.get("/admin/matches")
-def get_admin_matches(x_admin_token: str = Header(None)):
-    verify_admin(x_admin_token)
+def get_admin_matches(authorization: str = Header(None)):
+    verify_admin_jwt(authorization)
     query = text("""
         SELECT
             mg.id AS match_game_id,
@@ -293,8 +293,9 @@ def get_admin_matches(x_admin_token: str = Header(None)):
     return rows
 
 @app.put("/admin/match/{match_id}")
-def update_match(match_id: int, payload: dict = Body(...), x_admin_token: str = Header(None)):
-    verify_admin(x_admin_token)
+def update_match(match_id: int, payload: dict = Body(...), authorization: str = Header(None)):
+    verify_admin_jwt(authorization)
+
     games = payload.get("games", [])
 
     update_match_query = text("""
@@ -753,8 +754,9 @@ def get_teams():
 
 
 @app.post("/admin/pending-player/{pending_id}/approve")
-def approve_pending_player(pending_id: int, x_admin_token: str = Header(None)):
-    verify_admin(x_admin_token)
+def approve_pending_player(pending_id: int, authorization: str = Header(None)):
+    verify_admin_jwt(authorization)
+
     get_pending_query = text("""
         SELECT *
         FROM pending_players
@@ -841,8 +843,9 @@ def approve_pending_player(pending_id: int, x_admin_token: str = Header(None)):
 
 
 @app.get("/admin/pending-players")
-def get_admin_pending_players(x_admin_token: str = Header(None)):
-    verify_admin(x_admin_token)
+def get_admin_pending_players(authorization: str = Header(None)):
+    verify_admin_jwt(authorization)
+
     query = text("""
         SELECT
             pp.id,
@@ -877,8 +880,9 @@ def get_admin_pending_players(x_admin_token: str = Header(None)):
 
 
 @app.post("/admin/pending-player/{pending_id}/reject")
-def reject_pending_player(pending_id: int, x_admin_token: str = Header(None)):
-    verify_admin(x_admin_token)
+def reject_pending_player(pending_id: int, authorization: str = Header(None)):
+    verify_admin_jwt(authorization)
+
     query = text("""
         UPDATE pending_players
         SET status = 'rejected',
@@ -894,8 +898,9 @@ def reject_pending_player(pending_id: int, x_admin_token: str = Header(None)):
     return {"status": "ok", "pending_id": pending_id}
 
 @app.get("/admin/team-players")
-def get_admin_team_players(x_admin_token: str = Header(None)):
-    verify_admin(x_admin_token)
+def get_admin_team_players(authorization: str = Header(None)):
+    verify_admin_jwt(authorization)
+
     query = text("""
         SELECT
             tp.team_id,
@@ -921,8 +926,9 @@ def get_admin_team_players(x_admin_token: str = Header(None)):
 
 
 @app.put("/admin/match-game/{match_id}/{game_number}/players")
-def update_match_game_players(match_id: int, game_number: int, payload: dict = Body(...), x_admin_token: str = Header(None)):
-    verify_admin(x_admin_token)
+def update_match_game_players(match_id: int, game_number: int, payload: dict = Body(...), authorization: str = Header(None)):
+    verify_admin_jwt(authorization)
+
     query = text("""
         UPDATE match_games
         SET
