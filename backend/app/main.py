@@ -939,7 +939,6 @@ def get_admin_pending_players(authorization: str = Header(None)):
             pp.category,
             pp.position,
             pp.photo_url,
-            pp.notes,
             pp.status,
             pp.submitted_at,
             pp.reviewed_at
