@@ -328,7 +328,7 @@ button {
 <header class="site-header">
   <div class="site-header-inner">
     <a class="brand" href="/">
-      <img src="/logo.png" class="brand-logo" />
+      <img src="/tpl_logo_trans.png" class="brand-logo" />
       <div>
         <div class="brand-title">TPL Chile</div>
         <div class="brand-subtitle">Team Pádel League</div>
@@ -422,16 +422,18 @@ button {
             </select>
           </div>
 
-          <div>
-            <label for="photo_url">URL de foto</label>
-            <input id="photo_url" type="text" placeholder="https://..." />
-          </div>
 
-          <div class="full">
-            <label for="notes">Observaciones</label>
-            <textarea id="notes"></textarea>
-          </div>
-        </div>
+<div>
+  <label for="rut">RUT</label>
+  <input
+    id="rut"
+    type="text"
+    required
+    inputmode="text"
+    autocomplete="off"
+    placeholder="26065668-6"
+  />
+</div>
 
         <button type="submit">Enviar inscripción</button>
         <div id="msg" class="msg"></div>
@@ -468,7 +470,7 @@ button {
         nickname: document.getElementById("nickname").value,
         category: document.getElementById("category").value,
         position: document.getElementById("position").value,
-        photo_url: document.getElementById("photo_url").value,
+        rut: document.getElementById("rut").value,
         notes: document.getElementById("notes").value
       };
 
@@ -491,7 +493,7 @@ button {
         msg.textContent = "Inscripción enviada correctamente.";
         document.getElementById("registrationForm").reset();
       } catch (error) {
-        msg.textContent = "Error: " + error.message;
+        msg.textContent = "Error de conexión al enviar la inscripción ";
       }
     });
 

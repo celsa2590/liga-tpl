@@ -8,13 +8,46 @@ from passlib.context import CryptContext
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
 import os
-
+import re
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 SECRET_KEY = os.getenv("ADMIN_SECRET_KEY", "cambia-esto-por-una-clave-larga-y-secreta")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_HOURS = 12
+
+def normalize_rut(rut: str) -> str:
+    if not rut:
+        return ""
+
+    cleaned = re.sub(r"[^0-9kK]", "", rut).upper()
+    if len(cleaned) < 2:
+        return ""
+
+    body = cleaned[:-1]
+    dv = cleaned[-1]
+    return f"{body}-{dv}"
+
+def is_valid_rut(rut: str) -> bool:
+    rut = normalize_rut(rut)
+    if not rut or "-" not in rut:
+        return False
+
+    body, dv = rut.split("-")
+    if not body.isdigit():
+        return False
+
+    reversed_digits = list(map(int, reversed(body)))
+    factors = [2, 3, 4, 5, 6, 7]
+    s = 0
+
+    for i, digit in enumerate(reversed_digits):
+      s += digit * factors[i % len(factors)]
+
+    mod = 11 - (s % 11)
+    expected = "0" if mod == 11 else "K" if mod == 10 else str(mod)
+
+    return dv == expected
 
 def verify_password(plain_password: str, password_hash: str) -> bool:
     return pwd_context.verify(plain_password, password_hash)
@@ -215,6 +248,8 @@ def get_players():
             p.last_name,
             p.nickname,
             p.category,
+            p.position,
+            p.photo_url,
             p.ranking_points
         FROM team_players tp
         JOIN teams t ON t.id = tp.team_id
@@ -622,6 +657,8 @@ def get_players_stats():
       p.last_name,
       p.nickname,
       p.category,
+      p.position,
+      p.photo_url,
       COALESCE(pp.ranking_points, 0) AS ranking_points,
       pt.team_id,
       t.name AS team_name,
@@ -674,10 +711,37 @@ def get_players_stats():
 
 
 
-
 @app.post("/registration")
 def create_registration(payload: dict = Body(...)):
-    query = text("""
+    rut = normalize_rut(payload.get("rut", ""))
+
+    if not rut:
+        raise HTTPException(status_code=400, detail="El RUT es obligatorio")
+
+    if not is_valid_rut(rut):
+        raise HTTPException(status_code=400, detail="RUT inválido")
+
+    required_fields = ["team_id", "first_name", "last_name", "category"]
+    for field in required_fields:
+        if not payload.get(field):
+            raise HTTPException(status_code=400, detail=f"Falta el campo obligatorio: {field}")
+
+    check_player_query = text("""
+        SELECT id
+        FROM players
+        WHERE rut = :rut
+        LIMIT 1
+    """)
+
+    check_pending_query = text("""
+        SELECT id
+        FROM pending_players
+        WHERE rut = :rut
+          AND status IN ('pending', 'approved')
+        LIMIT 1
+    """)
+
+    insert_query = text("""
         INSERT INTO pending_players (
             team_id,
             contact_name,
@@ -685,11 +749,10 @@ def create_registration(payload: dict = Body(...)):
             contact_phone,
             first_name,
             last_name,
+            rut,
             nickname,
             category,
-            position,
-            photo_url,
-            notes
+            position
         ) VALUES (
             :team_id,
             :contact_name,
@@ -697,36 +760,50 @@ def create_registration(payload: dict = Body(...)):
             :contact_phone,
             :first_name,
             :last_name,
+            :rut,
             :nickname,
             :category,
-            :position,
-            :photo_url,
-            :notes
+            :position
         )
         RETURNING id
     """)
 
     try:
         with engine.connect() as conn:
-            result = conn.execute(query, {
+            existing_player = conn.execute(check_player_query, {"rut": rut}).fetchone()
+            if existing_player:
+                raise HTTPException(status_code=409, detail="RUT ya está inscrito")
+
+            existing_pending = conn.execute(check_pending_query, {"rut": rut}).fetchone()
+            if existing_pending:
+                raise HTTPException(status_code=409, detail="RUT ya está inscrito")
+
+            result = conn.execute(insert_query, {
                 "team_id": payload.get("team_id"),
                 "contact_name": payload.get("contact_name"),
                 "contact_email": payload.get("contact_email"),
                 "contact_phone": payload.get("contact_phone"),
                 "first_name": payload.get("first_name"),
                 "last_name": payload.get("last_name"),
+                "rut": rut,
                 "nickname": payload.get("nickname"),
                 "category": payload.get("category"),
                 "position": payload.get("position"),
-                "photo_url": payload.get("photo_url"),
-                "notes": payload.get("notes"),
             })
             row = result.fetchone()
             conn.commit()
 
-        return {"status": "ok", "pending_player_id": row.id}
+        return {"status": "ok", "pending_id": row.id}
+
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error creando inscripción: {str(e)}")
+
+
+
+
+
 
 
 @app.get("/teams")
@@ -765,12 +842,16 @@ def approve_pending_player(pending_id: int, authorization: str = Header(None)):
             last_name,
             nickname,
             category,
+            position,
+            photo_url,
             ranking_points
         ) VALUES (
             :first_name,
             :last_name,
             :nickname,
             :category,
+            :position,
+            :photo_url,
             0
         )
         RETURNING id
@@ -812,6 +893,8 @@ def approve_pending_player(pending_id: int, authorization: str = Header(None)):
                     "last_name": pending.last_name,
                     "nickname": pending.nickname,
                     "category": pending.category,
+                    "position": pending.position,
+                    "photo_url": None,
                 }
             ).fetchone()
 
