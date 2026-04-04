@@ -1,1117 +1,236 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jugadores - Team Padel League</title>
-  <style>
-    :root {
-      --bg: #05080f;
-      --panel: rgba(255,255,255,0.03);
-      --panel-2: rgba(255,255,255,0.04);
-      --text: #ffffff;
-      --muted: rgba(255,255,255,0.68);
-      --line: rgba(255,255,255,0.08);
-      --gold: #d6b06a;
-      --gold-soft: rgba(214,176,106,0.15);
-      --blue-soft: rgba(147,197,253,0.18);
-      --shadow: 0 14px 34px rgba(0,0,0,0.22);
-      --radius: 18px;
-      --max: 1180px;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Inter, system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .container {
-      width: min(var(--max), calc(100% - 32px));
-      margin: 0 auto 40px;
-    }
-
-    .site-header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(10px);
-      background: rgba(5, 8, 15, 0.92);
-      border-bottom: 1px solid rgba(214,176,106,0.12);
-    }
-
-    .site-header-inner {
-      width: min(var(--max), calc(100% - 32px));
-      margin: 0 auto;
-      min-height: 78px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      min-width: 0;
-    }
-
-    .brand-logo {
-      width: 58px;
-      height: 58px;
-      object-fit: contain;
-      border-radius: 14px;
-      background: radial-gradient(circle, #111 40%, #0b0f19 100%);
-      padding: 6px;
-      box-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
-      border: 1px solid #eef2f7;
-      flex-shrink: 0;
-    }
-
-    .brand-title {
-      font-size: 1.1rem;
-      font-weight: 900;
-      line-height: 1.1;
-      color: #ffffff;
-    }
-
-    .brand-subtitle {
-      color: rgba(255,255,255,0.68);
-      font-size: 0.86rem;
-      margin-top: 3px;
-    }
-
-    .main-nav {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .nav-link {
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-size: 0.92rem;
-      font-weight: 700;
-      color: #ffffff;
-      transition: background 0.18s ease, color 0.18s ease;
-    }
-
-    .nav-link:hover {
-      background: rgba(214,176,106,0.12);
-      color: #e8c98a;
-    }
-
-    .page-hero {
-      margin-top: 24px;
-      background:
-        radial-gradient(circle at 85% 20%, rgba(214,176,106,0.14), transparent 24%),
-        linear-gradient(135deg, #081120 0%, #0d1b33 55%, #13284a 100%);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 24px;
-      padding: 28px;
-      box-shadow: var(--shadow);
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 12px;
-      border-radius: 999px;
-      background: rgba(214,176,106,0.12);
-      border: 1px solid rgba(214,176,106,0.22);
-      color: #e8c98a;
-      font-size: 0.84rem;
-      font-weight: 800;
-      margin-bottom: 14px;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(2rem, 4vw, 3.2rem);
-      line-height: 1.02;
-    }
-
-    .hero-sub {
-      margin-top: 10px;
-      max-width: 760px;
-      color: rgba(255,255,255,0.82);
-      line-height: 1.7;
-      font-size: 1rem;
-    }
-
-    .filters {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr 1fr;
-      gap: 12px;
-      margin-top: 22px;
-    }
-
-    .input,
-    .select {
-      width: 100%;
-      background: rgba(255,255,255,0.05);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 14px;
-      padding: 13px 14px;
-      font-size: 0.95rem;
-      outline: none;
-    }
-
-    .input::placeholder {
-      color: rgba(255,255,255,0.45);
-    }
-
-    .select option {
-      background: #111827;
-      color: #fff;
-    }
-
-    .section {
-      margin-top: 26px;
-    }
-
-    .category-panel {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-      margin-bottom: 22px;
-    }
-
-    .category-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 14px;
-      padding: 20px 22px;
-      border-bottom: 1px solid var(--line);
-      flex-wrap: wrap;
-    }
-
-    .category-title {
-      margin: 0;
-      font-size: 1.2rem;
-      font-weight: 900;
-    }
-
-    .category-subtitle {
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
-
-    .category-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: var(--gold-soft);
-      border: 1px solid rgba(214,176,106,0.28);
-      color: #f3d9a2;
-      font-weight: 900;
-      font-size: 0.84rem;
-      white-space: nowrap;
-    }
-
-    .table-wrap {
-      overflow-x: auto;
-      padding: 0 16px 16px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 860px;
-    }
-
-    th, td {
-      padding: 14px 12px;
-      border-bottom: 1px solid var(--line);
-      text-align: left;
-      vertical-align: middle;
-    }
-
-    th {
-      color: #94a3b8;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      font-weight: 800;
-    }
-
-    th.num,
-    td.num {
-      text-align: center;
-    }
-
-    .player-row {
-      cursor: pointer;
-      transition: background 0.18s ease, transform 0.18s ease;
-    }
-
-    .player-row:hover {
-      background: rgba(255,255,255,0.03);
-    }
-
-    .player-row.open {
-      background: rgba(255,255,255,0.03);
-    }
-
-    .pos-chip {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      background: rgba(255,255,255,0.08);
-      color: #fff;
-    }
-
-    .player-main {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .avatar,
-    .avatar-img {
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .avatar {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #0f172a, #334155);
-      color: #fff;
-      font-weight: 900;
-      font-size: 0.95rem;
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .avatar-img {
-      object-fit: cover;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: #111827;
-    }
-
-    .player-name {
-      font-weight: 800;
-      color: #fff;
-    }
-
-    .player-meta {
-      color: var(--muted);
-      font-size: 0.88rem;
-      margin-top: 2px;
-    }
-
-    .team-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      font-size: 0.84rem;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .team-logo-mini {
-      width: 24px;
-      height: 24px;
-      object-fit: contain;
-      border-radius: 8px;
-      background: #0b0f19;
-      padding: 3px;
-      flex-shrink: 0;
-    }
-
-    .points-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 58px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(214,176,106,0.14);
-      border: 1px solid rgba(214,176,106,0.28);
-      color: #f3d9a2;
-      font-weight: 900;
-    }
-
-    .expand-row {
-      display: none;
-    }
-
-    .expand-row.open {
-      display: table-row;
-    }
-
-    .expand-cell {
-      padding: 0 !important;
-      border-bottom: 1px solid var(--line);
-      background: rgba(255,255,255,0.02);
-    }
-
-    .detail-card {
-      padding: 20px;
-    }
-
-    .detail-grid {
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      gap: 18px;
-    }
-
-    .profile-card,
-    .stats-card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 18px;
-      padding: 18px;
-    }
-
-    .profile-top {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .profile-photo,
-    .profile-photo-img {
-      width: 92px;
-      height: 92px;
-      border-radius: 22px;
-      flex-shrink: 0;
-    }
-
-    .profile-photo {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #172033, #243b55);
-      color: #fff;
-      font-weight: 900;
-      font-size: 1.6rem;
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .profile-photo-img {
-      object-fit: cover;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: #111827;
-    }
-
-    .profile-name {
-      font-size: 1.2rem;
-      font-weight: 900;
-    }
-
-    .profile-sub {
-      margin-top: 4px;
-      color: var(--muted);
-      line-height: 1.45;
-      font-size: 0.92rem;
-    }
-
-    .profile-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 14px;
-    }
-
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 8px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      font-size: 0.82rem;
-      font-weight: 800;
-      color: #dbe4f0;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(120px, 1fr));
-      gap: 12px;
-    }
-
-    .stat {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px;
-      padding: 14px;
-    }
-
-    .stat-label {
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: rgba(255,255,255,0.58);
-      margin-bottom: 8px;
-    }
-
-    .stat-value {
-      font-size: 1.35rem;
-      font-weight: 900;
-      color: #fff;
-    }
-
-    .stat-sub {
-      margin-top: 5px;
-      color: var(--muted);
-      font-size: 0.84rem;
-    }
-
-    .detail-bottom {
-      margin-top: 14px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .mini-panel {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px;
-      padding: 16px;
-    }
-
-    .mini-panel-title {
-      font-size: 0.92rem;
-      font-weight: 900;
-      margin-bottom: 12px;
-      color: #fff;
-    }
-
-    .metric-list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .metric-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      color: #fff;
-      font-size: 0.92rem;
-    }
-
-    .metric-row span:first-child {
-      color: var(--muted);
-    }
-
-    .empty-state {
-      padding: 26px;
-      text-align: center;
-      color: var(--muted);
-    }
-
-    .loading {
-      padding: 26px;
-      text-align: center;
-      color: var(--muted);
-    }
-
-    @media (max-width: 980px) {
-      .filters {
-        grid-template-columns: 1fr;
-      }
-
-      .detail-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .stats-grid {
-        grid-template-columns: repeat(2, minmax(120px, 1fr));
-      }
-
-      .detail-bottom {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .container {
-        width: min(var(--max), calc(100% - 18px));
-      }
-
-      .page-hero {
-        padding: 20px;
-      }
-
-      .category-head {
-        padding: 18px;
-      }
-
-      .table-wrap {
-        padding: 0 10px 12px;
-      }
-    }
-
-
-/* =========================
-   MOBILE IMPROVEMENTS
-   ========================= */
-
-@media (max-width: 900px) {
-
-  .site-header-inner {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .main-nav {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .nav-link {
-    flex: 1;
-    text-align: center;
-  }
-
-  .filters {
-    grid-template-columns: 1fr;
-  }
-
-  /* 👇 CLAVE: convertir tabla en scroll usable */
-  .table-wrap {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  table {
-    min-width: 720px; /* ↓ más compacta */
-  }
-
-  .player-main {
-    gap: 8px;
-  }
-
-  .avatar,
-  .avatar-img {
-    width: 38px;
-    height: 38px;
-  }
-
-  .team-pill {
-    font-size: 0.75rem;
-    padding: 6px 8px;
-  }
-
-  .team-logo-mini {
-    width: 20px;
-    height: 20px;
-  }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jugadores - TPL Chile</title>
+
+<style>
+:root {
+  --bg: #05080f;
+  --card: rgba(255,255,255,0.04);
+  --line: rgba(255,255,255,0.08);
+  --gold: #d6b06a;
+  --text: #fff;
+  --muted: rgba(255,255,255,0.65);
 }
 
-@media (max-width: 640px) {
-
-  .container {
-    width: calc(100% - 16px);
-  }
-
-  .page-hero {
-    padding: 18px;
-  }
-
-  h1 {
-    font-size: 1.6rem;
-  }
-
-  .hero-sub {
-    font-size: 0.9rem;
-  }
-
-  /* 👇 MEJORA CLAVE: stats en 1 columna */
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .detail-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .profile-top {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .profile-photo,
-  .profile-photo-img {
-    width: 72px;
-    height: 72px;
-  }
-
-  .detail-bottom {
-    grid-template-columns: 1fr;
-  }
-
-  .category-head {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  /* 👇 tabla más compacta */
-  th, td {
-    padding: 10px 8px;
-    font-size: 0.85rem;
-  }
-
-  .points-badge {
-    min-width: 50px;
-    padding: 6px 8px;
-  }
+body {
+  margin: 0;
+  font-family: Inter, system-ui;
+  background: radial-gradient(circle at top, #0f1b2d, #05080f);
+  color: var(--text);
 }
 
-.table-wrap::-webkit-scrollbar {
-  height: 6px;
+.container {
+  width: min(1100px, calc(100% - 24px));
+  margin: auto;
 }
 
-.table-wrap::-webkit-scrollbar-thumb {
-  background: rgba(214,176,106,0.4);
-  border-radius: 999px;
+/* HEADER */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  backdrop-filter: blur(10px);
+  background: rgba(5,8,15,0.9);
+  border-bottom: 1px solid var(--line);
 }
 
-.player-row:active {
-  transform: scale(0.98);
+.site-header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
 }
 
-  </style>
+.brand {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.brand-logo {
+  width: 44px;
+}
+
+.nav-link {
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+
+.nav-link:hover {
+  background: rgba(214,176,106,0.15);
+}
+
+/* HERO */
+
+.hero {
+  margin-top: 20px;
+  background: linear-gradient(135deg,#081120,#13284a);
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.hero p {
+  color: var(--muted);
+}
+
+/* CARDS */
+
+.players-grid {
+  margin-top: 20px;
+  display: grid;
+  gap: 14px;
+}
+
+.player-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.player-top {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.player-photo {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.player-name {
+  font-weight: 800;
+}
+
+.player-meta {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.player-points {
+  margin-left: auto;
+  font-weight: 900;
+  color: var(--gold);
+}
+
+/* STATS */
+
+.player-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 0.85rem;
+}
+
+/* EXPAND */
+
+.player-detail {
+  margin-top: 12px;
+  display: none;
+}
+
+.player-card.open .player-detail {
+  display: block;
+}
+
+/* MOBILE FIRST */
+</style>
 </head>
+
 <body>
-  <header class="site-header">
-    <div class="site-header-inner">
-      <a class="brand" href="/">
-        <img class="brand-logo" src="/assets/logos/tpl_logo_trans.png" alt="Team Padel League">
-        <div>
-          <div class="brand-title">Team Padel League</div>
-          <div class="brand-subtitle">Interclub de pádel</div>
-        </div>
-      </a>
 
-      <nav class="main-nav">
-        <a class="nav-link" href="/">Inicio</a>
-        <a class="nav-link" href="/teams.html">Equipos</a>
-        <a class="nav-link" href="/players.html">Jugadores</a>
-        <a class="nav-link" href="/admin.html">Admin</a>
-      </nav>
+<header class="site-header">
+  <div class="site-header-inner container">
+    <div class="brand">
+      <img src="/assets/logos/tpl_logo_trans.png" class="brand-logo">
+      <strong>TPL Chile</strong>
     </div>
-  </header>
 
-  <div class="container">
-    <section class="page-hero">
-      <div class="eyebrow">🎾 Ranking y rendimiento</div>
-      <h1>Jugadores</h1>
-      <div class="hero-sub">
-        Consulta la clasificación por categoría, la puntuación y las estadísticas detalladas de cada jugador de la Team Padel League.
-      </div>
-
-      <div class="filters">
-        <input id="searchInput" class="input" type="text" placeholder="Buscar por nombre o apellido">
-        <select id="teamFilter" class="select">
-          <option value="">Todos los equipos</option>
-        </select>
-        <select id="categoryFilter" class="select">
-          <option value="">Todas las categorías</option>
-        </select>
-      </div>
-    </section>
-
-    <section id="playersContent" class="section">
-      <div class="loading">Cargando jugadores...</div>
-    </section>
+    <nav>
+      <a href="/" class="nav-link">Inicio</a>
+      <a href="/teams.html" class="nav-link">Equipos</a>
+      <a href="/players.html" class="nav-link">Jugadores</a>
+    </nav>
   </div>
+</header>
 
-  <script>
-    const API = "https://liga-backend-f08y.onrender.com";
+<div class="container">
 
-    const teamLogos = {
-      1: "/assets/logos/espacio-active.png",
-      2: "/assets/logos/propadel.png",
-      3: "/assets/logos/2.png",
-      4: "/assets/logos/Revueltas.PNG"
-    };
+  <section class="hero">
+    <h1>Jugadoras</h1>
+    <p>Ranking, rendimiento y estadísticas</p>
+  </section>
 
-    let playersData = [];
-    let expandedPlayerId = null;
+  <section id="players" class="players-grid">
+    Cargando...
+  </section>
 
-    function initials(firstName, lastName) {
-      return `${firstName?.[0] || ""}${lastName?.[0] || ""}`.toUpperCase() || "??";
-    }
+</div>
 
-    function fullName(player) {
-      return `${player.first_name || ""} ${player.last_name || ""}`.trim();
-    }
+<script>
+const API = "https://liga-backend-f08y.onrender.com";
 
-    function safeNumber(value, fallback = 0) {
-      const num = Number(value);
-      return Number.isFinite(num) ? num : fallback;
-    }
-
-    function formatPercent(value) {
-      const num = Number(value);
-      if (!Number.isFinite(num)) return "0%";
-      return `${Math.round(num)}%`;
-    }
-
-    function formatDecimal(value) {
-      const num = Number(value);
-      if (!Number.isFinite(num)) return "0.0";
-      return num.toFixed(1);
-    }
-
-    function getPhotoHTML(player, classNameImage, classNameFallback) {
-      if (player.photo_url) {
-        return `<img class="${classNameImage}" src="${player.photo_url}" alt="${fullName(player)}">`;
-      }
-      return `<div class="${classNameFallback}">${initials(player.first_name, player.last_name)}</div>`;
-    }
-
-    function normalizePlayerStats(player) {
-      const matches = safeNumber(player.matches_played ?? player.matches);
-      const wins = safeNumber(player.wins);
-      const losses = safeNumber(player.losses);
-      const setsWon = safeNumber(player.sets_won);
-      const setsLost = safeNumber(player.sets_lost);
-
-      return {
-        ...player,
-        ranking_points: safeNumber(player.ranking_points ?? player.points),
-        matches_played: matches,
-        wins,
-        losses,
-        sets_won: setsWon,
-        sets_lost: setsLost,
-        sets_diff: setsWon - setsLost,
-        avg_sets_won: Number.isFinite(Number(player.avg_sets_won)) ? Number(player.avg_sets_won) : (matches ? setsWon / matches : 0),
-        avg_sets_lost: Number.isFinite(Number(player.avg_sets_lost)) ? Number(player.avg_sets_lost) : (matches ? setsLost / matches : 0),
-        home_win_pct: Number.isFinite(Number(player.home_win_pct)) ? Number(player.home_win_pct) : 0,
-        away_win_pct: Number.isFinite(Number(player.away_win_pct)) ? Number(player.away_win_pct) : 0,
-        super_tiebreak_played: safeNumber(player.super_tiebreak_played ?? player.tiebreaks_played),
-        super_tiebreak_won: safeNumber(player.super_tiebreak_won ?? player.tiebreaks_won),
-        super_tiebreak_lost: safeNumber(player.super_tiebreak_lost),
-        position: player.position || "Por definir",
-        category: player.category || "Sin categoría",
-        team_name: player.team_name || "Sin equipo",
-        club_name: player.club_name || "",
-        favorite_side: player.position || "Por definir"
-      };
-    }
-
-    function groupByCategory(players) {
-      const map = new Map();
-
-      players.forEach(player => {
-        const key = player.category || "Sin categoría";
-        if (!map.has(key)) map.set(key, []);
-        map.get(key).push(player);
-      });
-
-      return Array.from(map.entries()).sort((a, b) => a[0].localeCompare(b[0], "es"));
-    }
-
-    function renderFilters(players) {
-      const teamFilter = document.getElementById("teamFilter");
-      const categoryFilter = document.getElementById("categoryFilter");
-
-      const teams = [...new Map(
-        players.map(p => [p.team_id, { team_id: p.team_id, team_name: p.team_name }])
-      ).values()].sort((a, b) => (a.team_name || "").localeCompare(b.team_name || "", "es"));
-
-      const categories = [...new Set(players.map(p => p.category).filter(Boolean))]
-        .sort((a, b) => a.localeCompare(b, "es"));
-
-      teamFilter.innerHTML = `<option value="">Todos los equipos</option>` +
-        teams.map(team => `<option value="${team.team_id}">${team.team_name}</option>`).join("");
-
-      categoryFilter.innerHTML = `<option value="">Todas las categorías</option>` +
-        categories.map(category => `<option value="${category}">${category}</option>`).join("");
-    }
-
-    function getFilteredPlayers() {
-      const search = document.getElementById("searchInput").value.trim().toLowerCase();
-      const teamId = document.getElementById("teamFilter").value;
-      const category = document.getElementById("categoryFilter").value;
-
-      return playersData.filter(player => {
-        const name = fullName(player).toLowerCase();
-        const nickname = (player.nickname || "").toLowerCase();
-
-        const matchesSearch = !search || name.includes(search) || nickname.includes(search);
-        const matchesTeam = !teamId || String(player.team_id) === String(teamId);
-        const matchesCategory = !category || player.category === category;
-
-        return matchesSearch && matchesTeam && matchesCategory;
-      });
-    }
-
-    function createPlayerDetail(player) {
-      return `
-        <div class="detail-card">
-          <div class="detail-grid">
-            <div class="profile-card">
-              <div class="profile-top">
-                ${getPhotoHTML(player, "profile-photo-img", "profile-photo")}
-                <div>
-                  <div class="profile-name">${fullName(player)}</div>
-                  <div class="profile-sub">
-                    ${player.team_name}<br>
-                    ${player.club_name || ""}
-                  </div>
-                </div>
-              </div>
-
-              <div class="profile-tags">
-                <div class="tag">Categoría: ${player.category}</div>
-                <div class="tag">Posición: ${player.position}</div>
-                <div class="tag">Puntos: ${player.ranking_points}</div>
-                ${player.nickname ? `<div class="tag">Apodo: ${player.nickname}</div>` : ""}
-              </div>
-            </div>
-
-            <div class="stats-card">
-              <div class="stats-grid">
-                <div class="stat">
-                  <div class="stat-label">Partidos</div>
-                  <div class="stat-value">${player.matches_played}</div>
-                </div>
-                <div class="stat">
-                  <div class="stat-label">Victorias</div>
-                  <div class="stat-value">${player.wins}</div>
-                </div>
-                <div class="stat">
-                  <div class="stat-label">Derrotas</div>
-                  <div class="stat-value">${player.losses}</div>
-                </div>
-                <div class="stat">
-                  <div class="stat-label">Dif. Sets</div>
-                  <div class="stat-value">${player.sets_diff}</div>
-                </div>
-                <div class="stat">
-                  <div class="stat-label">Sets ganados</div>
-                  <div class="stat-value">${player.sets_won}</div>
-                </div>
-                <div class="stat">
-                  <div class="stat-label">Sets perdidos</div>
-                  <div class="stat-value">${player.sets_lost}</div>
-                </div>
-                <div class="stat">
-                  <div class="stat-label">Prom. SG / partido</div>
-                  <div class="stat-value">${formatDecimal(player.avg_sets_won)}</div>
-                </div>
-                <div class="stat">
-                  <div class="stat-label">Prom. SP / partido</div>
-                  <div class="stat-value">${formatDecimal(player.avg_sets_lost)}</div>
-                </div>
-              </div>
-
-              <div class="detail-bottom">
-                <div class="mini-panel">
-                  <div class="mini-panel-title">Rendimiento local / visita</div>
-                  <div class="metric-list">
-                    <div class="metric-row">
-                      <span>% victorias local</span>
-                      <strong>${formatPercent(player.home_win_pct)}</strong>
-                    </div>
-                    <div class="metric-row">
-                      <span>% victorias visita</span>
-                      <strong>${formatPercent(player.away_win_pct)}</strong>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="mini-panel">
-                  <div class="mini-panel-title">Super tie-break</div>
-                  <div class="metric-list">
-                    <div class="metric-row">
-                      <span>Participaciones</span>
-                      <strong>${player.super_tiebreak_played}</strong>
-                    </div>
-                    <div class="metric-row">
-                      <span>Ganados</span>
-                      <strong>${player.super_tiebreak_won}</strong>
-                    </div>
-                    <div class="metric-row">
-                      <span>Perdidos</span>
-                      <strong>${player.super_tiebreak_lost}</strong>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+function playerCard(p) {
+  return `
+    <div class="player-card" onclick="toggleDetail(this)">
+      <div class="player-top">
+        <img src="${p.photo_url || '/assets/players/default.png'}" class="player-photo">
+        
+        <div>
+          <div class="player-name">${p.first_name} ${p.last_name}</div>
+          <div class="player-meta">${p.team_name} · ${p.position || 'Por definir'}</div>
         </div>
-      `;
-    }
 
-    function createCategoryTable(category, players) {
-      const sortedPlayers = [...players].sort((a, b) => {
-        const diffPoints = safeNumber(b.ranking_points) - safeNumber(a.ranking_points);
-        if (diffPoints !== 0) return diffPoints;
-        const diffWins = safeNumber(b.wins) - safeNumber(a.wins);
-        if (diffWins !== 0) return diffWins;
-        return fullName(a).localeCompare(fullName(b), "es");
-      });
+        <div class="player-points">${p.ranking_points} pts</div>
+      </div>
 
-      return `
-        <section class="category-panel">
-          <div class="category-head">
-            <div>
-              <h2 class="category-title">${category}</h2>
-              <div class="category-subtitle">Ranking de jugadores de esta categoría.</div>
-            </div>
-            <div class="category-badge">${sortedPlayers.length} jugador(es)</div>
-          </div>
+      <div class="player-stats">
+        <div>PJ ${p.matches_played || 0}</div>
+        <div>PG ${p.wins || 0}</div>
+        <div>PP ${p.losses || 0}</div>
+      </div>
 
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th class="num">Pos</th>
-                  <th>Jugador/a</th>
-                  <th>Equipo</th>
-                  <th class="num">Puntuación</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${sortedPlayers.map((player, index) => {
-                  const isOpen = expandedPlayerId === player.player_id;
-                  return `
-                    <tr class="player-row ${isOpen ? 'open' : ''}" data-player-id="${player.player_id}">
-                      <td class="num">
-                        <span class="pos-chip">${index + 1}</span>
-                      </td>
-                      <td>
-                        <div class="player-main">
-                          ${getPhotoHTML(player, "avatar-img", "avatar")}
-                          <div>
-                            <div class="player-name">${fullName(player)}</div>
-                            <div class="player-meta">
-                              ${player.nickname ? player.nickname + " · " : ""}${player.position}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="team-pill">
-                          <img class="team-logo-mini" src="${teamLogos[player.team_id] || ""}" alt="${player.team_name}">
-                          <span>${player.team_name}</span>
-                        </div>
-                      </td>
-                      <td class="num">
-                        <span class="points-badge">${player.ranking_points}</span>
-                      </td>
-                    </tr>
+      <div class="player-detail">
+        <hr>
+        <div>Sets ganados: ${p.sets_won || 0}</div>
+        <div>Sets perdidos: ${p.sets_lost || 0}</div>
+      </div>
+    </div>
+  `;
+}
 
-                    <tr class="expand-row ${isOpen ? 'open' : ''}">
-                      <td colspan="4" class="expand-cell">
-                        ${createPlayerDetail(player)}
-                      </td>
-                    </tr>
-                  `;
-                }).join("")}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      `;
-    }
+function toggleDetail(el) {
+  el.classList.toggle("open");
+}
 
-    function renderPlayers() {
-      const content = document.getElementById("playersContent");
-      const filteredPlayers = getFilteredPlayers();
+async function loadPlayers() {
+  const container = document.getElementById("players");
 
-      if (!filteredPlayers.length) {
-        content.innerHTML = `<div class="empty-state">No se encontraron jugadores con esos filtros.</div>`;
-        return;
-      }
+  try {
+    const res = await fetch(API + "/players/stats");
+    const data = await res.json();
 
-      const groups = groupByCategory(filteredPlayers);
-      content.innerHTML = groups.map(([category, players]) => createCategoryTable(category, players)).join("");
+    container.innerHTML = data.map(playerCard).join("");
 
-      document.querySelectorAll(".player-row").forEach(row => {
-        row.addEventListener("click", () => {
-          const playerId = Number(row.dataset.playerId);
-          expandedPlayerId = expandedPlayerId === playerId ? null : playerId;
-          renderPlayers();
-        });
-      });
-    }
+  } catch (e) {
+    container.innerHTML = "Error cargando jugadores";
+  }
+}
 
-    async function loadPlayers() {
-      try {
-        const endpoints = [
-          API + "/players/stats",
-          API + "/players"
-        ];
+loadPlayers();
+</script>
 
-        let data = null;
-
-        for (const endpoint of endpoints) {
-          try {
-            const res = await fetch(endpoint);
-            if (!res.ok) continue;
-            data = await res.json();
-            if (Array.isArray(data)) break;
-          } catch (error) {
-            console.warn("Endpoint no disponible:", endpoint, error);
-          }
-        }
-
-        if (!Array.isArray(data)) {
-          throw new Error("No se pudo obtener información de jugadores");
-        }
-
-        playersData = data.map(normalizePlayerStats);
-
-        renderFilters(playersData);
-        renderPlayers();
-
-        document.getElementById("searchInput").addEventListener("input", renderPlayers);
-        document.getElementById("teamFilter").addEventListener("change", renderPlayers);
-        document.getElementById("categoryFilter").addEventListener("change", renderPlayers);
-      } catch (error) {
-        console.error("Error cargando players.html:", error);
-        document.getElementById("playersContent").innerHTML = `
-          <div class="empty-state">No se pudo cargar la información de jugadores.</div>
-        `;
-      }
-    }
-
-    loadPlayers();
-  </script>
 </body>
 </html>
