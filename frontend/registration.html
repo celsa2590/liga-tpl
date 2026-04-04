@@ -10,7 +10,6 @@
       background: #05080f;
       color: #fff;
       margin: 0;
-      padding: 24px;
     }
 
     .container {
@@ -167,10 +166,196 @@ button:active {
   transform: scale(0.97);
 }
 
+/* ===== HERO ===== */
+
+.page-hero {
+  margin-top: 24px;
+  background:
+    radial-gradient(circle at 85% 20%, rgba(214,176,106,0.14), transparent 24%),
+    linear-gradient(135deg, #081120 0%, #0d1b33 55%, #13284a 100%);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 14px 34px rgba(0,0,0,0.22);
+}
+
+.hero-sub {
+  margin-top: 10px;
+  max-width: 640px;
+  color: rgba(255,255,255,0.8);
+  line-height: 1.6;
+}
+
+/* ===== FORM ===== */
+
+.form-container {
+  margin-top: 30px;
+  max-width: 760px;
+}
+
+/* ===== BODY UNIFICADO ===== */
+
+body {
+  background: radial-gradient(circle at top, #0f1b2d, #05080f);
+}
+
+/* ===== INPUT MEJORADOS ===== */
+
+input, select, textarea {
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #d6b06a;
+  box-shadow: 0 0 0 2px rgba(214,176,106,0.15);
+}
+
+/* ===== BOTÓN ===== */
+
+button {
+  width: 100%;
+  margin-top: 20px;
+  background: linear-gradient(135deg, #d6b06a, #b8964f);
+}
+
+/* ===== MOBILE ===== */
+
+@media (max-width: 900px) {
+  .page-hero {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  background: rgba(5, 8, 15, 0.92);
+  border-bottom: 1px solid rgba(214,176,106,0.12);
+}
+
+.site-header-inner {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  min-height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.brand-logo {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  border-radius: 14px;
+  background: radial-gradient(circle, #111 40%, #0b0f19 100%);
+  padding: 6px;
+  box-shadow: 0 0 10px rgba(212,175,55,0.15);
+  border: 1px solid #eef2f7;
+  flex-shrink: 0;
+}
+
+.brand-title {
+  font-size: 1.1rem;
+  font-weight: 900;
+  line-height: 1.1;
+  color: #ffffff;
+}
+
+.brand-subtitle {
+  color: rgba(255,255,255,0.68);
+  font-size: 0.86rem;
+  margin-top: 3px;
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.nav-link {
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-decoration: none;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.nav-link:hover {
+  background: rgba(214,176,106,0.12);
+  color: #e8c98a;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(214,176,106,0.12);
+  border: 1px solid rgba(214,176,106,0.22);
+  color: #e8c98a;
+  font-size: 0.84rem;
+  font-weight: 800;
+  margin-bottom: 14px;
+}
+
   </style>
 </head>
 <body>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="/">
+      <img src="/logo.png" class="brand-logo" />
+      <div>
+        <div class="brand-title">TPL Chile</div>
+        <div class="brand-subtitle">Team Pádel League</div>
+      </div>
+    </a>
+
+    <nav class="main-nav">
+      <a href="/" class="nav-link">Inicio</a>
+      <a href="/teams.html" class="nav-link">Equipos</a>
+      <a href="/players.html" class="nav-link">Jugadoras</a>
+    </nav>
+  </div>
+</header>
+
+
+<section class="page-hero">
   <div class="container">
+    <div class="eyebrow">Inscripción</div>
+    <h1>Registra tu participación</h1>
+    <p class="hero-sub">
+      Forma parte de la liga interclubes de pádel de Chile y compite junto a tu equipo.
+    </p>
+  </div>
+</section>
+
+
+  <div class="container form-container">
     <div class="card">
       <h1>Inscripción de jugadores</h1>
       <div class="sub">
