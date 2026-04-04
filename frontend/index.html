@@ -1536,38 +1536,44 @@
       }
     });
   </script>
+
 <script>
 async function loadStandingsMobile() {
   const container = document.getElementById("standings-mobile");
+  if (!container) return;
 
   try {
     const res = await fetch("https://liga-backend-f08y.onrender.com/standings");
-    const data = await res.json();
+    if (!res.ok) throw new Error(`Error API: ${res.status}`);
 
+    const data = await res.json();
     container.innerHTML = "";
 
-    data.forEach((team, index) => {
+    data.forEach((team) => {
       const card = `
         <div class="standing-card">
           <div class="standing-top">
             <div>
-              <span class="standing-rank">#${index + 1}</span>
-              <span class="standing-team"> ${team.team_name}</span>
+              <span class="standing-rank">#${team.position}</span>
+              <span class="standing-team">${team.team_name}</span>
             </div>
-            <div class="standing-points">${team.points} pts</div>
+            <div class="standing-points">${team.total_points ?? 0} pts</div>
           </div>
 
           <div class="standing-bottom">
-            PJ ${team.played} · PG ${team.won} · PP ${team.lost}
+            PJ ${team.played_games ?? 0} ·
+            PG ${team.won_games ?? 0} ·
+            PP ${team.lost_games ?? 0}
           </div>
         </div>
       `;
 
-      container.innerHTML += card;
+      container.insertAdjacentHTML("beforeend", card);
     });
 
   } catch (err) {
-    container.innerHTML = "Error cargando tabla";
+    console.error("Error cargando ranking móvil:", err);
+    container.innerHTML = `<div class="loading">No se pudo cargar la tabla.</div>`;
   }
 }
 
