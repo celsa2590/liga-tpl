@@ -8,12 +8,13 @@
     name="description"
     content="Portal oficial de TPL Chile. Revisa tabla de posiciones, próximas fechas, resultados y equipos participantes."
   />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&family=Sora:wght@700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #05080f;
-      --bg-soft: #0a1020;
       --panel: rgba(255, 255, 255, 0.04);
-      --panel-strong: rgba(255, 255, 255, 0.06);
       --line: rgba(255, 255, 255, 0.08);
       --line-strong: rgba(214, 176, 106, 0.18);
       --text: #ffffff;
@@ -23,6 +24,7 @@
       --gold-2: #e6c98f;
       --blue: #93c5fd;
       --success: #86efac;
+      --orange: #fdba74;
       --shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
       --radius-xl: 28px;
       --radius-lg: 22px;
@@ -170,7 +172,7 @@
       margin: 0 auto;
       display: grid;
       grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
-      gap: 30px;
+      gap: 34px;
       align-items: center;
       min-height: calc(100vh - 104px);
       padding: 28px 0 40px;
@@ -188,24 +190,25 @@
       font-size: 0.84rem;
       font-weight: 800;
       letter-spacing: 0.01em;
-      margin-bottom: 20px;
+      margin-bottom: 22px;
       backdrop-filter: blur(8px);
     }
 
     .hero-logo-big {
-      width: 230px;
+      width: 200px;
       object-fit: contain;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
       filter: drop-shadow(0 14px 26px rgba(0,0,0,0.28));
     }
 
     .hero h1 {
       margin: 0;
       max-width: 760px;
-      font-size: clamp(2.7rem, 6vw, 5.2rem);
-      line-height: 1.02;
-      letter-spacing: -0.025em;
-      font-weight: 950;
+      font-family: Sora, Inter, system-ui, sans-serif;
+      font-size: clamp(2.7rem, 6vw, 5rem);
+      line-height: 1.03;
+      letter-spacing: -0.02em;
+      font-weight: 800;
     }
 
     .highlight {
@@ -214,17 +217,17 @@
 
     .hero p {
       margin: 18px 0 0;
-      max-width: 620px;
+      max-width: 540px;
       color: var(--muted);
-      font-size: 1.08rem;
-      line-height: 1.72;
+      font-size: 1.03rem;
+      line-height: 1.7;
     }
 
     .hero-actions {
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
-      margin-top: 28px;
+      margin-top: 30px;
     }
 
     .hero-btn {
@@ -240,9 +243,7 @@
       transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
     }
 
-    .hero-btn:hover {
-      transform: translateY(-1px);
-    }
+    .hero-btn:hover { transform: translateY(-1px); }
 
     .hero-btn.primary {
       background: var(--gold);
@@ -273,12 +274,23 @@
       max-width: 760px;
     }
 
-    .metric-card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 18px;
-      padding: 18px 16px;
+    .metric-card,
+    .hero-card,
+    .section-card,
+    .mini-card,
+    .team-spotlight-card,
+    .mobile-row,
+    .round-block,
+    .tie-item,
+    .summary-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
       box-shadow: var(--shadow);
+    }
+
+    .metric-card {
+      padding: 18px 16px;
       min-height: 118px;
     }
 
@@ -308,18 +320,6 @@
     .hero-aside {
       display: grid;
       gap: 14px;
-    }
-
-    .hero-card,
-    .section-card,
-    .mini-card,
-    .event-card,
-    .team-spotlight-card,
-    .mobile-row {
-      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
-      border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow);
     }
 
     .hero-card {
@@ -375,33 +375,13 @@
       border: 1px solid rgba(255,255,255,0.08);
     }
 
-    .hero-next-match {
-      font-weight: 800;
-    }
+    .hero-next-match { font-weight: 800; }
+    .hero-next-meta { color: var(--muted); font-size: 0.88rem; margin-top: 4px; }
+    .hero-next-time { color: var(--blue); font-weight: 800; white-space: nowrap; }
 
-    .hero-next-meta {
-      color: var(--muted);
-      font-size: 0.88rem;
-      margin-top: 4px;
-    }
-
-    .hero-next-time {
-      color: var(--blue);
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .content {
-      padding-bottom: 46px;
-    }
-
-    .section {
-      padding: 34px 0 0;
-    }
-
-    .section-card {
-      overflow: hidden;
-    }
+    .content { padding-bottom: 46px; }
+    .section { padding: 34px 0 0; }
+    .section-card { overflow: hidden; }
 
     .section-head {
       padding: 24px 24px 16px;
@@ -462,18 +442,9 @@
       font-weight: 800;
     }
 
-    td {
-      color: var(--muted);
-    }
-
-    td.num,
-    th.num {
-      text-align: center;
-    }
-
-    tbody tr:hover {
-      background: rgba(255,255,255,0.025);
-    }
+    td { color: var(--muted); }
+    td.num, th.num { text-align: center; }
+    tbody tr:hover { background: rgba(255,255,255,0.025); }
 
     .leader-row {
       background: linear-gradient(90deg, rgba(214,176,106,0.04), rgba(255,255,255,0.02));
@@ -538,9 +509,7 @@
       gap: 12px;
     }
 
-    .mobile-row {
-      padding: 14px;
-    }
+    .mobile-row { padding: 14px; }
 
     .mobile-top {
       display: grid;
@@ -549,21 +518,15 @@
       align-items: center;
     }
 
-    .mobile-info {
-      min-width: 0;
-    }
+    .mobile-info { min-width: 0; }
 
-    .mobile-points {
-      text-align: right;
-    }
-
+    .mobile-points { text-align: right; }
     .mobile-points strong {
       display: block;
       font-size: 1.25rem;
       color: var(--text);
       line-height: 1;
     }
-
     .mobile-points span {
       color: var(--muted-2);
       font-size: 0.8rem;
@@ -595,37 +558,102 @@
       gap: 20px;
     }
 
-    .events-list,
+    .calendar-wrap,
     .teams-spotlight {
       padding: 0 18px 18px;
       display: grid;
       gap: 14px;
     }
 
-    .event-card {
-      padding: 18px;
-      transition: transform 0.18s ease, border-color 0.18s ease;
+    .round-block {
+      padding: 16px;
+      overflow: hidden;
     }
 
-    .event-card:hover {
-      transform: translateY(-1px);
-      border-color: var(--line-strong);
-    }
-
-    .event-top {
+    .round-head {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       gap: 12px;
       flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .round-title {
+      font-size: 1rem;
+      font-weight: 900;
+      color: var(--text);
+    }
+
+    .round-date {
+      color: var(--gold-2);
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .round-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .tie-item {
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .tie-item summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 16px;
+    }
+
+    .tie-item summary::-webkit-details-marker { display: none; }
+
+    .tie-summary {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
       align-items: center;
     }
 
-    .event-date {
-      color: var(--gold-2);
+    .tie-main {
+      min-width: 0;
+    }
+
+    .tie-teams {
+      font-size: 1.05rem;
       font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-size: 0.82rem;
+      color: var(--text);
+      line-height: 1.25;
+    }
+
+    .tie-meta {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .tie-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .tie-side {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     .event-status {
@@ -648,36 +676,56 @@
       border: 1px solid rgba(134,239,172,0.22);
     }
 
-    .event-match {
-      margin-top: 12px;
-      font-size: 1.1rem;
-      font-weight: 900;
-      line-height: 1.22;
+    .event-status.live {
+      background: rgba(253,186,116,0.12);
+      color: var(--orange);
+      border: 1px solid rgba(253,186,116,0.22);
+    }
+
+    .tie-score {
       color: var(--text);
+      font-weight: 900;
+      font-size: 1rem;
     }
 
-    .event-venue,
-    .event-meta {
-      margin-top: 8px;
-      color: var(--muted);
-      font-size: 0.94rem;
-      line-height: 1.55;
+    .tie-toggle {
+      color: var(--gold-2);
+      font-size: 0.84rem;
+      font-weight: 800;
     }
 
-    .event-games {
-      margin-top: 14px;
+    .tie-item[open] .tie-toggle::after { content: " Ocultar"; }
+    .tie-item:not([open]) .tie-toggle::after { content: " Ver detalle"; }
+
+    .tie-details {
+      padding: 0 16px 16px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      margin-top: 2px;
+    }
+
+    .detail-label {
+      padding-top: 14px;
+      color: var(--muted-2);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+    }
+
+    .games-grid {
+      margin-top: 12px;
       display: grid;
       gap: 10px;
     }
 
-    .event-game {
+    .game-card {
       padding: 12px;
       border-radius: 14px;
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.07);
     }
 
-    .event-game-head {
+    .game-head {
       display: flex;
       justify-content: space-between;
       gap: 10px;
@@ -690,32 +738,32 @@
       margin-bottom: 10px;
     }
 
-    .event-pair {
+    .game-pair {
       display: grid;
       grid-template-columns: 1fr auto 1fr;
       gap: 10px;
       align-items: center;
     }
 
-    .event-side {
+    .game-side {
       text-align: center;
     }
 
-    .event-side strong {
+    .game-side strong {
       display: block;
       color: var(--text);
       line-height: 1.35;
       font-size: 0.95rem;
     }
 
-    .event-side span {
+    .game-side span {
       display: block;
       margin-top: 4px;
       color: var(--muted-2);
       font-size: 0.84rem;
     }
 
-    .event-score {
+    .game-score {
       color: var(--gold-2);
       font-size: 0.95rem;
       font-weight: 900;
@@ -729,17 +777,14 @@
       gap: 12px;
     }
 
-    .mini-card {
-      padding: 16px;
-    }
-
-    .mini-card h3 {
+    .mini-card, .summary-card { padding: 16px; }
+    .mini-card h3, .summary-card h3 {
       margin: 0;
       font-size: 1rem;
       line-height: 1.25;
     }
 
-    .mini-card p {
+    .mini-card p, .summary-card p {
       margin: 8px 0 0;
       color: var(--muted);
       font-size: 0.92rem;
@@ -774,10 +819,6 @@
       width: 52px;
       height: 52px;
       border-radius: 14px;
-    }
-
-    .spotlight-text {
-      min-width: 0;
     }
 
     .spotlight-rank {
@@ -820,13 +861,8 @@
         padding: 12px 0 20px;
       }
 
-      .hero-aside {
-        order: 2;
-      }
-
-      .hero-main {
-        order: 1;
-      }
+      .hero-aside { order: 2; }
+      .hero-main { order: 1; }
     }
 
     @media (max-width: 760px) {
@@ -854,13 +890,11 @@
         width: min(var(--max), calc(100% - 20px));
       }
 
-      .hero {
-        padding-top: 28px;
-      }
+      .hero { padding-top: 28px; }
 
       .hero-logo-big {
-        width: 170px;
-        margin-bottom: 24px;
+        width: 150px;
+        margin-bottom: 22px;
       }
 
       .hero h1 {
@@ -868,52 +902,27 @@
         line-height: 1.06;
       }
 
-      .hero p {
-        font-size: 0.96rem;
-      }
+      .hero p { font-size: 0.96rem; }
 
       .hero-actions {
         display: grid;
         grid-template-columns: 1fr;
       }
 
-      .hero-btn {
-        width: 100%;
-      }
+      .hero-btn { width: 100%; }
+      .hero-metrics { grid-template-columns: 1fr; }
 
-      .hero-metrics {
-        grid-template-columns: 1fr;
-      }
-
-      .section-head {
-        padding: 20px 16px 14px;
-      }
-
-      .standings-wrap {
-        display: none;
-      }
-
-      .mobile-standings {
-        display: grid;
-      }
-
-      .events-list,
+      .section-head { padding: 20px 16px 14px; }
+      .standings-wrap { display: none; }
+      .mobile-standings { display: grid; }
+      .calendar-wrap,
       .mini-list,
-      .teams-spotlight {
-        padding: 0 16px 16px;
-      }
-
-      .teams-spotlight {
-        grid-template-columns: 1fr;
-      }
-
-      .event-pair {
-        grid-template-columns: 1fr;
-      }
-
-      .event-score {
-        text-align: center;
-      }
+      .teams-spotlight { padding: 0 16px 16px; }
+      .teams-spotlight { grid-template-columns: 1fr; }
+      .tie-summary,
+      .game-pair { grid-template-columns: 1fr; }
+      .tie-side { justify-content: flex-start; }
+      .game-score { text-align: center; }
     }
   </style>
 </head>
@@ -943,7 +952,7 @@
         <div class="hero-badge" id="nextRoundBadge">🏆 Próxima jornada</div>
         <img class="hero-logo-big" src="/assets/logos/tpl_logo_trans.png" alt="Logo TPL Chile" />
         <h1>La liga interclubes de <span class="highlight">pádel</span> de Chile</h1>
-        <p>Donde los clubes compiten, crecen y construyen historia. Sigue fechas, cruces, tabla oficial y rendimiento de los equipos en un solo lugar.</p>
+        <p>Donde los clubes compiten, crecen y construyen historia.</p>
 
         <div class="hero-actions">
           <a class="hero-btn primary" href="#tabla">Ver tabla de posiciones</a>
@@ -954,7 +963,7 @@
           <div class="metric-card">
             <div class="metric-label">Temporada</div>
             <div class="metric-value">TPL Chile 2026</div>
-            <div class="metric-sub">Competencia oficial con seguimiento de clubes, jugadores y resultados.</div>
+            <div class="metric-sub">Competencia oficial con seguimiento de clubes, jugadoras, jugadores y resultados.</div>
           </div>
           <div class="metric-card">
             <div class="metric-label">Equipos activos</div>
@@ -973,16 +982,16 @@
         <div class="hero-card">
           <div class="eyebrow">Fecha destacada</div>
           <h2 id="heroNextTitle">La próxima jornada está por comenzar</h2>
-          <p id="heroNextText">Estamos preparando el siguiente cruce de la temporada. Aquí verás los enfrentamientos más cercanos.</p>
+          <p id="heroNextText">Aquí verás los encuentros más cercanos de la temporada y su horario general.</p>
           <div class="hero-next-list" id="heroNextMatches">
             <div class="loading">Cargando próximos encuentros...</div>
           </div>
         </div>
 
         <div class="hero-card">
-          <div class="eyebrow">Por qué seguir la TPL</div>
-          <h2>Una experiencia clara, rápida y hecha para móvil</h2>
-          <p>La portada prioriza lo que más importa: posiciones, próximas fechas y acceso directo a equipos y jugadoras, con una vista móvil más cómoda para revisar puntos.</p>
+          <div class="eyebrow">Todo en un vistazo</div>
+          <h2>Todo lo importante de la liga, en un solo lugar</h2>
+          <p>Tabla oficial, próximas fechas, equipos y jugadoras con una experiencia rápida, clara y cómoda para celular.</p>
         </div>
       </aside>
     </div>
@@ -1031,12 +1040,12 @@
           <div class="section-card">
             <div class="section-head">
               <div>
-                <h2 class="section-title">Próximas fechas y resultados</h2>
-                <p class="section-subtitle">Consulta los cruces confirmados, la sede y el detalle de cada enfrentamiento.</p>
+                <h2 class="section-title">Calendario y resultados</h2>
+                <p class="section-subtitle">Revisa cada jornada en modo resumen y abre solo los cruces que quieras ver en detalle.</p>
               </div>
               <div class="badge">Calendario oficial</div>
             </div>
-            <div class="events-list" id="eventsList">
+            <div class="calendar-wrap" id="eventsList">
               <div class="loading">Cargando fechas...</div>
             </div>
           </div>
@@ -1128,11 +1137,20 @@
       return players.length ? players.join(" / ") : "Pareja por confirmar";
     }
 
+    function normalizeStatus(value) {
+      const status = (value || "").toLowerCase();
+      if (["finalizado", "finished", "played", "resultado", "closed"].includes(status)) return "finished";
+      if (["en_juego", "en juego", "live", "playing"].includes(status)) return "live";
+      return "scheduled";
+    }
+
     function groupMatchesByTie(matches) {
       const grouped = new Map();
 
       matches.forEach(match => {
         const key = `${match.round_number}-${match.home_team_id}-${match.away_team_id}-${match.venue_club}`;
+        const normalized = normalizeStatus(match.result_status);
+
         if (!grouped.has(key)) {
           grouped.set(key, {
             round_number: match.round_number,
@@ -1146,26 +1164,32 @@
             games: [],
             homeGamesWon: 0,
             awayGamesWon: 0,
-            isFinished: false
+            status: "scheduled"
           });
         }
 
         const tie = grouped.get(key);
-        tie.games.push(match);
+        tie.games.push({ ...match, normalizedStatus: normalized });
 
         if (match.scheduled_at && (!tie.scheduled_at || new Date(match.scheduled_at) < new Date(tie.scheduled_at))) {
           tie.scheduled_at = match.scheduled_at;
         }
 
-        if (match.result_status === "played" || match.result_status === "finished") {
+        if (normalized === "finished") {
           if ((match.home_sets ?? -1) > (match.away_sets ?? -1)) tie.homeGamesWon += 1;
           if ((match.away_sets ?? -1) > (match.home_sets ?? -1)) tie.awayGamesWon += 1;
         }
       });
 
       return Array.from(grouped.values()).map(tie => {
-        tie.isFinished = tie.games.every(game => game.result_status === "played" || game.result_status === "finished");
         tie.games.sort((a, b) => (a.game_number || 0) - (b.game_number || 0));
+
+        const allFinished = tie.games.every(game => game.normalizedStatus === "finished");
+        const anyLive = tie.games.some(game => game.normalizedStatus === "live");
+
+        tie.status = allFinished ? "finished" : (anyLive ? "live" : "scheduled");
+        tie.isFinished = tie.status === "finished";
+        tie.isLive = tie.status === "live";
         return tie;
       });
     }
@@ -1262,7 +1286,7 @@
       list.innerHTML = "";
 
       const upcoming = ties
-        .filter(tie => !tie.isFinished)
+        .filter(tie => tie.status !== "finished")
         .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at))
         .slice(0, 2);
 
@@ -1275,7 +1299,7 @@
 
       const firstDate = upcoming[0].scheduled_at;
       title.textContent = `Próxima jornada: ${formatDate(firstDate)}`;
-      text.textContent = "Revisa los siguientes encuentros programados y entra a la sección de fechas para ver más detalle.";
+      text.textContent = "Aquí verás los encuentros más cercanos de la temporada y su horario general.";
 
       upcoming.forEach(tie => {
         const item = document.createElement("div");
@@ -1291,59 +1315,99 @@
       });
     }
 
-    function renderEvents(ties) {
+    function getStatusMeta(tie) {
+      if (tie.status === "finished") return { label: "Finalizado", className: "finished" };
+      if (tie.status === "live") return { label: "En juego", className: "live" };
+      return { label: "Programado", className: "scheduled" };
+    }
+
+    function renderCalendar(ties) {
       const container = document.getElementById("eventsList");
       container.innerHTML = "";
 
-      const ordered = [...ties].sort((a, b) => {
-        if (a.isFinished !== b.isFinished) return a.isFinished ? 1 : -1;
-        return new Date(a.scheduled_at) - new Date(b.scheduled_at);
-      });
-
-      if (!ordered.length) {
+      if (!ties.length) {
         container.innerHTML = '<div class="empty">No hay fechas registradas por ahora.</div>';
         return;
       }
 
-      ordered.forEach(tie => {
-        const article = document.createElement("article");
-        article.className = "event-card";
-        const statusClass = tie.isFinished ? "finished" : "scheduled";
-        const statusLabel = tie.isFinished ? "Resultado" : "Programado";
-        const scoreLabel = tie.isFinished ? `${tie.homeGamesWon} - ${tie.awayGamesWon}` : formatTime(tie.scheduled_at);
+      const grouped = ties
+        .sort((a, b) => {
+          if (a.round_number !== b.round_number) return (a.round_number || 0) - (b.round_number || 0);
+          return new Date(a.scheduled_at) - new Date(b.scheduled_at);
+        })
+        .reduce((acc, tie) => {
+          const round = tie.round_number || 0;
+          if (!acc[round]) acc[round] = [];
+          acc[round].push(tie);
+          return acc;
+        }, {});
 
-        article.innerHTML = `
-          <div class="event-top">
-            <div class="event-date">${formatShortDate(tie.scheduled_at).toUpperCase()} · Ronda ${tie.round_number}</div>
-            <div class="event-status ${statusClass}">${statusLabel}</div>
-          </div>
-          <div class="event-match">${tie.home_team_name} vs ${tie.away_team_name}</div>
-          <div class="event-venue">Sede ${tie.venue_club} · ${formatDate(tie.scheduled_at)}</div>
-          <div class="event-meta">Marcador global del cruce: <strong style="color:#fff;">${scoreLabel}</strong></div>
-          <div class="event-games">
-            ${tie.games.map(game => `
-              <div class="event-game">
-                <div class="event-game-head">
-                  <span>Categoría ${game.category || game.game_number}</span>
-                  <span>${(game.home_sets != null && game.away_sets != null) ? `${game.home_sets} - ${game.away_sets}` : formatTime(game.scheduled_at)}</span>
+      Object.entries(grouped).forEach(([round, roundTies], idx) => {
+        const block = document.createElement("section");
+        block.className = "round-block";
+        const firstDate = roundTies[0]?.scheduled_at;
+
+        const listHtml = roundTies.map((tie, tieIndex) => {
+          const status = getStatusMeta(tie);
+          const scoreLabel = tie.status === "finished"
+            ? `${tie.homeGamesWon} - ${tie.awayGamesWon}`
+            : (tie.status === "live" ? "En juego" : formatTime(tie.scheduled_at));
+
+          return `
+            <details class="tie-item" ${idx === 0 && tieIndex === 0 ? 'open' : ''}>
+              <summary>
+                <div class="tie-summary">
+                  <div class="tie-main">
+                    <div class="tie-teams">${tie.home_team_name} vs ${tie.away_team_name}</div>
+                    <div class="tie-meta">
+                      <span class="tie-chip">📍 ${tie.venue_club}</span>
+                      <span class="tie-chip">🗓 ${formatDate(tie.scheduled_at)}</span>
+                    </div>
+                  </div>
+                  <div class="tie-side">
+                    <span class="event-status ${status.className}">${status.label}</span>
+                    <span class="tie-score">${scoreLabel}</span>
+                    <span class="tie-toggle"></span>
+                  </div>
                 </div>
-                <div class="event-pair">
-                  <div class="event-side">
-                    <strong>${teamPlayers(game.home_player_1, game.home_player_2)}</strong>
-                    <span>${tie.home_team_name}</span>
-                  </div>
-                  <div class="event-score">vs</div>
-                  <div class="event-side">
-                    <strong>${teamPlayers(game.away_player_1, game.away_player_2)}</strong>
-                    <span>${tie.away_team_name}</span>
-                  </div>
+              </summary>
+              <div class="tie-details">
+                <div class="detail-label">Detalle del cruce</div>
+                <div class="games-grid">
+                  ${tie.games.map(game => `
+                    <div class="game-card">
+                      <div class="game-head">
+                        <span>${game.category || `Partido ${game.game_number}`}</span>
+                        <span>${(game.home_sets != null && game.away_sets != null) ? `${game.home_sets} - ${game.away_sets}` : formatTime(game.scheduled_at)}</span>
+                      </div>
+                      <div class="game-pair">
+                        <div class="game-side">
+                          <strong>${teamPlayers(game.home_player_1, game.home_player_2)}</strong>
+                          <span>${tie.home_team_name}</span>
+                        </div>
+                        <div class="game-score">vs</div>
+                        <div class="game-side">
+                          <strong>${teamPlayers(game.away_player_1, game.away_player_2)}</strong>
+                          <span>${tie.away_team_name}</span>
+                        </div>
+                      </div>
+                    </div>
+                  `).join("")}
                 </div>
               </div>
-            `).join("")}
+            </details>
+          `;
+        }).join("");
+
+        block.innerHTML = `
+          <div class="round-head">
+            <div class="round-title">Jornada ${round}</div>
+            <div class="round-date">${formatDate(firstDate)}</div>
           </div>
+          <div class="round-list">${listHtml}</div>
         `;
 
-        container.appendChild(article);
+        container.appendChild(block);
       });
     }
 
@@ -1371,7 +1435,7 @@
       const ties = groupMatchesByTie(data);
 
       renderHeroNext(ties);
-      renderEvents(ties);
+      renderCalendar(ties);
 
       document.getElementById("miniMatchesValue").textContent = `${data.length}`;
     }
@@ -1394,7 +1458,7 @@
         });
 
         document.getElementById("nextRoundBadge").textContent = `🏆 Próxima jornada · ${label}`;
-        document.getElementById("miniRoundValue").textContent = `Ronda ${data.round_number}`;
+        document.getElementById("miniRoundValue").textContent = `Jornada ${data.round_number}`;
         document.getElementById("miniRoundText").textContent = `La próxima fecha comienza el ${label}.`;
       } catch (error) {
         document.getElementById("nextRoundBadge").textContent = "🏆 Próxima jornada";
