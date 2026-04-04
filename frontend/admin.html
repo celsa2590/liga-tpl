@@ -3,1107 +3,1410 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Liga San Miguel</title>
+  <title>TPL Chile | Liga interclubes de pádel</title>
+  <meta
+    name="description"
+    content="Portal oficial de TPL Chile. Revisa tabla de posiciones, próximas fechas, resultados y equipos participantes."
+  />
   <style>
+    :root {
+      --bg: #05080f;
+      --bg-soft: #0a1020;
+      --panel: rgba(255, 255, 255, 0.04);
+      --panel-strong: rgba(255, 255, 255, 0.06);
+      --line: rgba(255, 255, 255, 0.08);
+      --line-strong: rgba(214, 176, 106, 0.18);
+      --text: #ffffff;
+      --muted: rgba(255, 255, 255, 0.72);
+      --muted-2: rgba(255, 255, 255, 0.55);
+      --gold: #d6b06a;
+      --gold-2: #e6c98f;
+      --blue: #93c5fd;
+      --success: #86efac;
+      --shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --max: 1180px;
+    }
 
-select {
-  background: #0a0f1c;
-  color: #ffffff;
-  border: 1px solid rgba(255,255,255,0.2);
-}
+    * { box-sizing: border-box; }
 
-select option {
-  background: #0a0f1c;
-  color: #ffffff;
-}
-
-.game.disabled {
-  opacity: 0.45;
-  filter: grayscale(0.15);
-}
-
-.game.disabled input {
-  pointer-events: none;
-}
-
-.game-note {
-  margin-top: 10px;
-  font-size: 0.88rem;
-  color: #94a3b8;
-}
-
-.game-note.active {
-  color: #f8fafc;
-}
-
-.round-tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-.round-tab {
-  padding: 10px 16px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
-  color: #cbd5e1;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.round-tab:hover {
-  background: rgba(255,255,255,0.1);
-}
-
-.round-tab.active {
-  background: #d6b06a;
-  color: #081120;
-  border-color: #d6b06a;
-}
-
-.section-tabs {
-  display: flex;
-  gap: 10px;
-  margin: 14px 0 20px;
-  flex-wrap: wrap;
-}
-
-.section-tab {
-  padding: 10px 16px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
-  color: #cbd5e1;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.section-tab.active {
-  background: #d6b06a;
-  color: #081120;
-  border-color: #d6b06a;
-}
-
-.pending-table-wrap {
-  overflow-x: auto;
-}
-
-.pending-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.pending-table th,
-.pending-table td {
-  padding: 12px 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  text-align: left;
-  vertical-align: top;
-}
-
-.pending-table th {
-  color: #94a3b8;
-  font-size: 0.82rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  padding: 6px 10px;
-  font-size: 0.8rem;
-  font-weight: 800;
-}
-
-.status-pending {
-  background: rgba(59,130,246,0.12);
-  color: #93c5fd;
-  border: 1px solid rgba(59,130,246,0.28);
-}
-
-.status-approved {
-  background: rgba(34,197,94,0.12);
-  color: #86efac;
-  border: 1px solid rgba(34,197,94,0.28);
-}
-
-.status-rejected {
-  background: rgba(239,68,68,0.12);
-  color: #fca5a5;
-  border: 1px solid rgba(239,68,68,0.28);
-}
-
-.row-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.btn-secondary {
-  background: rgba(255,255,255,0.08);
-  color: #ffffff;
-}
-
-.btn-danger {
-  background: #7f1d1d;
-  color: #fff;
-}
-
-.pair-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  margin-bottom: 14px;
-}
-
-.pair-selects {
-  display: grid;
-  gap: 8px;
-}
-
-.small-label {
-  font-size: 0.84rem;
-  color: #cbd5e1;
-  font-weight: 700;
-}
-
-.inline-actions {
-  margin-top: 10px;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 96px;
+    }
 
     body {
-      font-family: Inter, system-ui, sans-serif;
-      background: #0a0f1c;
       margin: 0;
-      padding: 24px;
-      color: #f8fafc;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(214,176,106,0.08), transparent 20%),
+        linear-gradient(180deg, #05080f 0%, #07101b 100%);
+      color: var(--text);
     }
 
-    .topbar {
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .container {
+      width: min(var(--max), calc(100% - 28px));
+      margin: 0 auto;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(5, 8, 15, 0.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(214, 176, 106, 0.1);
+    }
+
+    .site-header-inner {
+      width: min(var(--max), calc(100% - 28px));
+      min-height: 78px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .brand {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-logo {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+      border-radius: 14px;
+      padding: 6px;
+      background: radial-gradient(circle, #111 40%, #0b0f19 100%);
+      border: 1px solid rgba(255,255,255,0.7);
+      box-shadow: 0 0 14px rgba(214,176,106,0.18);
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 1.05rem;
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-subtitle {
+      margin-top: 4px;
+      font-size: 0.85rem;
+      color: var(--muted-2);
+    }
+
+    .main-nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-link {
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text);
+      transition: 0.18s ease;
+    }
+
+    .nav-link:hover {
+      background: rgba(214,176,106,0.12);
+      color: var(--gold-2);
+    }
+
+    .nav-link.admin {
+      background: var(--gold);
+      color: #081120;
+    }
+
+    .nav-link.admin:hover {
+      background: var(--gold-2);
+      color: #081120;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 44px 0 26px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 86% 18%, rgba(214,176,106,0.16), transparent 18%),
+        radial-gradient(circle at 12% 84%, rgba(147,197,253,0.08), transparent 16%),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: auto, auto, 34px 34px, 34px 34px;
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      width: min(var(--max), calc(100% - 28px));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+      gap: 30px;
+      align-items: center;
+      min-height: calc(100vh - 104px);
+      padding: 28px 0 40px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(214,176,106,0.1);
+      border: 1px solid rgba(214,176,106,0.24);
+      color: var(--gold-2);
+      font-size: 0.84rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
       margin-bottom: 20px;
+      backdrop-filter: blur(8px);
     }
 
-    h1 {
+    .hero-logo-big {
+      width: 230px;
+      object-fit: contain;
+      margin-bottom: 28px;
+      filter: drop-shadow(0 14px 26px rgba(0,0,0,0.28));
+    }
+
+    .hero h1 {
       margin: 0;
-      font-size: 2rem;
+      max-width: 760px;
+      font-size: clamp(2.7rem, 6vw, 5.2rem);
+      line-height: 1.02;
+      letter-spacing: -0.025em;
+      font-weight: 950;
     }
 
-    .card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    .highlight {
+      color: var(--gold);
+    }
+
+    .hero p {
+      margin: 18px 0 0;
+      max-width: 620px;
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.72;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+
+    .hero-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 48px;
+      padding: 12px 18px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .hero-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .hero-btn.primary {
+      background: var(--gold);
+      color: #081120;
+      border: 1px solid var(--gold);
+    }
+
+    .hero-btn.primary:hover {
+      background: var(--gold-2);
+      border-color: var(--gold-2);
+    }
+
+    .hero-btn.secondary {
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .hero-btn.secondary:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    .hero-metrics {
+      margin-top: 28px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      max-width: 760px;
+    }
+
+    .metric-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 18px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+      padding: 18px 16px;
+      box-shadow: var(--shadow);
+      min-height: 118px;
     }
 
-    .head {
+    .metric-label {
+      color: var(--muted-2);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .metric-value {
+      font-size: clamp(1.2rem, 2vw, 1.7rem);
+      line-height: 1.1;
+      font-weight: 900;
+      color: var(--text);
+    }
+
+    .metric-sub {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .hero-aside {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card,
+    .section-card,
+    .mini-card,
+    .event-card,
+    .team-spotlight-card,
+    .mobile-row {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      padding: 22px;
+      backdrop-filter: blur(12px);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(214,176,106,0.11);
+      border: 1px solid rgba(214,176,106,0.22);
+      color: var(--gold-2);
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .hero-card h2,
+    .section-title,
+    .panel-title {
+      margin: 14px 0 0;
+      font-size: 1.4rem;
+      line-height: 1.12;
+    }
+
+    .hero-card p,
+    .section-subtitle,
+    .panel-subtitle {
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.96rem;
+    }
+
+    .hero-next-list {
+      margin-top: 18px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .hero-next-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.035);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .hero-next-match {
+      font-weight: 800;
+    }
+
+    .hero-next-meta {
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin-top: 4px;
+    }
+
+    .hero-next-time {
+      color: var(--blue);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .content {
+      padding-bottom: 46px;
+    }
+
+    .section {
+      padding: 34px 0 0;
+    }
+
+    .section-card {
+      overflow: hidden;
+    }
+
+    .section-head {
+      padding: 24px 24px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      font-size: clamp(1.4rem, 2vw, 2rem);
+      margin: 0;
+    }
+
+    .section-subtitle {
+      margin: 8px 0 0;
+      max-width: 700px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(147,197,253,0.12);
+      color: var(--blue);
+      border: 1px solid rgba(147,197,253,0.22);
+      font-size: 0.88rem;
+      font-weight: 800;
+    }
+
+    .standings-wrap {
+      padding: 0 18px 18px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 15px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      text-align: left;
+    }
+
+    th {
+      color: var(--muted-2);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+    }
+
+    td {
+      color: var(--muted);
+    }
+
+    td.num,
+    th.num {
+      text-align: center;
+    }
+
+    tbody tr:hover {
+      background: rgba(255,255,255,0.025);
+    }
+
+    .leader-row {
+      background: linear-gradient(90deg, rgba(214,176,106,0.04), rgba(255,255,255,0.02));
+    }
+
+    .pos-chip {
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(147,197,253,0.12);
+      color: var(--blue);
+      font-weight: 900;
+    }
+
+    .leader-row .pos-chip {
+      background: rgba(214,176,106,0.16);
+      color: var(--gold-2);
+    }
+
+    .team-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .team-logo-mini {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      border-radius: 12px;
+      padding: 5px;
+      background: radial-gradient(circle, #111 40%, #0b0f19 100%);
+      border: 1px solid rgba(255,255,255,0.7);
+      box-shadow: 0 0 10px rgba(214,176,106,0.14);
+      flex-shrink: 0;
+    }
+
+    .team-name {
+      color: var(--text);
+      font-weight: 900;
+      line-height: 1.15;
+    }
+
+    .team-club {
+      margin-top: 4px;
+      color: var(--muted-2);
+      font-size: 0.87rem;
+    }
+
+    .points {
+      color: var(--text);
+      font-weight: 900;
+      font-size: 1.05rem;
+    }
+
+    .mobile-standings {
+      display: none;
+      padding: 0 16px 18px;
+      gap: 12px;
+    }
+
+    .mobile-row {
+      padding: 14px;
+    }
+
+    .mobile-top {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .mobile-info {
+      min-width: 0;
+    }
+
+    .mobile-points {
+      text-align: right;
+    }
+
+    .mobile-points strong {
+      display: block;
+      font-size: 1.25rem;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .mobile-points span {
+      color: var(--muted-2);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .mobile-meta {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .meta-pill {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      gap: 20px;
+    }
+
+    .events-list,
+    .teams-spotlight {
+      padding: 0 18px 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .event-card {
+      padding: 18px;
+      transition: transform 0.18s ease, border-color 0.18s ease;
+    }
+
+    .event-card:hover {
+      transform: translateY(-1px);
+      border-color: var(--line-strong);
+    }
+
+    .event-top {
       display: flex;
       justify-content: space-between;
       gap: 12px;
       flex-wrap: wrap;
-      margin-bottom: 14px;
+      align-items: center;
     }
 
-    .match-title {
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: #ffffff;
+    .event-date {
+      color: var(--gold-2);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.82rem;
     }
 
-    .meta {
-      color: #94a3b8;
-      font-size: 0.92rem;
-      margin-top: 4px;
+    .event-status {
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 900;
+      white-space: nowrap;
     }
 
-    .game {
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 14px;
-      padding: 16px;
+    .event-status.scheduled {
+      background: rgba(147,197,253,0.12);
+      color: var(--blue);
+      border: 1px solid rgba(147,197,253,0.22);
+    }
+
+    .event-status.finished {
+      background: rgba(134,239,172,0.12);
+      color: var(--success);
+      border: 1px solid rgba(134,239,172,0.22);
+    }
+
+    .event-match {
+      margin-top: 12px;
+      font-size: 1.1rem;
+      font-weight: 900;
+      line-height: 1.22;
+      color: var(--text);
+    }
+
+    .event-venue,
+    .event-meta {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .event-games {
       margin-top: 14px;
-      background: rgba(255,255,255,0.03);
-    }
-
-    .game-title {
-      font-size: 1rem;
-      font-weight: 800;
-      color: #e2e8f0;
-      margin-bottom: 12px;
-    }
-
-    .team-block {
       display: grid;
-      gap: 2px;
+      gap: 10px;
+    }
+
+    .event-game {
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .event-game-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 0.83rem;
+      color: var(--muted-2);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
       margin-bottom: 10px;
     }
 
-    .team-name {
-      font-weight: 800;
-      color: #ffffff;
-    }
-
-    .players {
-      color: #94a3b8;
-      font-size: 0.92rem;
-    }
-
-    .section-label {
-      margin-top: 14px;
-      margin-bottom: 8px;
-      font-size: 0.9rem;
-      font-weight: 800;
-      color: #cbd5e1;
-    }
-
-    .sets-grid {
+    .event-pair {
       display: grid;
-      grid-template-columns: repeat(3, minmax(180px, 1fr));
-      gap: 12px;
-      margin-top: 10px;
-    }
-
-    .set-box {
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px;
-      padding: 12px;
-      background: rgba(255,255,255,0.04);
-    }
-
-    .set-box label {
-      display: block;
-      font-size: 0.86rem;
-      color: #cbd5e1;
-      margin-bottom: 8px;
-      font-weight: 700;
-    }
-
-    .score-pair {
-      display: flex;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 10px;
       align-items: center;
-      gap: 8px;
     }
 
-    input {
-      width: 72px;
-      padding: 10px;
-      border: 1px solid rgba(255,255,255,0.14);
-      border-radius: 10px;
-      font-size: 1rem;
+    .event-side {
       text-align: center;
-      background: rgba(255,255,255,0.06);
-      color: #ffffff;
-      outline: none;
     }
 
-    input::placeholder {
-      color: #94a3b8;
-    }
-
-    input:focus {
-      border-color: #d6b06a;
-      box-shadow: 0 0 0 3px rgba(214,176,106,0.12);
-    }
-
-    .result-box {
-      margin-top: 14px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      font-weight: 800;
+    .event-side strong {
+      display: block;
+      color: var(--text);
+      line-height: 1.35;
       font-size: 0.95rem;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: #cbd5e1;
     }
 
-    .result-box.win-home {
-      background: rgba(34,197,94,0.12);
-      border-color: rgba(34,197,94,0.28);
-      color: #86efac;
+    .event-side span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted-2);
+      font-size: 0.84rem;
     }
 
-    .result-box.win-away {
-      background: rgba(59,130,246,0.12);
-      border-color: rgba(59,130,246,0.28);
-      color: #93c5fd;
+    .event-score {
+      color: var(--gold-2);
+      font-size: 0.95rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      white-space: nowrap;
     }
 
-    .actions {
-      display: flex;
-      align-items: center;
+    .mini-list {
+      padding: 0 18px 18px;
+      display: grid;
       gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 16px;
     }
 
-    button {
-      background: #d6b06a;
-      color: #081120;
-      border: 0;
-      border-radius: 12px;
-      padding: 11px 18px;
-      cursor: pointer;
-      font-weight: 800;
-      font-size: 0.95rem;
+    .mini-card {
+      padding: 16px;
     }
 
-    button:hover {
-      background: #e3bf7b;
+    .mini-card h3 {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.25;
     }
 
-    .ok {
-      color: #86efac;
-      font-weight: 800;
+    .mini-card p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
     }
 
-    .empty {
-      color: #94a3b8;
-      padding: 18px 0;
+    .mini-value {
+      margin-top: 12px;
+      color: var(--gold-2);
+      font-size: 1.25rem;
+      font-weight: 900;
     }
 
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 200;
-  background: #0a0f1c;
-  padding: 12px 0 14px;
-  margin-bottom: 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  backdrop-filter: blur(8px);
-}
+    .teams-spotlight {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 
-.round-tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 0;
-  flex-wrap: wrap;
-}
+    .team-spotlight-card {
+      padding: 18px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      transition: transform 0.18s ease, border-color 0.18s ease;
+    }
 
-    @media (max-width: 900px) {
-      .sets-grid {
+    .team-spotlight-card:hover {
+      transform: translateY(-1px);
+      border-color: var(--line-strong);
+    }
+
+    .team-spotlight-card .team-logo-mini {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+    }
+
+    .spotlight-text {
+      min-width: 0;
+    }
+
+    .spotlight-rank {
+      color: var(--gold-2);
+      font-size: 0.8rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .spotlight-points {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .loading,
+    .empty,
+    .error {
+      color: var(--muted);
+      padding: 6px 0;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted-2);
+      padding: 30px 0 40px;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero-inner,
+      .grid-2 {
         grid-template-columns: 1fr;
       }
 
-      input {
-        width: 100%;
+      .hero-inner {
+        min-height: auto;
+        padding: 12px 0 20px;
       }
 
-      .score-pair {
-        display: grid;
-        grid-template-columns: 1fr auto 1fr;
+      .hero-aside {
+        order: 2;
+      }
+
+      .hero-main {
+        order: 1;
       }
     }
 
-/* =========================
-   RESPONSIVE MOBILE FIXES
-   ========================= */
+    @media (max-width: 760px) {
+      .site-header-inner {
+        min-height: 72px;
+        align-items: flex-start;
+        padding: 12px 0;
+        flex-direction: column;
+      }
 
-@media (max-width: 900px) {
+      .main-nav {
+        width: 100%;
+        justify-content: flex-start;
+        gap: 8px;
+      }
 
-  body {
-    padding: 14px;
-  }
+      .nav-link {
+        font-size: 0.86rem;
+        padding: 9px 12px;
+      }
 
-  .card {
-    padding: 14px;
-    border-radius: 14px;
-  }
+      .container,
+      .site-header-inner,
+      .hero-inner {
+        width: min(var(--max), calc(100% - 20px));
+      }
 
-  .pair-grid {
-    grid-template-columns: 1fr;
-  }
+      .hero {
+        padding-top: 28px;
+      }
 
-  .sets-grid {
-    grid-template-columns: 1fr;
-  }
+      .hero-logo-big {
+        width: 170px;
+        margin-bottom: 24px;
+      }
 
-  .score-pair {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    gap: 6px;
-  }
+      .hero h1 {
+        font-size: clamp(2.1rem, 9vw, 3rem);
+        line-height: 1.06;
+      }
 
-  input {
-    width: 100%;
-    font-size: 16px;
-  }
+      .hero p {
+        font-size: 0.96rem;
+      }
 
-  .topbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
+      .hero-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
 
-  .topbar button {
-    width: 100%;
-  }
+      .hero-btn {
+        width: 100%;
+      }
 
-  .round-tabs,
-  .section-tabs {
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    padding-bottom: 6px;
-  }
+      .hero-metrics {
+        grid-template-columns: 1fr;
+      }
 
-  .round-tab,
-  .section-tab {
-    white-space: nowrap;
-  }
+      .section-head {
+        padding: 20px 16px 14px;
+      }
 
-  .actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
+      .standings-wrap {
+        display: none;
+      }
 
-  .actions button {
-    width: 100%;
-  }
+      .mobile-standings {
+        display: grid;
+      }
 
-  .inline-actions button {
-    width: 100%;
-  }
-}
+      .events-list,
+      .mini-list,
+      .teams-spotlight {
+        padding: 0 16px 16px;
+      }
 
-@media (max-width: 640px) {
+      .teams-spotlight {
+        grid-template-columns: 1fr;
+      }
 
-  h1 {
-    font-size: 1.5rem;
-  }
+      .event-pair {
+        grid-template-columns: 1fr;
+      }
 
-  .match-title {
-    font-size: 1rem;
-    line-height: 1.35;
-  }
-
-  .game {
-    padding: 12px;
-  }
-
-  .set-box {
-    padding: 10px;
-  }
-
-  button {
-    min-height: 44px;
-    font-size: 0.95rem;
-  }
-
-  select {
-    width: 100%;
-    min-height: 44px;
-  }
-
-  .pending-table th,
-  .pending-table td {
-    font-size: 0.85rem;
-    padding: 8px;
-  }
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-}
-
-@media (max-width: 900px) {
-  .game-title {
-    font-size: 0.95rem;
-  }
-
-  .small-label {
-    font-size: 0.8rem;
-  }
-}
-
+      .event-score {
+        text-align: center;
+      }
+    }
   </style>
 </head>
 <body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="brand" href="/">
+        <img class="brand-logo" src="/assets/logos/tpl_logo_trans.png" alt="TPL Chile" />
+        <div>
+          <div class="brand-title">TPL Chile</div>
+          <div class="brand-subtitle">Liga interclubes de pádel</div>
+        </div>
+      </a>
 
+      <nav class="main-nav">
+        <a class="nav-link" href="/">Inicio</a>
+        <a class="nav-link" href="/teams.html">Equipos</a>
+        <a class="nav-link" href="/players.html">Jugadores</a>
+        <a class="nav-link admin" href="/admin.html">Admin</a>
+      </nav>
+    </div>
+  </header>
 
-<div class="topbar">
-  <h1>Panel Admin</h1>
-  <button type="button" onclick="logoutAdmin()">Cerrar sesión</button>
-</div>
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-main">
+        <div class="hero-badge" id="nextRoundBadge">🏆 Próxima jornada</div>
+        <img class="hero-logo-big" src="/assets/logos/tpl_logo_trans.png" alt="Logo TPL Chile" />
+        <h1>La liga interclubes de <span class="highlight">pádel</span> de Chile</h1>
+        <p>Donde los clubes compiten, crecen y construyen historia. Sigue fechas, cruces, tabla oficial y rendimiento de los equipos en un solo lugar.</p>
 
+        <div class="hero-actions">
+          <a class="hero-btn primary" href="#tabla">Ver tabla de posiciones</a>
+          <a class="hero-btn secondary" href="#fechas">Ver próximas fechas</a>
+        </div>
 
-<div class="section-tabs">
-  <div id="tabMatches" class="section-tab active">Partidos</div>
-  <div id="tabPending" class="section-tab">Inscripciones</div>
-</div>
+        <div class="hero-metrics">
+          <div class="metric-card">
+            <div class="metric-label">Temporada</div>
+            <div class="metric-value">TPL Chile 2026</div>
+            <div class="metric-sub">Competencia oficial con seguimiento de clubes, jugadores y resultados.</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Equipos activos</div>
+            <div class="metric-value" id="heroTeamsCount">--</div>
+            <div class="metric-sub">Clubes compitiendo en la temporada actual.</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Estado</div>
+            <div class="metric-value">En juego</div>
+            <div class="metric-sub">Consulta la tabla, revisa los cruces y sigue el avance de cada fecha.</div>
+          </div>
+        </div>
+      </div>
 
-<div id="matchesSection">
-  <div id="roundTabs" class="round-tabs"></div>
-  <div id="matches"></div>
-</div>
+      <aside class="hero-aside">
+        <div class="hero-card">
+          <div class="eyebrow">Fecha destacada</div>
+          <h2 id="heroNextTitle">La próxima jornada está por comenzar</h2>
+          <p id="heroNextText">Estamos preparando el siguiente cruce de la temporada. Aquí verás los enfrentamientos más cercanos.</p>
+          <div class="hero-next-list" id="heroNextMatches">
+            <div class="loading">Cargando próximos encuentros...</div>
+          </div>
+        </div>
 
-<div id="pendingSection" style="display:none;">
-  <div id="pendingContainer"></div>
-</div>
+        <div class="hero-card">
+          <div class="eyebrow">Por qué seguir la TPL</div>
+          <h2>Una experiencia clara, rápida y hecha para móvil</h2>
+          <p>La portada prioriza lo que más importa: posiciones, próximas fechas y acceso directo a equipos y jugadoras, con una vista móvil más cómoda para revisar puntos.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
 
+  <main class="content">
+    <div class="container">
+      <section class="section" id="tabla">
+        <div class="section-card">
+          <div class="section-head">
+            <div>
+              <h2 class="section-title">Tabla oficial de posiciones</h2>
+              <p class="section-subtitle">En escritorio mantienes la tabla completa. En celular verás un ranking más limpio para revisar puntos sin arrastrar tanto hacia la derecha.</p>
+            </div>
+            <div class="badge" id="standingsBadge">Cargando...</div>
+          </div>
+
+          <div class="standings-wrap">
+            <table id="standingsTable">
+              <thead>
+                <tr>
+                  <th class="num">Pos</th>
+                  <th>Equipo</th>
+                  <th class="num">PJ</th>
+                  <th class="num">PG</th>
+                  <th class="num">PP</th>
+                  <th class="num">Pts</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="6" class="loading">Cargando tabla...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="mobile-standings" id="mobileStandings">
+            <div class="loading">Cargando ranking...</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="fechas">
+        <div class="grid-2">
+          <div class="section-card">
+            <div class="section-head">
+              <div>
+                <h2 class="section-title">Próximas fechas y resultados</h2>
+                <p class="section-subtitle">Consulta los cruces confirmados, la sede y el detalle de cada enfrentamiento.</p>
+              </div>
+              <div class="badge">Calendario oficial</div>
+            </div>
+            <div class="events-list" id="eventsList">
+              <div class="loading">Cargando fechas...</div>
+            </div>
+          </div>
+
+          <div style="display:grid; gap:20px;">
+            <div class="section-card">
+              <div class="section-head">
+                <div>
+                  <h2 class="section-title">Resumen rápido</h2>
+                  <p class="section-subtitle">Lo esencial de la temporada en bloques simples.</p>
+                </div>
+              </div>
+              <div class="mini-list">
+                <div class="mini-card">
+                  <h3>Próxima jornada</h3>
+                  <p id="miniRoundText">Estamos revisando la fecha más cercana de la temporada.</p>
+                  <div class="mini-value" id="miniRoundValue">--</div>
+                </div>
+                <div class="mini-card">
+                  <h3>Líder actual</h3>
+                  <p id="miniLeaderText">El equipo que encabeza la tabla aparecerá aquí.</p>
+                  <div class="mini-value" id="miniLeaderValue">--</div>
+                </div>
+                <div class="mini-card">
+                  <h3>Partidos cargados</h3>
+                  <p>Encuentros registrados en el calendario y disponibles para seguimiento.</p>
+                  <div class="mini-value" id="miniMatchesValue">--</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-card">
+              <div class="section-head">
+                <div>
+                  <h2 class="section-title">Equipos destacados</h2>
+                  <p class="section-subtitle">Acceso rápido a los clubes mejor posicionados.</p>
+                </div>
+              </div>
+              <div class="teams-spotlight" id="teamsSpotlight">
+                <div class="loading">Cargando equipos...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <p class="footer-note">Portal oficial de TPL Chile.</p>
+    </div>
+  </main>
 
   <script>
     const API = "https://liga-backend-f08y.onrender.com";
 
-const adminJwt = localStorage.getItem("admin_token");
+    const teamLogos = {
+      1: "/assets/logos/espacio-active.png",
+      2: "/assets/logos/propadel.png",
+      3: "/assets/logos/1.png",
+      4: "/assets/logos/Revueltas.PNG"
+    };
 
-if (!adminJwt) {
-  window.location.href = "/admin-login.html";
-}
-    
-function getAuthHeaders(extra = {}) {
-  return {
-    ...extra,
-    "Authorization": `Bearer ${adminJwt}`
-  };
-}
+    function formatDate(dateString) {
+      if (!dateString) return "Fecha por definir";
+      return new Date(dateString).toLocaleDateString("es-CL", {
+        weekday: "long",
+        day: "2-digit",
+        month: "long"
+      });
+    }
 
-function handleUnauthorized(res) {
-  if (res.status === 401) {
-    localStorage.removeItem("admin_token");
-    localStorage.removeItem("admin_username");
-    window.location.href = "/admin-login.html";
-    throw new Error("Sesión expirada");
-  }
-  return res;
-}
+    function formatShortDate(dateString) {
+      if (!dateString) return "--";
+      return new Date(dateString).toLocaleDateString("es-CL", {
+        day: "2-digit",
+        month: "short"
+      });
+    }
 
+    function formatTime(dateString) {
+      if (!dateString) return "--:--";
+      return new Date(dateString).toLocaleTimeString("es-CL", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      });
+    }
 
-let currentRound = "all";
-let currentSection = "matches";
-let teamPlayersData = [];
+    function teamPlayers(p1, p2) {
+      const players = [p1, p2].filter(Boolean);
+      return players.length ? players.join(" / ") : "Pareja por confirmar";
+    }
 
-    function groupMatches(data) {
-      const map = new Map();
+    function groupMatchesByTie(matches) {
+      const grouped = new Map();
 
-      data.forEach(item => {
-        if (!map.has(item.match_id)) {
-          map.set(item.match_id, {
-            match_id: item.match_id,
-            round_number: item.round_number,
-            home_team_name: item.home_team_name,
-            away_team_name: item.away_team_name,
-            venue_club: item.venue_club,
-            scheduled_at: item.scheduled_at,
-            games: []
+      matches.forEach(match => {
+        const key = `${match.round_number}-${match.home_team_id}-${match.away_team_id}-${match.venue_club}`;
+        if (!grouped.has(key)) {
+          grouped.set(key, {
+            round_number: match.round_number,
+            season_name: match.season_name,
+            home_team_id: match.home_team_id,
+            away_team_id: match.away_team_id,
+            home_team_name: match.home_team_name,
+            away_team_name: match.away_team_name,
+            venue_club: match.venue_club,
+            scheduled_at: match.scheduled_at,
+            games: [],
+            homeGamesWon: 0,
+            awayGamesWon: 0,
+            isFinished: false
           });
         }
-        map.get(item.match_id).games.push(item);
-      });
 
-      return Array.from(map.values());
-    }
+        const tie = grouped.get(key);
+        tie.games.push(match);
 
-    function setValue(value) {
-      return value ?? "";
-    }
-
-    function parseNullableInt(value) {
-      return value === "" ? null : parseInt(value, 10);
-    }
-
-    function calculateSets(matchId, gameNumber) {
-      const sets = [
-        {
-          home_games: parseNullableInt(document.getElementById(`s1h_${matchId}_${gameNumber}`).value),
-          away_games: parseNullableInt(document.getElementById(`s1a_${matchId}_${gameNumber}`).value),
-        },
-        {
-          home_games: parseNullableInt(document.getElementById(`s2h_${matchId}_${gameNumber}`).value),
-          away_games: parseNullableInt(document.getElementById(`s2a_${matchId}_${gameNumber}`).value),
-        },
-        {
-          home_games: parseNullableInt(document.getElementById(`s3h_${matchId}_${gameNumber}`).value),
-          away_games: parseNullableInt(document.getElementById(`s3a_${matchId}_${gameNumber}`).value),
+        if (match.scheduled_at && (!tie.scheduled_at || new Date(match.scheduled_at) < new Date(tie.scheduled_at))) {
+          tie.scheduled_at = match.scheduled_at;
         }
-      ];
 
-      let homeSets = 0;
-      let awaySets = 0;
-
-      sets.forEach(set => {
-        if (set.home_games != null && set.away_games != null) {
-          if (set.home_games > set.away_games) homeSets++;
-          else if (set.away_games > set.home_games) awaySets++;
+        if (match.result_status === "played" || match.result_status === "finished") {
+          if ((match.home_sets ?? -1) > (match.away_sets ?? -1)) tie.homeGamesWon += 1;
+          if ((match.away_sets ?? -1) > (match.home_sets ?? -1)) tie.awayGamesWon += 1;
         }
       });
 
-      return { homeSets, awaySets, sets };
-    }
-
-function getGameWinner(matchId, gameNumber) {
-  const { homeSets, awaySets } = calculateSets(matchId, gameNumber);
-
-  if (homeSets > awaySets) return "home";
-  if (awaySets > homeSets) return "away";
-  return null;
-}
-
-
-    function updateResultBox(matchId, gameNumber, homeTeam, awayTeam) {
-      const resultEl = document.getElementById(`result_${matchId}_${gameNumber}`);
-      const { homeSets, awaySets } = calculateSets(matchId, gameNumber);
-
-      resultEl.className = "result-box";
-
-      if (homeSets === 0 && awaySets === 0) {
-        resultEl.textContent = "Ingresa los games de cada set para ver el resultado automático.";
-        return;
-      }
-
-      if (homeSets > awaySets) {
-        resultEl.classList.add("win-home");
-        resultEl.textContent = `Resultado automático: ${homeTeam} gana ${homeSets}-${awaySets}`;
-      } else if (awaySets > homeSets) {
-        resultEl.classList.add("win-away");
-        resultEl.textContent = `Resultado automático: ${awayTeam} gana ${awaySets}-${homeSets}`;
-      } else {
-        resultEl.textContent = `Resultado parcial: ${homeSets}-${awaySets}`;
-      }
-    }
-
-
-function bindResultInputs(matchId, gameNumber, homeTeam, awayTeam) {
-  const ids = [
-    `s1h_${matchId}_${gameNumber}`,
-    `s1a_${matchId}_${gameNumber}`,
-    `s2h_${matchId}_${gameNumber}`,
-    `s2a_${matchId}_${gameNumber}`,
-    `s3h_${matchId}_${gameNumber}`,
-    `s3a_${matchId}_${gameNumber}`
-  ];
-
-  ids.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.addEventListener("input", () => {
-        updateResultBox(matchId, gameNumber, homeTeam, awayTeam);
+      return Array.from(grouped.values()).map(tie => {
+        tie.isFinished = tie.games.every(game => game.result_status === "played" || game.result_status === "finished");
+        tie.games.sort((a, b) => (a.game_number || 0) - (b.game_number || 0));
+        return tie;
       });
     }
-  });
 
-  updateResultBox(matchId, gameNumber, homeTeam, awayTeam);
-}
+    function renderDesktopStandings(data) {
+      const tbody = document.querySelector("#standingsTable tbody");
+      tbody.innerHTML = "";
 
+      data.forEach((team, index) => {
+        const row = document.createElement("tr");
+        if (index === 0) row.classList.add("leader-row");
 
-    async function loadAdminMatches() {
-      const res = await fetch(API + "/admin/matches", {
-  headers: getAuthHeaders()
-});
+        const logo = teamLogos[team.team_id] || "/assets/logos/tpl_logo_trans.png";
 
-handleUnauthorized(res);
+        row.innerHTML = `
+          <td class="num"><span class="pos-chip">${team.position}</span></td>
+          <td>
+            <div class="team-cell">
+              <img class="team-logo-mini" src="${logo}" alt="Logo ${team.team_name}" />
+              <div>
+                <div class="team-name">${team.team_name}</div>
+                <div class="team-club">${team.club_name || "Club participante"}</div>
+              </div>
+            </div>
+          </td>
+          <td class="num">${team.played_games ?? 0}</td>
+          <td class="num">${team.won_games ?? 0}</td>
+          <td class="num">${team.lost_games ?? 0}</td>
+          <td class="num"><span class="points">${team.total_points ?? 0}</span></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
 
-      const data = await res.json();
-      const grouped = groupMatches(data);
-
-      renderRoundTabs(grouped);
-      const selectedRound = currentRound;
-
-      const container = document.getElementById("matches");
+    function renderMobileStandings(data) {
+      const container = document.getElementById("mobileStandings");
       container.innerHTML = "";
 
-      const filtered = selectedRound === "all"
-        ? grouped
-        : grouped.filter(m => String(m.round_number) === selectedRound);
+      data.forEach(team => {
+        const logo = teamLogos[team.team_id] || "/assets/logos/tpl_logo_trans.png";
+        const article = document.createElement("article");
+        article.className = "mobile-row";
+        article.innerHTML = `
+          <div class="mobile-top">
+            <span class="pos-chip">${team.position}</span>
+            <div class="team-cell mobile-info">
+              <img class="team-logo-mini" src="${logo}" alt="Logo ${team.team_name}" />
+              <div>
+                <div class="team-name">${team.team_name}</div>
+                <div class="team-club">${team.club_name || "Club participante"}</div>
+              </div>
+            </div>
+            <div class="mobile-points">
+              <strong>${team.total_points ?? 0}</strong>
+              <span>Puntos</span>
+            </div>
+          </div>
+          <div class="mobile-meta">
+            <span class="meta-pill">PJ ${team.played_games ?? 0}</span>
+            <span class="meta-pill">PG ${team.won_games ?? 0}</span>
+            <span class="meta-pill">PP ${team.lost_games ?? 0}</span>
+          </div>
+        `;
+        container.appendChild(article);
+      });
+    }
 
-      if (!filtered.length) {
-        container.innerHTML = '<div class="empty">No hay matches para esta ronda.</div>';
+    function renderTeamsSpotlight(data) {
+      const container = document.getElementById("teamsSpotlight");
+      container.innerHTML = "";
+
+      data.slice(0, 4).forEach(team => {
+        const logo = teamLogos[team.team_id] || "/assets/logos/tpl_logo_trans.png";
+        const article = document.createElement("a");
+        article.className = "team-spotlight-card";
+        article.href = "/teams.html";
+        article.innerHTML = `
+          <img class="team-logo-mini" src="${logo}" alt="Logo ${team.team_name}" />
+          <div class="spotlight-text">
+            <div class="spotlight-rank">Posición #${team.position}</div>
+            <div class="team-name">${team.team_name}</div>
+            <div class="team-club">${team.club_name || "Club participante"}</div>
+            <div class="spotlight-points">${team.total_points ?? 0} puntos · ${team.played_games ?? 0} partidos jugados</div>
+          </div>
+        `;
+        container.appendChild(article);
+      });
+    }
+
+    function renderHeroNext(ties) {
+      const list = document.getElementById("heroNextMatches");
+      const title = document.getElementById("heroNextTitle");
+      const text = document.getElementById("heroNextText");
+      list.innerHTML = "";
+
+      const upcoming = ties
+        .filter(tie => !tie.isFinished)
+        .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at))
+        .slice(0, 2);
+
+      if (!upcoming.length) {
+        title.textContent = "La temporada sigue avanzando";
+        text.textContent = "Pronto aparecerán aquí los próximos cruces destacados de la TPL Chile.";
+        list.innerHTML = '<div class="empty">No hay encuentros próximos cargados por ahora.</div>';
         return;
       }
 
-      filtered.forEach(match => {
+      const firstDate = upcoming[0].scheduled_at;
+      title.textContent = `Próxima jornada: ${formatDate(firstDate)}`;
+      text.textContent = "Revisa los siguientes encuentros programados y entra a la sección de fechas para ver más detalle.";
 
-
-
-const gamesHtml = match.games.map(game => {
-  const localPlayers = getPlayersByTeam(game.home_team_id, game.category);
-  const awayPlayers = getPlayersByTeam(game.away_team_id, game.category);
-
-  return `
-    <div class="game" id="game_${match.match_id}_${game.game_number}">
-      <div class="game-title">${game.category || `Partido ${game.game_number}`}</div>
-
-      <div class="pair-grid">
-        <div>
-          <div class="team-name">${match.home_team_name}</div>
-          <div class="pair-selects">
-            <div>
-              <div class="small-label">Jugador/a local 1</div>
-              <select id="hp1_${match.match_id}_${game.game_number}">
-                ${renderPlayerOptions(localPlayers, game.home_player_1_id)}
-              </select>
-            </div>
-            <div>
-              <div class="small-label">Jugador/a local 2</div>
-              <select id="hp2_${match.match_id}_${game.game_number}">
-                ${renderPlayerOptions(localPlayers, game.home_player_2_id)}
-              </select>
-            </div>
+      upcoming.forEach(tie => {
+        const item = document.createElement("div");
+        item.className = "hero-next-item";
+        item.innerHTML = `
+          <div>
+            <div class="hero-next-match">${tie.home_team_name} vs ${tie.away_team_name}</div>
+            <div class="hero-next-meta">Sede ${tie.venue_club}</div>
           </div>
-        </div>
+          <div class="hero-next-time">${formatTime(tie.scheduled_at)}</div>
+        `;
+        list.appendChild(item);
+      });
+    }
 
-        <div>
-          <div class="team-name">${match.away_team_name}</div>
-          <div class="pair-selects">
-            <div>
-              <div class="small-label">Jugador/a visita 1</div>
-              <select id="ap1_${match.match_id}_${game.game_number}">
-                ${renderPlayerOptions(awayPlayers, game.away_player_1_id)}
-              </select>
-            </div>
-            <div>
-              <div class="small-label">Jugador/a visita 2</div>
-              <select id="ap2_${match.match_id}_${game.game_number}">
-                ${renderPlayerOptions(awayPlayers, game.away_player_2_id)}
-              </select>
-            </div>
+    function renderEvents(ties) {
+      const container = document.getElementById("eventsList");
+      container.innerHTML = "";
+
+      const ordered = [...ties].sort((a, b) => {
+        if (a.isFinished !== b.isFinished) return a.isFinished ? 1 : -1;
+        return new Date(a.scheduled_at) - new Date(b.scheduled_at);
+      });
+
+      if (!ordered.length) {
+        container.innerHTML = '<div class="empty">No hay fechas registradas por ahora.</div>';
+        return;
+      }
+
+      ordered.forEach(tie => {
+        const article = document.createElement("article");
+        article.className = "event-card";
+        const statusClass = tie.isFinished ? "finished" : "scheduled";
+        const statusLabel = tie.isFinished ? "Resultado" : "Programado";
+        const scoreLabel = tie.isFinished ? `${tie.homeGamesWon} - ${tie.awayGamesWon}` : formatTime(tie.scheduled_at);
+
+        article.innerHTML = `
+          <div class="event-top">
+            <div class="event-date">${formatShortDate(tie.scheduled_at).toUpperCase()} · Ronda ${tie.round_number}</div>
+            <div class="event-status ${statusClass}">${statusLabel}</div>
           </div>
-        </div>
-      </div>
-
-      <div class="inline-actions">
-        <button type="button" onclick="saveGamePlayers(${match.match_id}, ${game.game_number})">Guardar pareja</button>
-      </div>
-
-      <div class="section-label">Resultado por set</div>
-      <div class="sets-grid">
-        <div class="set-box">
-          <label>Set 1</label>
-          <div class="score-pair">
-            <input type="number" min="0" id="s1h_${match.match_id}_${game.game_number}" value="${setValue(game.set1_home_games)}" placeholder="Local" />
-            <span>-</span>
-            <input type="number" min="0" id="s1a_${match.match_id}_${game.game_number}" value="${setValue(game.set1_away_games)}" placeholder="Visita" />
-          </div>
-        </div>
-
-        <div class="set-box">
-          <label>Set 2</label>
-          <div class="score-pair">
-            <input type="number" min="0" id="s2h_${match.match_id}_${game.game_number}" value="${setValue(game.set2_home_games)}" placeholder="Local" />
-            <span>-</span>
-            <input type="number" min="0" id="s2a_${match.match_id}_${game.game_number}" value="${setValue(game.set2_away_games)}" placeholder="Visita" />
-          </div>
-        </div>
-
-        <div class="set-box">
-          <label>Set 3</label>
-          <div class="score-pair">
-            <input type="number" min="0" id="s3h_${match.match_id}_${game.game_number}" value="${setValue(game.set3_home_games)}" placeholder="Local" />
-            <span>-</span>
-            <input type="number" min="0" id="s3a_${match.match_id}_${game.game_number}" value="${setValue(game.set3_away_games)}" placeholder="Visita" />
-          </div>
-        </div>
-      </div>
-
-      <div id="result_${match.match_id}_${game.game_number}" class="result-box">
-        Ingresa los games de cada set para ver el resultado automático.
-      </div>
-    </div>
-  `;
-}).join("");
-
-
-
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <div class="head">
-            <div>
-              <div class="match-title">
-                ${Number(match.round_number) === 7 ? "Final" : `Ronda ${match.round_number}`} ·
-                ${match.home_team_name} vs ${match.away_team_name}
+          <div class="event-match">${tie.home_team_name} vs ${tie.away_team_name}</div>
+          <div class="event-venue">Sede ${tie.venue_club} · ${formatDate(tie.scheduled_at)}</div>
+          <div class="event-meta">Marcador global del cruce: <strong style="color:#fff;">${scoreLabel}</strong></div>
+          <div class="event-games">
+            ${tie.games.map(game => `
+              <div class="event-game">
+                <div class="event-game-head">
+                  <span>Categoría ${game.category || game.game_number}</span>
+                  <span>${(game.home_sets != null && game.away_sets != null) ? `${game.home_sets} - ${game.away_sets}` : formatTime(game.scheduled_at)}</span>
+                </div>
+                <div class="event-pair">
+                  <div class="event-side">
+                    <strong>${teamPlayers(game.home_player_1, game.home_player_2)}</strong>
+                    <span>${tie.home_team_name}</span>
+                  </div>
+                  <div class="event-score">vs</div>
+                  <div class="event-side">
+                    <strong>${teamPlayers(game.away_player_1, game.away_player_2)}</strong>
+                    <span>${tie.away_team_name}</span>
+                  </div>
+                </div>
               </div>
-              <div class="meta">📍 ${match.venue_club} · 🕒 ${new Date(match.scheduled_at).toLocaleString("es-CL")}</div>
-            </div>
-          </div>
-          ${gamesHtml}
-          <div class="actions">
-            <button onclick="saveMatch(${match.match_id}, ${match.games.length})">Guardar match</button>
-            <span id="ok_${match.match_id}" class="ok"></span>
+            `).join("")}
           </div>
         `;
 
-        container.appendChild(card);
-
-        match.games.forEach(game => {
-          bindResultInputs(
-            match.match_id,
-            game.game_number,
-            match.home_team_name,
-            match.away_team_name
-          );
-        });
-
+        container.appendChild(article);
       });
     }
 
-    async function saveMatch(matchId, gameCount) {
-      const games = [];
+    async function loadStandings() {
+      const response = await fetch(`${API}/standings`);
+      const data = await response.json();
 
-      for (let i = 1; i <= gameCount; i++) {
-        const calculated = calculateSets(matchId, i);
+      document.getElementById("standingsBadge").textContent = `${data.length} equipos`;
+      document.getElementById("heroTeamsCount").textContent = data.length;
 
-        games.push({
-          game_number: i,
-          home_sets: calculated.homeSets,
-          away_sets: calculated.awaySets,
-          sets: calculated.sets
-        });
+      renderDesktopStandings(data);
+      renderMobileStandings(data);
+      renderTeamsSpotlight(data);
+
+      const leader = data[0];
+      if (leader) {
+        document.getElementById("miniLeaderValue").textContent = leader.team_name;
+        document.getElementById("miniLeaderText").textContent = `${leader.total_points ?? 0} puntos y posición #${leader.position}.`;
       }
-
-      await fetch(API + `/admin/match/${matchId}`, {
-        method: "PUT",
-        headers: getAuthHeaders({
-    "Content-Type": "application/json"
-  }),
-        body: JSON.stringify({ games })
-});
-
-
-      document.getElementById(`ok_${matchId}`).textContent = "Guardado";
-      setTimeout(() => {
-        document.getElementById(`ok_${matchId}`).textContent = "";
-      }, 2000);
     }
 
+    async function loadMatches() {
+      const response = await fetch(`${API}/matches`);
+      const data = await response.json();
+      const ties = groupMatchesByTie(data);
 
-function fullPlayerName(player) {
-  return `${player.first_name} ${player.last_name}`.trim();
-}
+      renderHeroNext(ties);
+      renderEvents(ties);
 
+      document.getElementById("miniMatchesValue").textContent = `${data.length}`;
+    }
 
-function normalizeCategory(value) {
-  const v = (value || "").toString().trim().toLowerCase().replace(/\s+/g, "");
+    async function loadNextRound() {
+      try {
+        const response = await fetch(`${API}/next-round`);
+        const data = await response.json();
 
-  if (v.includes("4")) return "4ta";
-  if (v.includes("5")) return "5ta";
-  if (v === "c") return "c";
-  if (v === "d") return "d";
+        if (!data.date) {
+          document.getElementById("nextRoundBadge").textContent = "🏆 Calendario en actualización";
+          document.getElementById("miniRoundValue").textContent = "Por definir";
+          document.getElementById("miniRoundText").textContent = "Aún no hay una jornada futura publicada.";
+          return;
+        }
 
-  return v;
-}
+        const label = new Date(data.date).toLocaleDateString("es-CL", {
+          day: "2-digit",
+          month: "long"
+        });
 
-function getPlayersByTeam(teamId, category = null) {
-  return teamPlayersData.filter(player => {
-    const sameTeam = Number(player.team_id) === Number(teamId);
+        document.getElementById("nextRoundBadge").textContent = `🏆 Próxima jornada · ${label}`;
+        document.getElementById("miniRoundValue").textContent = `Ronda ${data.round_number}`;
+        document.getElementById("miniRoundText").textContent = `La próxima fecha comienza el ${label}.`;
+      } catch (error) {
+        document.getElementById("nextRoundBadge").textContent = "🏆 Próxima jornada";
+      }
+    }
 
-    const playerCategory = normalizeCategory(player.category);
-    const gameCategory = normalizeCategory(category);
-
-    const sameCategory = !category || playerCategory === gameCategory;
-    return sameTeam && sameCategory;
-  });
-}
-
-function renderPlayerOptions(players, selectedId) {
-  return '<option value="">Selecciona</option>' + players.map(player => `
-    <option value="${player.player_id}" ${Number(selectedId) === Number(player.player_id) ? 'selected' : ''}>
-      ${fullPlayerName(player)}${player.position ? ` · ${player.position}` : ''}
-    </option>
-  `).join("");
-}
-
-async function loadTeamPlayers() {
-  const res = await fetch(API + "/admin/team-players", {
-  headers: getAuthHeaders()
-});
-
-handleUnauthorized(res);
-
-  teamPlayersData = await res.json();
-}
-
-async function saveGamePlayers(matchId, gameNumber) {
-  const payload = {
-    home_player_1_id: parseNullableInt(document.getElementById(`hp1_${matchId}_${gameNumber}`).value),
-    home_player_2_id: parseNullableInt(document.getElementById(`hp2_${matchId}_${gameNumber}`).value),
-    away_player_1_id: parseNullableInt(document.getElementById(`ap1_${matchId}_${gameNumber}`).value),
-    away_player_2_id: parseNullableInt(document.getElementById(`ap2_${matchId}_${gameNumber}`).value),
-  };
-
-  await fetch(API + `/admin/match-game/${matchId}/${gameNumber}/players`, {
-    method: "PUT",
-  headers: getAuthHeaders({
-    "Content-Type": "application/json"
-  }),
-  body: JSON.stringify(payload)
-});
-
-
-  alert("Pareja guardada correctamente");
-  loadAdminMatches();
-}
-
-
-async function loadPendingPlayers() {
-  const res = await fetch(API + "/admin/pending-players", {
-  headers: getAuthHeaders()
-});
-
-handleUnauthorized(res);
-
-  const data = await res.json();
-
-  const container = document.getElementById("pendingContainer");
-
-  if (!data.length) {
-    container.innerHTML = '<div class="empty">No hay inscripciones registradas.</div>';
-    return;
-  }
-
-  container.innerHTML = `
-    <div class="card">
-      <div class="head">
-        <div>
-          <div class="match-title">Inscripciones</div>
-          <div class="meta">Revisa, aprueba o rechaza jugadores antes de pasarlos a producción.</div>
-        </div>
-      </div>
-
-      <div class="pending-table-wrap">
-        <table class="pending-table">
-          <thead>
-            <tr>
-              <th>Jugador/a</th>
-              <th>Equipo</th>
-              <th>Categoría</th>
-              <th>Contacto</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${data.map(item => `
-              <tr>
-                <td>
-                  <strong>${item.first_name} ${item.last_name}</strong><br>
-                  <span class="meta">${item.position || "Sin posición"}${item.nickname ? ` · ${item.nickname}` : ""}</span>
-                </td>
-                <td>
-                  <strong>${item.team_name}</strong><br>
-                  <span class="meta">${item.club_name}</span>
-                </td>
-                <td>${item.category}</td>
-                <td>
-                  <strong>${item.contact_name || "-"}</strong><br>
-                  <span class="meta">${item.contact_email || "-"}${item.contact_phone ? ` · ${item.contact_phone}` : ""}</span>
-                </td>
-                <td>
-                  <span class="status-pill status-${item.status}">
-                    ${item.status}
-                  </span>
-                </td>
-                <td>
-                  <div class="row-actions">
-                    ${item.status === "pending" ? `
-                      <button type="button" onclick="approvePending(${item.id})">Aprobar</button>
-                      <button type="button" class="btn-danger" onclick="rejectPending(${item.id})">Rechazar</button>
-                    ` : ""}
-                  </div>
-                </td>
-              </tr>
-            `).join("")}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  `;
-}
-
-async function approvePending(id) {
-  await fetch(API + `/admin/pending-player/${id}/approve`, {
-    method: "POST",
-  headers: getAuthHeaders()
-  });
-  await loadPendingPlayers();
-  await loadTeamPlayers();
-}
-
-async function rejectPending(id) {
-  await fetch(API + `/admin/pending-player/${id}/reject`, {
-    method: "POST",
-  headers: getAuthHeaders()
-  });
-  await loadPendingPlayers();
-}
-
-
-function switchSection(section) {
-  currentSection = section;
-
-  document.getElementById("matchesSection").style.display = section === "matches" ? "" : "none";
-  document.getElementById("pendingSection").style.display = section === "pending" ? "" : "none";
-
-  document.getElementById("tabMatches").classList.toggle("active", section === "matches");
-  document.getElementById("tabPending").classList.toggle("active", section === "pending");
-}
-
-document.getElementById("tabMatches").addEventListener("click", () => switchSection("matches"));
-document.getElementById("tabPending").addEventListener("click", async () => {
-  switchSection("pending");
-  await loadPendingPlayers();
-});
-
-
-
-
-function renderRoundTabs(grouped) {
-  const container = document.getElementById("roundTabs");
-
-  const rounds = [...new Set(grouped.map(m => m.round_number))]
-    .filter(r => r !== null && r !== undefined)
-    .sort((a, b) => a - b);
-
-  container.innerHTML = "";
-
-  // botón "todas"
-  const allTab = document.createElement("div");
-  allTab.className = "round-tab" + (currentRound === "all" ? " active" : "");
-  allTab.textContent = "Todas";
-  allTab.onclick = () => {
-    currentRound = "all";
-    loadAdminMatches();
-  };
-  container.appendChild(allTab);
-
-  // tabs por ronda
-  rounds.forEach(r => {
-    const tab = document.createElement("div");
-    tab.className = "round-tab" + (currentRound == r ? " active" : "");
-    tab.textContent = Number(r) === 7 ? "Final" : `Ronda ${r}`;
-    tab.onclick = () => {
-      currentRound = String(r);
-      loadAdminMatches();
-    };
-    container.appendChild(tab);
-  });
-}
-
-
-async function initAdmin() {
-  await loadTeamPlayers();
-  await loadAdminMatches();
-}
-
-initAdmin().catch(console.error);
-
-function logoutAdmin() {
-  localStorage.removeItem("admin_token");
-  localStorage.removeItem("admin_username");
-  window.location.href = "/admin-login.html";
-}
+    Promise.allSettled([loadStandings(), loadMatches(), loadNextRound()]).then(results => {
+      const hasError = results.some(result => result.status === "rejected");
+      if (hasError) {
+        console.error("Se produjo un error cargando parte de la portada", results);
+      }
+    });
   </script>
 </body>
 </html>
