@@ -1136,9 +1136,6 @@
     display: none;
   }
 
-  .mobile-team-inline {
-    display: inline-flex;
-  }
 
   .player-main {
     gap: 10px;
@@ -1261,6 +1258,213 @@
     font-size: 0.82rem;
   }
 }
+
+/* ===== FIX REAL PARA PLAYERS EN CELULAR ===== */
+@media (max-width: 640px) {
+  .table-wrap {
+    overflow-x: visible;
+    padding: 0 6px 10px;
+  }
+
+  table {
+    width: 100%;
+    min-width: 0;
+    table-layout: fixed;
+  }
+
+  thead th:nth-child(1) {
+    width: 52px;
+  }
+
+  thead th:nth-child(2) {
+    width: auto;
+  }
+
+  thead th:nth-child(3),
+  tbody td:nth-child(3) {
+    display: none;
+  }
+
+  thead th:nth-child(4) {
+    width: 78px;
+  }
+
+  th, td {
+    padding: 10px 6px;
+    font-size: 0.84rem;
+    vertical-align: top;
+  }
+
+  .player-main {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .player-info {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .player-name {
+    font-size: 0.98rem;
+    line-height: 1.15;
+    word-break: normal;
+    overflow-wrap: break-word;
+  }
+
+  .player-meta {
+    font-size: 0.8rem;
+    line-height: 1.25;
+    margin-top: 4px;
+    word-break: normal;
+    overflow-wrap: break-word;
+  }
+
+  .mobile-team-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    max-width: 100%;
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .mobile-team-inline span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 120px;
+  }
+
+  .avatar,
+  .avatar-img {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+  }
+
+  .team-logo-mini {
+    width: 18px;
+    height: 18px;
+    padding: 2px;
+  }
+
+  .points-badge {
+    min-width: 48px;
+    padding: 6px 8px;
+    font-size: 0.86rem;
+  }
+
+  .pos-chip {
+    width: 30px;
+    height: 30px;
+    font-size: 0.88rem;
+  }
+
+  .expand-cell {
+    display: block;
+    width: 100%;
+  }
+
+  .detail-card {
+    padding: 10px;
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .profile-card,
+  .stats-card,
+  .mini-panel {
+    width: 100%;
+    padding: 12px;
+    border-radius: 14px;
+    box-sizing: border-box;
+  }
+
+  .profile-top {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .profile-photo,
+  .profile-photo-img {
+    width: 68px;
+    height: 68px;
+    border-radius: 16px;
+    flex-shrink: 0;
+  }
+
+  .profile-name {
+    font-size: 1rem;
+    line-height: 1.15;
+    word-break: break-word;
+  }
+
+  .profile-sub {
+    font-size: 0.84rem;
+    line-height: 1.35;
+  }
+
+  .profile-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .tag {
+    font-size: 0.74rem;
+    padding: 6px 8px;
+    white-space: normal;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .stat {
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+    margin-bottom: 6px;
+  }
+
+  .stat-value {
+    font-size: 1.05rem;
+  }
+
+  .detail-bottom {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .mini-panel-title {
+    font-size: 0.86rem;
+    margin-bottom: 8px;
+  }
+
+  .metric-row {
+    font-size: 0.82rem;
+  }
+}
+
 
 </style>
 </head>
@@ -1570,7 +1774,7 @@
                       <td>
                         <div class="player-main">
                           ${getPhotoHTML(player, "avatar-img", "avatar")}
-                          <div>
+                          <div class="player-info">
                             <div class="player-name">${fullName(player)}</div>
                             <div class="player-meta">
                               ${player.nickname ? player.nickname + " · " : ""}${player.position}
