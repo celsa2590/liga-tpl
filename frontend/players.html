@@ -955,6 +955,150 @@
   }
 }
 
+.player-info {
+  min-width: 0;
+}
+
+.mobile-team-pill {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 6px 8px;
+  width: fit-content;
+  max-width: 100%;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.mobile-team-pill span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .table-wrap {
+    overflow-x: visible;
+  }
+
+  table {
+    min-width: 0;
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  /* ocultar columna Equipo en móvil */
+  table th:nth-child(3),
+  table td:nth-child(3) {
+    display: none;
+  }
+
+  .mobile-team-pill {
+    display: inline-flex;
+  }
+
+  .player-main {
+    align-items: flex-start;
+  }
+
+  .player-name {
+    font-size: 0.95rem;
+    line-height: 1.2;
+  }
+
+  .player-meta {
+    font-size: 0.8rem;
+    line-height: 1.25;
+  }
+
+  .points-badge {
+    min-width: 46px;
+    padding: 6px 8px;
+    font-size: 0.86rem;
+  }
+
+  .expand-cell {
+    display: block;
+    width: 100%;
+  }
+
+  .detail-card {
+    padding: 12px;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .profile-card,
+  .stats-card,
+  .mini-panel {
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .detail-bottom {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .stat {
+    padding: 12px;
+  }
+
+  .stat-label {
+    font-size: 0.74rem;
+  }
+
+  .stat-value {
+    font-size: 1.1rem;
+  }
+
+  .metric-row {
+    font-size: 0.84rem;
+  }
+
+  .profile-top {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .profile-photo,
+  .profile-photo-img {
+    width: 68px;
+    height: 68px;
+    border-radius: 16px;
+  }
+
+  .profile-name {
+    font-size: 1rem;
+  }
+
+  .profile-sub {
+    font-size: 0.86rem;
+  }
+
+  .profile-tags {
+    gap: 6px;
+  }
+
+  .tag {
+    font-size: 0.76rem;
+    padding: 6px 8px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1269,6 +1413,13 @@
                               ${player.nickname ? player.nickname + " · " : ""}${player.position}
                             </div>
                           </div>
+
+<div class="mobile-team-pill">
+    <img class="team-logo-mini" src="${teamLogos[player.team_id] || ""}" alt="${player.team_name}">
+    <span>${player.team_name}</span>
+  </div>
+</div>
+
                         </div>
                       </td>
                       <td>
