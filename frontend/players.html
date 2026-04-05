@@ -780,34 +780,39 @@
 /* ===== COMPACTAR DETALLE EXPANDIDO EN CELULAR ===== */
 @media (max-width: 640px) {
 
-  .expand-cell, 
-  td[colspan] { 
-    padding: 0 !important; 
+  .expand-cell {
+    padding: 0 !important;
     width: 100% !important;
+    display: table-cell; /* Asegura que se comporte como celda pero ignore límites */
   }
 
+  /* 2. El contenedor principal del detalle */
   .detail-card {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 10px !important;
-    margin: 0 !important;
+    width: 100vw !important; /* Usa el ancho visual total del dispositivo */
+    max-width: 100vw !important;
+    margin-left: calc(-1 * var(--table-padding, 0px)); /* Si la tabla tiene padding lateral, esto lo compensa */
+    padding: 15px !important;
     box-sizing: border-box;
-    display: block; /* Cambiar de grid/flex a block asegura el ancho */
+    background: #1a1d21; /* Asegúrate de que el fondo sea sólido para cubrir bordes */
   }
 
+  /* 3. ¡IMPORTANTE! Cambiar GRID a BLOCK */
   .detail-grid {
-    display: block !important; /* En móvil, mejor que sea bloque simple */
+    display: block !important; /* El grid suele causar el error de 'rincón' en móviles */
     width: 100% !important;
   }
 
-  .profile-card,
-  .stats-card,
+  /* 4. Estirar las tarjetas internas */
+  .profile-card, 
+  .stats-card, 
   .mini-panel {
     width: 100% !important;
     max-width: 100% !important;
-    margin-bottom: 12px; /* Espacio entre tarjetas */
+    display: block !important;
+    margin-bottom: 10px;
     box-sizing: border-box;
   }
+
 
   /* Si las estadísticas están en una fila, asegúrate de que ocupen el ancho */
   .stats-grid { 
@@ -904,6 +909,41 @@
   }
 }
 
+
+@media (max-width: 640px) {
+  /* 1. Quitamos el padding del contenedor de la tabla para ganar espacio */
+  .table-wrap {
+    padding: 0 0 10px !important;
+  }
+
+  /* 2. IMPORTANTE: La celda expandida debe ignorar el 'table-layout: fixed' */
+  .expand-row .expand-cell {
+    display: block !important; /* La convertimos en bloque para que ignore las columnas */
+    width: 100vw !important;  /* Ocupa todo el ancho visual */
+    padding: 0 !important;
+    border: none;
+  }
+
+  /* 3. Ajustamos el card para que se pegue a los bordes */
+  .detail-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 15px 10px !important; /* Padding interno para que el texto no toque el borde */
+    box-sizing: border-box;
+    display: block !important; /* Rompemos el grid */
+  }
+
+  /* 4. Aseguramos que el contenido interno también se estire */
+  .detail-grid, 
+  .profile-card, 
+  .stats-card {
+    display: block !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
 
 </style>
 </head>
