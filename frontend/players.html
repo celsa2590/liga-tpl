@@ -1099,6 +1099,169 @@
   }
 }
 
+/* ===== AJUSTES FINOS MÓVIL PLAYERS ===== */
+
+.mobile-team-inline {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #fff;
+  min-width: 0;
+}
+
+.mobile-team-inline span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .table-wrap {
+    overflow-x: visible;
+    padding: 0 6px 10px;
+  }
+
+  table {
+    width: 100%;
+    min-width: 0;
+    table-layout: fixed;
+  }
+
+  /* ocultar columna equipo en móvil */
+  table th:nth-child(3),
+  table td:nth-child(3) {
+    display: none;
+  }
+
+  .mobile-team-inline {
+    display: inline-flex;
+  }
+
+  .player-main {
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .player-info {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .player-name {
+    font-size: 0.98rem;
+    line-height: 1.15;
+    word-break: break-word;
+  }
+
+  .player-meta {
+    font-size: 0.8rem;
+    line-height: 1.25;
+    margin-top: 3px;
+  }
+
+  .points-badge {
+    min-width: 44px;
+    padding: 6px 8px;
+    font-size: 0.84rem;
+  }
+
+  .expand-cell {
+    display: block;
+    width: 100%;
+  }
+
+  .detail-card {
+    padding: 10px;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .profile-card,
+  .stats-card,
+  .mini-panel {
+    width: 100%;
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .profile-top {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .profile-photo,
+  .profile-photo-img {
+    width: 68px;
+    height: 68px;
+    border-radius: 16px;
+  }
+
+  .profile-name {
+    font-size: 1rem;
+    line-height: 1.15;
+  }
+
+  .profile-sub {
+    font-size: 0.84rem;
+    line-height: 1.35;
+  }
+
+  .profile-tags {
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .tag {
+    font-size: 0.74rem;
+    padding: 6px 8px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .stat {
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+    margin-bottom: 6px;
+  }
+
+  .stat-value {
+    font-size: 1.05rem;
+  }
+
+  .detail-bottom {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .mini-panel-title {
+    font-size: 0.86rem;
+    margin-bottom: 8px;
+  }
+
+  .metric-list {
+    gap: 8px;
+  }
+
+  .metric-row {
+    font-size: 0.82rem;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1413,12 +1576,11 @@
                               ${player.nickname ? player.nickname + " · " : ""}${player.position}
                             </div>
                           </div>
-
-<div class="mobile-team-pill">
-    <img class="team-logo-mini" src="${teamLogos[player.team_id] || ""}" alt="${player.team_name}">
-    <span>${player.team_name}</span>
-  </div>
-</div>
+                          <div class="mobile-team-inline">
+                            <img class="team-logo-mini" src="${teamLogos[player.team_id] || ""}" alt="${player.team_name}">
+                            <span>${player.team_name}</span>
+                          </div>
+                        </div>
 
                         </div>
                       </td>
