@@ -716,15 +716,19 @@ img {
 }
 
 .team-hero-compact {
-  padding: 16px;
-  margin: 16px 18px 12px;
-  border-radius: 18px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: none;
+  max-width: 900px;
+  margin: 12px auto;
 }
 
 .team-hero-compact .hero-logo {
-  width: 74px;
-  height: 74px;
-  border-radius: 14px;
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  padding: 0;
+  background: none;
 }
 
 .team-hero-compact .eyebrow {
@@ -733,24 +737,23 @@ img {
 }
 
 .team-hero-compact h2 {
-  font-size: clamp(1.8rem, 3vw, 2.6rem);
-  margin: 0 0 6px;
+  font-size: 2rem);
 }
 
 .team-hero-compact p {
-  font-size: 0.95rem;
-  line-height: 1.5;
-  max-width: 680px;
+  font-size: 0.9rem;
+  max-width: 520px;
 }
 
 .team-hero-compact .stats {
-  margin-top: 16px;
-  gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 12px;
+  gap: 8px;
 }
 
 .team-hero-compact .stat {
-  padding: 12px 14px;
-  border-radius: 14px;
+  padding: 10px 12px;
+  border-radius: 12px;
 }
 
 .team-hero-compact .stat-label {
@@ -759,7 +762,7 @@ img {
 }
 
 .team-hero-compact .stat-value {
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .panel-gap {
