@@ -277,8 +277,93 @@
         grid-template-columns: 1fr;
       }
     }
+
+
+.photo-card img {
+  cursor: zoom-in;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 6, 12, 0.92);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 24px;
+  z-index: 9999;
+}
+
+.lightbox.active {
+  display: flex;
+}
+
+.lightbox-img {
+  max-width: min(92vw, 1200px);
+  max-height: 80vh;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+}
+
+.lightbox-caption {
+  margin-top: 14px;
+  color: rgba(255,255,255,0.82);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+
+.lightbox-close:hover {
+  background: rgba(255,255,255,0.2);
+}
+
   </style>
 </head>
+
+<script>
+  function openLightbox(src, altText) {
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightboxImg");
+    const lightboxCaption = document.getElementById("lightboxCaption");
+
+    lightboxImg.src = src;
+    lightboxImg.alt = altText || "";
+    lightboxCaption.textContent = altText || "";
+    lightbox.classList.add("active");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeLightbox(event) {
+    if (event) event.stopPropagation();
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightboxImg");
+
+    lightbox.classList.remove("active");
+    lightboxImg.src = "";
+    document.body.style.overflow = "";
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      closeLightbox();
+    }
+  });
+</script>
+
 <body>
   <header class="site-header">
     <div class="site-header-inner">
@@ -331,7 +416,7 @@
             </article>
 
             <article class="photo-card">
-              <img src="/assets/photos/foto2.jpg" alt="Equipo participante" loading="lazy">
+              <img src="/assets/photos/foto10.jpg" alt="Equipo participante" loading="lazy">
               <div class="photo-info">
                 <h3>Equipos participantes</h3>
                 <p>Registro de clubes y jugadores durante la temporada.</p>
@@ -339,7 +424,7 @@
             </article>
 
             <article class="photo-card">
-              <img src="/assets/photos/foto3.jpg" alt="Momento destacado" loading="lazy">
+              <img src="/assets/photos/foto11.jpg" alt="Momento destacado" loading="lazy">
               <div class="photo-info">
                 <h3>Momentos destacados</h3>
                 <p>Puntos, celebraciones y postales importantes de la liga.</p>
@@ -369,7 +454,22 @@
                 <p>Jugadores, clubes y seguidores que hacen crecer la liga.</p>
               </div>
             </article>
+
+            <article class="photo-card">
+              <img src="/assets/photos/foto2.jpg" alt="Selectivo Espacio Active" loading="lazy" onclick="openLightbox(this.src, this.alt)">
+              <div class="photo-info">
+                <h3>Selectivo Espacio Active</h3>
+                <p>Espacio Active se prepara para su selectivo.</p>
+              </div>
+            </article>
           </div>
+
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox(event)">×</button>
+  <img id="lightboxImg" class="lightbox-img" src="" alt="">
+  <div id="lightboxCaption" class="lightbox-caption"></div>
+</div>
+
         </div>
       </section>
 
