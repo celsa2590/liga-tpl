@@ -715,6 +715,66 @@ img {
   height: auto;
 }
 
+.team-hero-compact {
+  padding: 16px;
+  margin: 16px 18px 12px;
+  border-radius: 18px;
+}
+
+.team-hero-compact .hero-logo {
+  width: 74px;
+  height: 74px;
+  border-radius: 14px;
+}
+
+.team-hero-compact .eyebrow {
+  margin-bottom: 8px;
+  font-size: 0.8rem;
+}
+
+.team-hero-compact h2 {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  margin: 0 0 6px;
+}
+
+.team-hero-compact p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  max-width: 680px;
+}
+
+.team-hero-compact .stats {
+  margin-top: 16px;
+  gap: 10px;
+}
+
+.team-hero-compact .stat {
+  padding: 12px 14px;
+  border-radius: 14px;
+}
+
+.team-hero-compact .stat-label {
+  font-size: 0.76rem;
+  margin-bottom: 6px;
+}
+
+.team-hero-compact .stat-value {
+  font-size: 1.1rem;
+}
+
+.panel-gap {
+  margin-top: 28px;
+}
+
+.team-links-wrap {
+  padding: 18px;
+}
+
+#clubSummary {
+  padding-top: 0;
+}
+
+
   </style>
 </head>
 <body>
@@ -778,21 +838,16 @@ img {
 </div>
 
 
-<div class="panel">
+<div class="panel panel-gap">
   <div class="panel-header">
     <h3 class="panel-title">Resumen por club</h3>
     <p class="panel-subtitle">Selecciona un club para ver sus fechas y resultados.</p>
   </div>
 
-  <div id="teamLinks" class="team-links" style="padding: 18px;"></div>
+  <div id="teamLinks" class="team-links team-links-wrap"></div>
 
-<div>
-    <section id="teamHero" class="hero team-1" style="padding: 18px;"></section>
-    <section class="grid">
-</div>
-
-
-  <div id="clubSummary" class="schedule-wrap"></div>
+    <section id="teamHero" class="hero team-hero-compact team-1"></section>
+    <div id="clubSummary" class="schedule-wrap"></div>
 
 </div>
 
