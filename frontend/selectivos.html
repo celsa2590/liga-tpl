@@ -526,23 +526,51 @@
       font-weight: 800;
     }
 
-    .match-main {
-      padding: 12px 18px 18px;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      align-items: center;
-    }
 
-    .match-side {
-      text-align: center;
-    }
+.match-main {
+  padding: 14px 18px 18px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  align-items: center;
+}
 
-    .match-pair {
-      font-size: 1.18rem;
-      font-weight: 900;
-      line-height: 1.3;
-    }
+.match-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.match-side {
+  text-align: center;
+}
+
+.match-pair {
+  font-size: 1.12rem;
+  font-weight: 900;
+  line-height: 1.3;
+}
+
+.match-vs {
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--gold-2);
+  text-align: center;
+  letter-spacing: 0.06em;
+}
+
+.match-score {
+  margin-top: 2px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--text);
+}
+
+
 
     .match-meta {
       margin-top: 8px;
@@ -550,21 +578,8 @@
       font-size: 0.95rem;
     }
 
-    .match-vs {
-      font-size: 1.4rem;
-      font-weight: 900;
-      color: var(--gold-2);
-      text-align: center;
-      letter-spacing: 0.06em;
-    }
 
-    .match-score {
-      margin-top: 2px;
-      text-align: center;
-      font-size: 1.55rem;
-      font-weight: 900;
-      color: var(--text);
-    }
+
 
     .match-status {
       margin-top: 8px;
@@ -575,6 +590,28 @@
       text-transform: uppercase;
       letter-spacing: 0.06em;
     }
+
+.rest-card {
+  padding: 14px 16px;
+  border: 1px dashed rgba(255,255,255,0.14);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.025);
+}
+
+.rest-title {
+  color: var(--muted-2);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.rest-list {
+  margin-top: 8px;
+  color: var(--muted);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
 
 
 .match-line {
@@ -714,21 +751,15 @@
         padding-top: 28px;
       }
 
-      .match-main {
-        grid-template-columns: 1fr;
-      }
 
-      .match-vs {
-        order: 2;
-      }
+.match-line {
+  flex-direction: column;
+  gap: 8px;
+}
 
-      .match-side:first-child {
-        order: 1;
-      }
-
-      .match-side:last-child {
-        order: 3;
-      }
+.match-vs {
+  font-size: 0.95rem;
+}
 
       .standings-grid {
         grid-template-columns: 1fr;
@@ -844,51 +875,85 @@
   </article>
 </div>
 
+
+
+
 <div class="rule-blocks">
+
+  <!-- REGLAS GENERALES -->
   <article class="rule-panel">
-    <h3>Sistema de juego</h3>
+    <h3>Reglas generales</h3>
     <p>
-      Cada partido dura <span class="rule-highlight">22 minutos</span>. Se juega dentro de ese tiempo y el marcador al finalizar será el resultado oficial del match.
+      El formato del selectivo puede variar según la cantidad de parejas inscritas en cada categoría.
     </p>
     <p>
-      Si el partido termina empatado, ambas parejas suman <span class="rule-highlight">1 punto</span>.
+      Puntaje:<br>
+      Victoria: <strong>3 puntos</strong><br>
+      Empate: <strong>1 punto</strong><br>
+      Derrota: <strong>0 puntos</strong>
+    </p>
+    <p>
+      Si el partido termina empatado, ambas parejas suman 1 punto.
     </p>
   </article>
 
-  <article class="rule-panel">
-    <h3>Criterios de clasificación</h3>
+  <!-- D/C -->
+  <article class="rule-panel rule-category" id="rules-dc" style="display:none;">
+    <h3>Formato D/C</h3>
     <p>
-      La tabla se ordena por:
+      Todos contra todos · 5 parejas · 5 rondas.
     </p>
     <p>
-      1. Puntos<br>
-      2. Diferencia de games<br>
-      3. Games a favor<br>
-      4. Enfrentamiento directo
+      En cada ronda descansa una pareja.
     </p>
   </article>
 
+  <!-- C/B -->
+  <article class="rule-panel rule-category" id="rules-cb" style="display:none;">
+    <h3>Formato C/B</h3>
+    <p>
+      2 grupos de 3 parejas.
+    </p>
+    <p>
+      Todos contra todos dentro de cada grupo.
+    </p>
+    <p>
+      No hay cruces entre grupos.
+    </p>
+  </article>
+
+  <!-- CLASIFICACIÓN -->
+  <article class="rule-panel">
+    <h3>Clasificación</h3>
+    <p>
+      🥇 1er lugar: pareja titular<br>
+      🥈 2do lugar: pareja suplente
+    </p>
+  </article>
+
+  <!-- INSCRIPCIÓN -->
   <article class="rule-panel">
     <h3>Inscripción a la liga</h3>
     <p>
       La pareja ganadora deberá formalizar su inscripción en la liga TPL a más tardar a fines de abril.
     </p>
     <p>
-      En caso contrario, se correrá la lista: la pareja que haya obtenido el segundo lugar pasará a ser titular y la del tercer lugar asumirá como suplente.
+      En caso contrario, se correrá la lista.
     </p>
   </article>
 
+  <!-- PUNTUALIDAD -->
   <article class="rule-panel">
-    <h3>Importante</h3>
+    <h3>Puntualidad</h3>
     <p>
-      El tiempo no se detiene y el partido finalizará al término de la ronda.
+      5 minutos de tolerancia.
     </p>
     <p>
-      No habrá calentamiento si el partido ya comenzó. La idea es competir, pasarlo bien y que el formato sea justo para todas las parejas.
+      Luego se comienza 0-2 abajo.
     </p>
   </article>
-</div>
 
+</div>
 
 
 
@@ -965,6 +1030,7 @@
     let activeSelectiveId = null;
     let activeCategoryId = null;
     let activeCategoryMap = [];
+    let activeStandings = [];
     let autoRefreshTimer = null;
 
     function formatDate(dateStr) {
@@ -1052,6 +1118,7 @@
 
     async function selectCategory(categoryId) {
       activeCategoryId = categoryId;
+      updateRulesByCategory();
       renderCategoryButtons();
       await refreshCategoryData();
       startAutoRefresh();
@@ -1060,6 +1127,27 @@
     function getActiveCategory() {
       return activeCategoryMap.find(item => Number(item.id) === Number(activeCategoryId));
     }
+
+function updateRulesByCategory() {
+  const category = getActiveCategory();
+
+  // Oculta todas
+  document.querySelectorAll(".rule-category").forEach(el => {
+    el.style.display = "none";
+  });
+
+  if (!category) return;
+
+  const name = category.category_name.toLowerCase();
+
+  if (name.includes("d")) {
+    document.getElementById("rules-dc").style.display = "block";
+  }
+
+  if (name.includes("c/b") || name.includes("b")) {
+    document.getElementById("rules-cb").style.display = "block";
+  }
+}
 
     async function refreshCategoryData() {
       if (!activeCategoryId) return;
@@ -1082,8 +1170,11 @@
       const matches = await matchesRes.json();
       const standings = await standingsRes.json();
 
-      renderStandings(standings);
-      renderMatches(matches, category);
+activeStandings = Array.isArray(standings) ? standings : [];
+
+renderStandings(activeStandings);
+renderMatches(matches, category, activeStandings);
+
     }
 
     function renderStandings(data) {
@@ -1162,7 +1253,7 @@
       `;
     }
 
-    function renderMatches(data, category) {
+    function renderMatches(data, category, standings = []) {
       const container = document.getElementById("matchesContainer");
 
       if (!Array.isArray(data) || !data.length) {
@@ -1180,20 +1271,40 @@
 
       const sortedRounds = Array.from(rounds.keys()).sort((a, b) => a - b);
 
+
+function getRestingPairs(roundMatches, standings) {
+  const allPairs = standings.map(item => item.pair_name);
+  const playingPairs = new Set();
+
+  roundMatches.forEach(match => {
+    if (match.pair_1_name) playingPairs.add(match.pair_1_name);
+    if (match.pair_2_name) playingPairs.add(match.pair_2_name);
+  });
+
+  return allPairs.filter(name => !playingPairs.has(name));
+}
+
       container.innerHTML = `
         <div class="matches-wrap">
           ${sortedRounds.map(round => `
-            <section class="round-group">
-              <div class="round-title">Ronda ${round}</div>
+      
 
-              <div class="round-grid">
-                ${rounds.get(round).map(match => `
-                  <article class="match-card">
-                    <div class="match-top">
-                      <span>${match.court_name || "Cancha por definir"}</span>
-                      <span>${category ? formatTime(category.start_time) : "--:--"}</span>
-                    </div>
+<section class="round-group">
+  <div class="round-title">Ronda ${round}</div>
 
+  ${(() => {
+    const restingPairs = getRestingPairs(rounds.get(round), standings);
+    if (!restingPairs.length) return "";
+    return `
+      <div class="rest-card">
+        <div class="rest-title">${restingPairs.length === 1 ? "Pareja que descansa" : "Parejas que descansan"}</div>
+        <div class="rest-list">${restingPairs.join("<br>")}</div>
+      </div>
+    `;
+  })()}
+
+  <div class="round-grid">
+    ${rounds.get(round).map(match => `
 
 
 <div class="match-main">
@@ -1209,7 +1320,6 @@
 
   <div class="match-status">${normalizeStatus(match.result_status)}</div>
 </div>
-
 
                   </article>
                 `).join("")}
