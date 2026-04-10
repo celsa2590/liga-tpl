@@ -349,6 +349,7 @@ def get_selective_category_matches(category_id: int):
             sm.selective_category_id,
             sm.round_number,
             sm.display_order,
+            sm.stage,
             sm.court_id,
             sc.name AS court_name,
             sm.pair_1_id,
@@ -400,6 +401,231 @@ def get_selective_category_standings(category_id: int):
         rows = [dict(row._mapping) for row in result]
 
     return rows
+
+
+@app.get("/selective-category/{category_id}/pairs")
+def get_selective_category_pairs(category_id: int):
+    query = text("""
+        SELECT
+            sp.id,
+            sp.selective_category_id,
+            sp.pair_name,
+            sp.group_name,
+            p1.first_name || ' ' || p1.last_name AS player_1_name,
+            p2.first_name || ' ' || p2.last_name AS player_2_name
+        FROM selective_pairs sp
+        JOIN selective_players p1 ON p1.id = sp.player_1_id
+        JOIN selective_players p2 ON p2.id = sp.player_2_id
+        WHERE sp.selective_category_id = :category_id
+        ORDER BY sp.pair_name
+    """)
+
+    with engine.connect() as conn:
+        result = conn.execute(query, {"category_id": category_id})
+        rows = [dict(row._mapping) for row in result]
+
+    return rows
+
+
+@app.post("/admin/selective-pair/{pair_id}/group")
+def update_selective_pair_group(
+    pair_id: int,
+    payload: dict = Body(...),
+    authorization: str = Header(None)
+):
+    verify_admin_jwt(authorization)
+
+    group_name = payload.get("group_name")
+
+    if group_name not in ("A", "B", None, ""):
+        raise HTTPException(status_code=400, detail="group_name debe ser 'A', 'B' o vacío")
+
+    query = text("""
+        UPDATE selective_pairs
+        SET group_name = :group_name,
+            updated_at = NOW()
+        WHERE id = :pair_id
+        RETURNING id
+    """)
+
+    with engine.connect() as conn:
+        result = conn.execute(query, {
+            "pair_id": pair_id,
+            "group_name": group_name if group_name else None
+        }).fetchone()
+        conn.commit()
+
+    if not result:
+        raise HTTPException(status_code=404, detail="Pareja no encontrada")
+
+    return {"status": "ok", "pair_id": pair_id, "group_name": group_name}
+
+
+@app.get("/selective-category/{category_id}/group-standings")
+def get_selective_category_group_standings(category_id: int):
+    query = text("""
+        SELECT
+            selective_category_id,
+            group_name,
+            pair_id,
+            pair_name,
+            pj,
+            gf,
+            gc,
+            dg,
+            pts
+        FROM selective_group_standings
+        WHERE selective_category_id = :category_id
+        ORDER BY group_name, pts DESC, dg DESC, gf DESC, pair_name
+    """)
+
+    with engine.connect() as conn:
+        result = conn.execute(query, {"category_id": category_id})
+        rows = [dict(row._mapping) for row in result]
+
+    grouped = {"A": [], "B": []}
+    for row in rows:
+        if row["group_name"] in grouped:
+            grouped[row["group_name"]].append(row)
+
+    return grouped
+
+
+@app.post("/admin/selective-category/{category_id}/generate-semifinals")
+def generate_selective_semifinals(
+    category_id: int,
+    payload: dict = Body(default={}),
+    authorization: str = Header(None)
+):
+    verify_admin_jwt(authorization)
+
+    court_a_id = payload.get("court_a_id")
+    court_b_id = payload.get("court_b_id")
+
+    with engine.connect() as conn:
+        standings = conn.execute(text("""
+            SELECT
+                group_name,
+                pair_id,
+                pair_name,
+                pts,
+                dg,
+                gf
+            FROM selective_group_standings
+            WHERE selective_category_id = :category_id
+            ORDER BY group_name, pts DESC, dg DESC, gf DESC, pair_name
+        """), {"category_id": category_id}).mappings().all()
+
+        by_group = {"A": [], "B": []}
+        for row in standings:
+            if row["group_name"] in by_group:
+                by_group[row["group_name"]].append(dict(row))
+
+        if len(by_group["A"]) < 2 or len(by_group["B"]) < 2:
+            raise HTTPException(status_code=400, detail="Debes tener al menos 2 parejas clasificadas por grupo")
+
+        existing = conn.execute(text("""
+            SELECT id
+            FROM selective_matches
+            WHERE selective_category_id = :category_id
+              AND stage = 'semifinal'
+        """), {"category_id": category_id}).fetchall()
+
+        if existing:
+            raise HTTPException(status_code=400, detail="Las semifinales ya fueron generadas")
+
+        a1 = by_group["A"][0]["pair_id"]
+        a2 = by_group["A"][1]["pair_id"]
+        b1 = by_group["B"][0]["pair_id"]
+        b2 = by_group["B"][1]["pair_id"]
+
+        conn.execute(text("""
+            INSERT INTO selective_matches
+            (selective_category_id, round_number, display_order, court_id, pair_1_id, pair_2_id, result_status, stage, created_at, updated_at)
+            VALUES
+            (:category_id, 4, 1, :court_a_id, :a1, :b2, 'scheduled', 'semifinal', NOW(), NOW()),
+            (:category_id, 4, 2, :court_b_id, :b1, :a2, 'scheduled', 'semifinal', NOW(), NOW())
+        """), {
+            "category_id": category_id,
+            "court_a_id": court_a_id,
+            "court_b_id": court_b_id,
+            "a1": a1,
+            "a2": a2,
+            "b1": b1,
+            "b2": b2
+        })
+
+        conn.commit()
+
+    return {"status": "ok", "message": "Semifinales generadas"}
+
+
+@app.post("/admin/selective-category/{category_id}/generate-final")
+def generate_selective_final(
+    category_id: int,
+    payload: dict = Body(default={}),
+    authorization: str = Header(None)
+):
+    verify_admin_jwt(authorization)
+
+    court_id = payload.get("court_id")
+
+    with engine.connect() as conn:
+        semifinals = conn.execute(text("""
+            SELECT
+                id,
+                pair_1_id,
+                pair_2_id,
+                pair_1_games,
+                pair_2_games,
+                result_status
+            FROM selective_matches
+            WHERE selective_category_id = :category_id
+              AND stage = 'semifinal'
+            ORDER BY display_order, id
+        """), {"category_id": category_id}).mappings().all()
+
+        if len(semifinals) < 2:
+            raise HTTPException(status_code=400, detail="Primero debes generar las semifinales")
+
+        winners = []
+        for match in semifinals:
+            if match["result_status"] != "finished":
+                raise HTTPException(status_code=400, detail="Debes completar las semifinales antes de generar la final")
+
+            if match["pair_1_games"] > match["pair_2_games"]:
+                winners.append(match["pair_1_id"])
+            elif match["pair_2_games"] > match["pair_1_games"]:
+                winners.append(match["pair_2_id"])
+            else:
+                raise HTTPException(status_code=400, detail="Una semifinal no puede terminar empatada si quieres generar la final")
+
+        existing = conn.execute(text("""
+            SELECT id
+            FROM selective_matches
+            WHERE selective_category_id = :category_id
+              AND stage = 'final'
+        """), {"category_id": category_id}).fetchone()
+
+        if existing:
+            raise HTTPException(status_code=400, detail="La final ya fue generada")
+
+        conn.execute(text("""
+            INSERT INTO selective_matches
+            (selective_category_id, round_number, display_order, court_id, pair_1_id, pair_2_id, result_status, stage, created_at, updated_at)
+            VALUES
+            (:category_id, 5, 1, :court_id, :winner_1, :winner_2, 'scheduled', 'final', NOW(), NOW())
+        """), {
+            "category_id": category_id,
+            "court_id": court_id,
+            "winner_1": winners[0],
+            "winner_2": winners[1]
+        })
+
+        conn.commit()
+
+    return {"status": "ok", "message": "Final generada"}
+
 
 
 @app.post("/admin/selective-match/{match_id}/result")

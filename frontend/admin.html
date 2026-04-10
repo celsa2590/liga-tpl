@@ -556,12 +556,13 @@ img {
 
 
 
+
 <div id="selectivosSection" style="display:none;">
   <div class="card">
     <div class="head">
       <div>
         <div class="match-title">Gestión de selectivos</div>
-        <div class="meta">Primero selecciona el club, luego la categoría y después carga los resultados de cada match.</div>
+        <div class="meta">Selecciona club, categoría, arma grupos si corresponde y carga resultados.</div>
       </div>
     </div>
 
@@ -581,11 +582,16 @@ img {
       </div>
     </div>
 
-    <div id="selectiveMatchesContainer" style="margin-top:18px;">
+    <div id="selectiveGroupManager" style="margin-top:20px; display:none;"></div>
+    <div id="selectiveStandingsContainer" style="margin-top:20px; display:none;"></div>
+    <div id="selectiveActionsContainer" style="margin-top:20px; display:none;"></div>
+    <div id="selectiveMatchesContainer" style="margin-top:20px;">
       <div class="empty">Selecciona un club para comenzar.</div>
     </div>
   </div>
 </div>
+
+
 
 
 
@@ -623,6 +629,7 @@ let teamPlayersData = [];
 let selectivesData = [];
 let activeSelectiveId = null;
 let activeSelectiveCategories = [];
+let activeSelectiveCategory = null;
 
     function groupMatches(data) {
       const map = new Map();
@@ -1091,6 +1098,12 @@ function switchSection(section) {
   document.getElementById("tabSelectivos").classList.toggle("active", section === "selectivos");
 }
 
+document.getElementById("tabMatches").addEventListener("click", () => switchSection("matches"));
+document.getElementById("tabPending").addEventListener("click", async () => {
+  switchSection("pending");
+  await loadPendingPlayers();
+});
+
 document.getElementById("tabSelectivos").addEventListener("click", async () => {
   switchSection("selectivos");
   await loadSelectivesAdmin();
@@ -1142,11 +1155,17 @@ document.getElementById("selectiveCategorySelect").addEventListener("change", on
 initAdmin().catch(console.error);
 
 async function loadSelectivesAdmin() {
-  const selectiveClubSelect = document.getElementById("selectiveClubSelect");
-  const selectiveCategorySelect = document.getElementById("selectiveCategorySelect");
-  const selectiveMatchesContainer = document.getElementById("selectiveMatchesContainer");
+  const clubSelect = document.getElementById("selectiveClubSelect");
+  const categorySelect = document.getElementById("selectiveCategorySelect");
+  const matchesContainer = document.getElementById("selectiveMatchesContainer");
+  const groupManager = document.getElementById("selectiveGroupManager");
+  const standingsContainer = document.getElementById("selectiveStandingsContainer");
+  const actionsContainer = document.getElementById("selectiveActionsContainer");
 
-  selectiveMatchesContainer.innerHTML = '<div class="empty">Cargando selectivos...</div>';
+  matchesContainer.innerHTML = '<div class="empty">Cargando selectivos...</div>';
+  groupManager.style.display = "none";
+  standingsContainer.style.display = "none";
+  actionsContainer.style.display = "none";
 
   const res = await fetch(API + "/selectives", {
     headers: getAuthHeaders()
@@ -1157,35 +1176,38 @@ async function loadSelectivesAdmin() {
   const data = await res.json();
   selectivesData = Array.isArray(data) ? data : [];
 
-  selectiveClubSelect.innerHTML = '<option value="">Selecciona un club</option>' +
+  clubSelect.innerHTML = '<option value="">Selecciona un club</option>' +
     selectivesData.map(item => `
-      <option value="${item.id}">
-        ${item.club_name}
-      </option>
+      <option value="${item.id}">${item.club_name}</option>
     `).join("");
 
-  selectiveCategorySelect.innerHTML = '<option value="">Selecciona una categoría</option>';
-  selectiveCategorySelect.disabled = true;
+  categorySelect.innerHTML = '<option value="">Selecciona una categoría</option>';
+  categorySelect.disabled = true;
 
-  selectiveMatchesContainer.innerHTML = '<div class="empty">Selecciona un club para comenzar.</div>';
+  matchesContainer.innerHTML = '<div class="empty">Selecciona un club para comenzar.</div>';
 }
 
 async function onSelectiveClubChange() {
-  const selectiveClubSelect = document.getElementById("selectiveClubSelect");
-  const selectiveCategorySelect = document.getElementById("selectiveCategorySelect");
-  const selectiveMatchesContainer = document.getElementById("selectiveMatchesContainer");
+  const clubSelect = document.getElementById("selectiveClubSelect");
+  const categorySelect = document.getElementById("selectiveCategorySelect");
+  const matchesContainer = document.getElementById("selectiveMatchesContainer");
+  const groupManager = document.getElementById("selectiveGroupManager");
+  const standingsContainer = document.getElementById("selectiveStandingsContainer");
+  const actionsContainer = document.getElementById("selectiveActionsContainer");
 
-  const selectiveId = selectiveClubSelect.value;
-  activeSelectiveId = selectiveId ? Number(selectiveId) : null;
+  activeSelectiveId = clubSelect.value ? Number(clubSelect.value) : null;
+  activeSelectiveCategory = null;
+  activeSelectiveCategories = [];
 
-  selectiveCategorySelect.innerHTML = '<option value="">Selecciona una categoría</option>';
-  selectiveCategorySelect.disabled = true;
-  selectiveMatchesContainer.innerHTML = '<div class="empty">Selecciona una categoría.</div>';
+  categorySelect.innerHTML = '<option value="">Selecciona una categoría</option>';
+  categorySelect.disabled = true;
 
-  if (!activeSelectiveId) {
-    activeSelectiveCategories = [];
-    return;
-  }
+  groupManager.style.display = "none";
+  standingsContainer.style.display = "none";
+  actionsContainer.style.display = "none";
+  matchesContainer.innerHTML = '<div class="empty">Selecciona una categoría.</div>';
+
+  if (!activeSelectiveId) return;
 
   const res = await fetch(API + `/selective/${activeSelectiveId}`, {
     headers: getAuthHeaders()
@@ -1196,25 +1218,257 @@ async function onSelectiveClubChange() {
   const detail = await res.json();
   activeSelectiveCategories = Array.isArray(detail.categories) ? detail.categories : [];
 
-  selectiveCategorySelect.innerHTML = '<option value="">Selecciona una categoría</option>' +
+  categorySelect.innerHTML = '<option value="">Selecciona una categoría</option>' +
     activeSelectiveCategories.map(cat => `
       <option value="${cat.id}">
         ${(cat.gender === "femenino" ? "Femenino" : "Masculino")} · ${cat.category_name}
       </option>
     `).join("");
 
-  selectiveCategorySelect.disabled = false;
+  categorySelect.disabled = false;
+}
+
+function categoryUsesGroups(category) {
+  if (!category) return false;
+  return category.category_name === "C/B";
 }
 
 async function onSelectiveCategoryChange() {
-  const selectiveCategorySelect = document.getElementById("selectiveCategorySelect");
-  const categoryId = selectiveCategorySelect.value;
+  const categorySelect = document.getElementById("selectiveCategorySelect");
+  const categoryId = categorySelect.value ? Number(categorySelect.value) : null;
 
   if (!categoryId) {
     document.getElementById("selectiveMatchesContainer").innerHTML = '<div class="empty">Selecciona una categoría.</div>';
+    document.getElementById("selectiveGroupManager").style.display = "none";
+    document.getElementById("selectiveStandingsContainer").style.display = "none";
+    document.getElementById("selectiveActionsContainer").style.display = "none";
     return;
   }
 
+  activeSelectiveCategory = activeSelectiveCategories.find(c => Number(c.id) === categoryId) || null;
+
+  if (categoryUsesGroups(activeSelectiveCategory)) {
+    await loadSelectiveGroupManager(categoryId);
+    await loadSelectiveGroupStandings(categoryId);
+    await loadSelectiveStageActions(categoryId);
+  } else {
+    document.getElementById("selectiveGroupManager").style.display = "none";
+    document.getElementById("selectiveStandingsContainer").style.display = "none";
+    document.getElementById("selectiveActionsContainer").style.display = "none";
+  }
+
+  await loadSelectiveMatchesAdmin(categoryId);
+}
+
+async function loadSelectiveGroupManager(categoryId) {
+  const container = document.getElementById("selectiveGroupManager");
+  container.style.display = "block";
+  container.innerHTML = '<div class="empty">Cargando parejas...</div>';
+
+  const res = await fetch(API + `/selective-category/${categoryId}/pairs`, {
+    headers: getAuthHeaders()
+  });
+
+  handleUnauthorized(res);
+
+  const pairs = await res.json();
+
+  container.innerHTML = `
+    <div class="card">
+      <div class="head">
+        <div>
+          <div class="match-title">Asignación de grupos</div>
+          <div class="meta">Asigna cada pareja al Grupo A o Grupo B.</div>
+        </div>
+      </div>
+
+      ${pairs.map(pair => `
+        <div class="game">
+          <div class="game-title">${pair.pair_name}</div>
+          <div class="meta">${pair.player_1_name} · ${pair.player_2_name}</div>
+
+          <div class="inline-actions" style="margin-top:12px;">
+            <select id="group_${pair.id}">
+              <option value="">Sin grupo</option>
+              <option value="A" ${pair.group_name === "A" ? "selected" : ""}>Grupo A</option>
+              <option value="B" ${pair.group_name === "B" ? "selected" : ""}>Grupo B</option>
+            </select>
+            <button type="button" onclick="savePairGroup(${pair.id}, ${categoryId})">Guardar grupo</button>
+            <span id="group_ok_${pair.id}" class="ok"></span>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+async function savePairGroup(pairId, categoryId) {
+  const select = document.getElementById(`group_${pairId}`);
+  const groupName = select.value;
+
+  const res = await fetch(API + `/admin/selective-pair/${pairId}/group`, {
+    method: "POST",
+    headers: getAuthHeaders({
+      "Content-Type": "application/json"
+    }),
+    body: JSON.stringify({
+      group_name: groupName || null
+    })
+  });
+
+  handleUnauthorized(res);
+
+  if (!res.ok) {
+    alert("No se pudo guardar el grupo.");
+    return;
+  }
+
+  document.getElementById(`group_ok_${pairId}`).textContent = "Guardado";
+  setTimeout(() => {
+    document.getElementById(`group_ok_${pairId}`).textContent = "";
+  }, 1500);
+
+  await loadSelectiveGroupStandings(categoryId);
+}
+
+async function loadSelectiveGroupStandings(categoryId) {
+  const container = document.getElementById("selectiveStandingsContainer");
+  container.style.display = "block";
+  container.innerHTML = '<div class="empty">Cargando tablas por grupo...</div>';
+
+  const res = await fetch(API + `/selective-category/${categoryId}/group-standings`, {
+    headers: getAuthHeaders()
+  });
+
+  handleUnauthorized(res);
+
+  const data = await res.json();
+
+  function renderGroupTable(groupName, rows) {
+    if (!rows || !rows.length) {
+      return `
+        <div class="card">
+          <div class="head">
+            <div>
+              <div class="match-title">Grupo ${groupName}</div>
+            </div>
+          </div>
+          <div class="empty">Sin parejas asignadas.</div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="card">
+        <div class="head">
+          <div>
+            <div class="match-title">Grupo ${groupName}</div>
+          </div>
+        </div>
+
+        <table class="pending-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Pareja</th>
+              <th>PJ</th>
+              <th>GF</th>
+              <th>GC</th>
+              <th>DG</th>
+              <th>PTS</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map((item, idx) => `
+              <tr>
+                <td>${idx + 1}</td>
+                <td><strong>${item.pair_name}</strong></td>
+                <td>${item.pj}</td>
+                <td>${item.gf}</td>
+                <td>${item.gc}</td>
+                <td>${item.dg}</td>
+                <td><strong>${item.pts}</strong></td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  container.innerHTML = `
+    ${renderGroupTable("A", data.A)}
+    ${renderGroupTable("B", data.B)}
+  `;
+}
+
+async function loadSelectiveStageActions(categoryId) {
+  const container = document.getElementById("selectiveActionsContainer");
+  container.style.display = "block";
+
+  container.innerHTML = `
+    <div class="card">
+      <div class="head">
+        <div>
+          <div class="match-title">Fases finales</div>
+          <div class="meta">Genera semifinales y final cuando corresponda.</div>
+        </div>
+      </div>
+
+      <div class="inline-actions">
+        <button type="button" onclick="generateSemifinals(${categoryId})">Generar semifinales</button>
+        <button type="button" onclick="generateFinal(${categoryId})">Generar final</button>
+      </div>
+    </div>
+  `;
+}
+
+async function generateSemifinals(categoryId) {
+  const res = await fetch(API + `/admin/selective-category/${categoryId}/generate-semifinals`, {
+    method: "POST",
+    headers: getAuthHeaders({
+      "Content-Type": "application/json"
+    }),
+    body: JSON.stringify({
+      court_a_id: 1,
+      court_b_id: 2
+    })
+  });
+
+  handleUnauthorized(res);
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    alert(data.detail || "No se pudieron generar las semifinales.");
+    return;
+  }
+
+  alert("Semifinales generadas.");
+  await loadSelectiveMatchesAdmin(categoryId);
+}
+
+async function generateFinal(categoryId) {
+  const res = await fetch(API + `/admin/selective-category/${categoryId}/generate-final`, {
+    method: "POST",
+    headers: getAuthHeaders({
+      "Content-Type": "application/json"
+    }),
+    body: JSON.stringify({
+      court_id: 1
+    })
+  });
+
+  handleUnauthorized(res);
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    alert(data.detail || "No se pudo generar la final.");
+    return;
+  }
+
+  alert("Final generada.");
   await loadSelectiveMatchesAdmin(categoryId);
 }
 
@@ -1224,8 +1478,8 @@ function formatSelectiveTime(timeStr) {
 }
 
 async function loadSelectiveMatchesAdmin(categoryId) {
-  const selectiveMatchesContainer = document.getElementById("selectiveMatchesContainer");
-  selectiveMatchesContainer.innerHTML = '<div class="empty">Cargando matches...</div>';
+  const container = document.getElementById("selectiveMatchesContainer");
+  container.innerHTML = '<div class="empty">Cargando matches...</div>';
 
   const res = await fetch(API + `/selective-category/${categoryId}/matches`, {
     headers: getAuthHeaders()
@@ -1236,32 +1490,37 @@ async function loadSelectiveMatchesAdmin(categoryId) {
   const matches = await res.json();
 
   if (!Array.isArray(matches) || !matches.length) {
-    selectiveMatchesContainer.innerHTML = '<div class="empty">No hay cruces cargados para esta categoría.</div>';
+    container.innerHTML = '<div class="empty">No hay cruces cargados para esta categoría.</div>';
     return;
   }
 
-  const roundsMap = new Map();
+  const grouped = {};
+
   matches.forEach(match => {
-    const round = match.round_number || 0;
-    if (!roundsMap.has(round)) roundsMap.set(round, []);
-    roundsMap.get(round).push(match);
+    const stage = match.stage || "round_robin";
+    if (!grouped[stage]) grouped[stage] = [];
+    grouped[stage].push(match);
   });
 
-  const rounds = Array.from(roundsMap.keys()).sort((a, b) => a - b);
+  function renderStageTitle(stage) {
+    if (stage === "group_stage") return "Fase de grupos";
+    if (stage === "semifinal") return "Semifinales";
+    if (stage === "final") return "Final";
+    return "Rondas";
+  }
 
-  selectiveMatchesContainer.innerHTML = rounds.map(round => `
+  container.innerHTML = Object.keys(grouped).map(stage => `
     <div class="card">
       <div class="head">
         <div>
-          <div class="match-title">Ronda ${round}</div>
-          <div class="meta">Carga los resultados de esta ronda.</div>
+          <div class="match-title">${renderStageTitle(stage)}</div>
         </div>
       </div>
 
-      ${roundsMap.get(round).map(match => `
+      ${grouped[stage].map(match => `
         <div class="game">
           <div class="game-title">
-            ${match.court_name || "Cancha por definir"} · ${formatSelectiveTime(match.start_time)}
+            ${match.court_name || "Cancha por definir"} · ${formatSelectiveTime(match.start_time)} · Ronda ${match.round_number}
           </div>
 
           <div class="team-block">
@@ -1322,10 +1581,19 @@ async function saveSelectiveMatch(matchId, categoryId) {
   document.getElementById(`sm_ok_${matchId}`).textContent = "Guardado";
   setTimeout(() => {
     document.getElementById(`sm_ok_${matchId}`).textContent = "";
-  }, 2000);
+  }, 1500);
 
   await loadSelectiveMatchesAdmin(categoryId);
+
+  if (categoryUsesGroups(activeSelectiveCategory)) {
+    await loadSelectiveGroupStandings(categoryId);
+  }
 }
+
+
+
+
+
 
 
 function logoutAdmin() {

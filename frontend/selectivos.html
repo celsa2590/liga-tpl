@@ -812,7 +812,7 @@
     Selecciona un club para ver sus categorías, cruces, canchas, horarios y tabla en vivo.
   </p>
   <p>
-    El formato general del selectivo considera 5 parejas, 5 rondas y puntaje de 3 por victoria, 1 por empate y 0 por derrota.
+    El formato general del selectivo considera 22 minutos por partido y puntaje de 3 por victoria, 1 por empate y 0 por derrota.
   </p>
 </aside>
 
@@ -990,6 +990,7 @@
     let activeCategoryId = null;
     let activeCategoryMap = [];
     let activeStandings = [];
+    let activeGroupStandings = null;
     let autoRefreshTimer = null;
 
     function formatDate(dateStr) {
@@ -1087,6 +1088,11 @@
       return activeCategoryMap.find(item => Number(item.id) === Number(activeCategoryId));
     }
 
+function categoryUsesGroups(category) {
+  if (!category) return false;
+  return category.category_name === "C/B";
+}
+
 function updateRulesByCategory() {
   const category = getActiveCategory();
 
@@ -1108,33 +1114,39 @@ function updateRulesByCategory() {
   }
 }
 
-    async function refreshCategoryData() {
-      if (!activeCategoryId) return;
+async function refreshCategoryData() {
+  if (!activeCategoryId) return;
 
-      const category = getActiveCategory();
+  const category = getActiveCategory();
 
-      if (category) {
-        document.getElementById("standingsSubtitle").textContent =
-          `${category.gender === "femenino" ? "Femenino" : "Masculino"} · ${category.category_name} · ${formatDate(category.selective_date)} · ${formatTime(category.start_time)} a ${formatTime(category.end_time)}`;
+  if (category) {
+    document.getElementById("standingsSubtitle").textContent =
+      `${category.gender === "femenino" ? "Femenino" : "Masculino"} · ${category.category_name} · ${formatDate(category.selective_date)} · ${formatTime(category.start_time)} a ${formatTime(category.end_time)}`;
 
-        document.getElementById("matchesSubtitle").textContent =
-          `${category.match_duration_minutes} min de juego · ${category.changeover_minutes} min de cambio`;
-      }
+    document.getElementById("matchesSubtitle").textContent =
+      `${category.match_duration_minutes} min de juego · ${category.changeover_minutes} min de cambio`;
+  }
 
-      const [matchesRes, standingsRes] = await Promise.all([
-        fetch(API + `/selective-category/${activeCategoryId}/matches`),
-        fetch(API + `/selective-category/${activeCategoryId}/standings`)
-      ]);
+  const matchesRes = await fetch(API + `/selective-category/${activeCategoryId}/matches`);
+  const matches = await matchesRes.json();
 
-      const matches = await matchesRes.json();
-      const standings = await standingsRes.json();
+  if (categoryUsesGroups(category)) {
+    const groupStandingsRes = await fetch(API + `/selective-category/${activeCategoryId}/group-standings`);
+    activeGroupStandings = await groupStandingsRes.json();
+    activeStandings = [];
+    renderGroupStandings(activeGroupStandings);
+  } else {
+    const standingsRes = await fetch(API + `/selective-category/${activeCategoryId}/standings`);
+    activeStandings = await standingsRes.json();
+    activeGroupStandings = null;
+    renderStandings(activeStandings);
+  }
 
-activeStandings = Array.isArray(standings) ? standings : [];
+  renderMatches(matches, category, activeStandings, activeGroupStandings);
+}
 
-renderStandings(activeStandings);
-renderMatches(matches, category, activeStandings);
 
-    }
+
 
     function renderStandings(data) {
       const leaderContainer = document.getElementById("leaderContainer");
@@ -1212,23 +1224,230 @@ renderMatches(matches, category, activeStandings);
       `;
     }
 
-    function renderMatches(data, category, standings = []) {
-      const container = document.getElementById("matchesContainer");
+function renderGroupStandings(groupedData) {
+  const leaderContainer = document.getElementById("leaderContainer");
+  const topThreeContainer = document.getElementById("topThreeContainer");
+  const standingsContainer = document.getElementById("standingsContainer");
 
-      if (!Array.isArray(data) || !data.length) {
-        container.innerHTML = '<div class="empty">No hay cruces cargados todavía.</div>';
-        return;
-      }
+  leaderContainer.innerHTML = "";
+  topThreeContainer.innerHTML = "";
 
-      const rounds = new Map();
+  if (!groupedData || (!groupedData.A?.length && !groupedData.B?.length)) {
+    standingsContainer.innerHTML = '<div class="empty">No hay tablas de grupos disponibles todavía.</div>';
+    return;
+  }
 
-      data.forEach(match => {
-        const round = match.round_number || 0;
-        if (!rounds.has(round)) rounds.set(round, []);
-        rounds.get(round).push(match);
-      });
+  function renderGroupTable(groupName, rows) {
+    if (!rows || !rows.length) {
+      return `
+        <article class="panel" style="margin-bottom:18px;">
+          <div class="panel-head">
+            <div>
+              <h3 class="panel-title">Grupo ${groupName}</h3>
+              <p class="panel-subtitle">Sin parejas asignadas todavía.</p>
+            </div>
+          </div>
+        </article>
+      `;
+    }
 
-      const sortedRounds = Array.from(rounds.keys()).sort((a, b) => a - b);
+    const leader = rows[0];
+
+    return `
+      <article class="panel" style="margin-bottom:18px;">
+        <div class="panel-head">
+          <div>
+            <h3 class="panel-title">Grupo ${groupName}</h3>
+            <p class="panel-subtitle">Líder actual: <strong>${leader.pair_name}</strong> · ${leader.pts} pts</p>
+          </div>
+        </div>
+
+        <div class="panel-body">
+          <div class="standings-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th class="num">#</th>
+                  <th>Pareja</th>
+                  <th class="num">PJ</th>
+                  <th class="num">GF</th>
+                  <th class="num">GC</th>
+                  <th class="num">DG</th>
+                  <th class="num">PTS</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rows.map((item, index) => `
+                  <tr>
+                    <td class="num">${index + 1}</td>
+                    <td>${item.pair_name}</td>
+                    <td class="num">${item.pj}</td>
+                    <td class="num">${item.gf}</td>
+                    <td class="num">${item.gc}</td>
+                    <td class="num">${item.dg}</td>
+                    <td class="num"><strong>${item.pts}</strong></td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
+  standingsContainer.innerHTML = `
+    ${renderGroupTable("A", groupedData.A || [])}
+    ${renderGroupTable("B", groupedData.B || [])}
+  `;
+}
+
+
+
+
+function renderMatches(data, category, standings = [], groupStandings = null) {
+  const container = document.getElementById("matchesContainer");
+
+  if (!Array.isArray(data) || !data.length) {
+    container.innerHTML = '<div class="empty">No hay cruces cargados todavía.</div>';
+    return;
+  }
+
+  function getRestingPairs(roundMatches, standingsRows) {
+    const allPairs = standingsRows.map(item => item.pair_name);
+    const playingPairs = new Set();
+
+    roundMatches.forEach(match => {
+      if (match.pair_1_name) playingPairs.add(match.pair_1_name);
+      if (match.pair_2_name) playingPairs.add(match.pair_2_name);
+    });
+
+    return allPairs.filter(name => !playingPairs.has(name));
+  }
+
+  function renderMatchCard(match, category) {
+    return `
+      <article class="match-card">
+        <div class="match-top">
+          <span>${match.court_name || "Cancha por definir"}</span>
+          <span>${category ? formatTime(category.start_time) : "--:--"}</span>
+        </div>
+
+        <div class="match-main">
+          <div class="match-line">
+            <div class="match-pair">${match.pair_1_name}</div>
+            <div class="match-vs">VS</div>
+            <div class="match-pair">${match.pair_2_name}</div>
+          </div>
+
+          <div class="match-score">
+            ${(match.pair_1_games ?? "-")} - ${(match.pair_2_games ?? "-")}
+          </div>
+
+          <div class="match-status">${normalizeStatus(match.result_status)}</div>
+        </div>
+      </article>
+    `;
+  }
+
+  function renderRoundGroups(matchesRows, standingsRows) {
+    const rounds = new Map();
+
+    matchesRows.forEach(match => {
+      const round = match.round_number || 0;
+      if (!rounds.has(round)) rounds.set(round, []);
+      rounds.get(round).push(match);
+    });
+
+    const sortedRounds = Array.from(rounds.keys()).sort((a, b) => a - b);
+
+    return `
+      <div class="matches-wrap">
+        ${sortedRounds.map(round => {
+          const roundMatches = rounds.get(round);
+          const restingPairs = getRestingPairs(roundMatches, standingsRows || []);
+
+          return `
+            <section class="round-group">
+              <div class="round-title">Ronda ${round}</div>
+
+              ${restingPairs.length ? `
+                <div class="rest-card">
+                  <div class="rest-title">${restingPairs.length === 1 ? "Pareja que descansa" : "Parejas que descansan"}</div>
+                  <div class="rest-list">${restingPairs.join("<br>")}</div>
+                </div>
+              ` : ""}
+
+              <div class="round-grid">
+                ${roundMatches.map(match => renderMatchCard(match, category)).join("")}
+              </div>
+            </section>
+          `;
+        }).join("")}
+      </div>
+    `;
+  }
+
+  if (!categoryUsesGroups(category)) {
+    container.innerHTML = renderRoundGroups(data, standings);
+    return;
+  }
+
+  const groupStageMatches = data.filter(item => item.stage === "group_stage");
+  const semifinalMatches = data.filter(item => item.stage === "semifinal");
+  const finalMatches = data.filter(item => item.stage === "final");
+
+  const groupAStandings = groupStandings?.A || [];
+  const groupBStandings = groupStandings?.B || [];
+
+  const groupAMatchRows = groupStageMatches.filter(match => {
+    const allPairs = new Set(groupAStandings.map(x => x.pair_name));
+    return allPairs.has(match.pair_1_name) && allPairs.has(match.pair_2_name);
+  });
+
+  const groupBMatchRows = groupStageMatches.filter(match => {
+    const allPairs = new Set(groupBStandings.map(x => x.pair_name));
+    return allPairs.has(match.pair_1_name) && allPairs.has(match.pair_2_name);
+  });
+
+  container.innerHTML = `
+    ${(groupAMatchRows.length || groupAStandings.length) ? `
+      <section class="round-group" style="margin-bottom:20px;">
+        <div class="round-title">Grupo A</div>
+        ${renderRoundGroups(groupAMatchRows, groupAStandings)}
+      </section>
+    ` : ""}
+
+    ${(groupBMatchRows.length || groupBStandings.length) ? `
+      <section class="round-group" style="margin-bottom:20px;">
+        <div class="round-title">Grupo B</div>
+        ${renderRoundGroups(groupBMatchRows, groupBStandings)}
+      </section>
+    ` : ""}
+
+    ${semifinalMatches.length ? `
+      <section class="round-group" style="margin-bottom:20px;">
+        <div class="round-title">Semifinales</div>
+        <div class="round-grid">
+          ${semifinalMatches.map(match => renderMatchCard(match, category)).join("")}
+        </div>
+      </section>
+    ` : ""}
+
+    ${finalMatches.length ? `
+      <section class="round-group">
+        <div class="round-title">Final</div>
+        <div class="round-grid">
+          ${finalMatches.map(match => renderMatchCard(match, category)).join("")}
+        </div>
+      </section>
+    ` : ""}
+  `;
+}
+
+
+
+
 
 
 function getRestingPairs(roundMatches, standings) {
