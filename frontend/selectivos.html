@@ -840,7 +840,7 @@
 <div class="rules-grid">
   <article class="rule-card">
     <div class="rule-label">Formato</div>
-    <div class="rule-value">Segń categoria</div>
+    <div class="rule-value">Según categoria</div>
     <div class="rule-meta">D/C 1 grupo - C/B 2 grupos</div>
   </article>
 
@@ -1014,12 +1014,21 @@
       return "Programado";
     }
 
-    async function loadSelectives() {
-      const res = await fetch(API + "/selectives");
-      const data = await res.json();
-      selectivesData = Array.isArray(data) ? data : [];
-      renderClubButtons();
-    }
+
+async function loadSelectives() {
+  const container = document.getElementById("clubButtons");
+
+  try {
+    const res = await fetch(API + "/selectives");
+    const data = await res.json();
+    selectivesData = Array.isArray(data) ? data : [];
+    renderClubButtons();
+  } catch (error) {
+    console.error("Error cargando selectivos:", error);
+    container.innerHTML = '<div class="empty">No se pudieron cargar los clubes.</div>';
+  }
+}
+
 
     function renderClubButtons() {
       const container = document.getElementById("clubButtons");
@@ -1450,63 +1459,7 @@ function renderMatches(data, category, standings = [], groupStandings = null) {
 
 
 
-function getRestingPairs(roundMatches, standings) {
-  const allPairs = standings.map(item => item.pair_name);
-  const playingPairs = new Set();
 
-  roundMatches.forEach(match => {
-    if (match.pair_1_name) playingPairs.add(match.pair_1_name);
-    if (match.pair_2_name) playingPairs.add(match.pair_2_name);
-  });
-
-  return allPairs.filter(name => !playingPairs.has(name));
-}
-
-      container.innerHTML = `
-        <div class="matches-wrap">
-          ${sortedRounds.map(round => `
-      
-
-<section class="round-group">
-  <div class="round-title">Ronda ${round}</div>
-
-  ${(() => {
-    const restingPairs = getRestingPairs(rounds.get(round), standings);
-    if (!restingPairs.length) return "";
-    return `
-      <div class="rest-card">
-        <div class="rest-title">${restingPairs.length === 1 ? "Pareja que descansa" : "Parejas que descansan"}</div>
-        <div class="rest-list">${restingPairs.join("<br>")}</div>
-      </div>
-    `;
-  })()}
-
-  <div class="round-grid">
-    ${rounds.get(round).map(match => `
-
-
-<div class="match-main">
-  <div class="match-line">
-    <div class="match-pair">${match.pair_1_name}</div>
-    <div class="match-vs">VS</div>
-    <div class="match-pair">${match.pair_2_name}</div>
-  </div>
-
-  <div class="match-score">
-    ${(match.pair_1_games ?? "-")} - ${(match.pair_2_games ?? "-")}
-  </div>
-
-  <div class="match-status">${normalizeStatus(match.result_status)}</div>
-</div>
-
-                  </article>
-                `).join("")}
-              </div>
-            </section>
-          `).join("")}
-        </div>
-      `;
-    }
 
     function startAutoRefresh() {
       if (autoRefreshTimer) clearInterval(autoRefreshTimer);
