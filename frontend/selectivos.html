@@ -287,27 +287,34 @@
       gap: 10px;
     }
 
-    .club-btn,
-    .category-btn {
-      padding: 10px 14px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.10);
-      color: var(--text);
-      font-size: 0.92rem;
-      font-weight: 800;
-      cursor: pointer;
-      transition: 0.18s ease;
-    }
 
-    .club-btn:hover,
-    .category-btn:hover,
-    .club-btn.active,
-    .category-btn.active {
-      background: rgba(214,176,106,0.16);
-      border-color: rgba(214,176,106,0.30);
-      color: var(--gold-2);
-    }
+.club-btn,
+.category-btn {
+  padding: 11px 16px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--text);
+  font-size: 0.92rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+.club-btn:hover,
+.category-btn:hover {
+  transform: translateY(-1px);
+}
+
+.club-btn:hover,
+.category-btn:hover,
+.club-btn.active,
+.category-btn.active {
+  background: rgba(214,176,106,0.16);
+  border-color: rgba(214,176,106,0.32);
+  color: var(--gold-2);
+}
+
 
     .status-row {
       margin-top: 14px;
@@ -410,14 +417,23 @@
 
     .standing-card.gold {
       border-color: rgba(255,215,0,0.30);
+      background:
+        radial-gradient(circle at top right, rgba(255,215,0,0.12), transparent 28%),
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
     }
 
     .standing-card.silver {
       border-color: rgba(192,192,192,0.30);
+  background:
+    radial-gradient(circle at top right, rgba(192,192,192,0.10), transparent 28%),
+    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
     }
 
     .standing-card.bronze {
       border-color: rgba(205,127,50,0.30);
+  background:
+    radial-gradient(circle at top right, rgba(205,127,50,0.10), transparent 28%),
+    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
     }
 
     .standing-rank {
@@ -513,8 +529,8 @@
     .match-main {
       padding: 12px 18px 18px;
       display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      gap: 18px;
+      grid-template-columns: 1fr;
+      gap: 10px;
       align-items: center;
     }
 
@@ -523,7 +539,7 @@
     }
 
     .match-pair {
-      font-size: 1.15rem;
+      font-size: 1.18rem;
       font-weight: 900;
       line-height: 1.3;
     }
@@ -539,12 +555,13 @@
       font-weight: 900;
       color: var(--gold-2);
       text-align: center;
+      letter-spacing: 0.06em;
     }
 
     .match-score {
-      margin-top: 10px;
+      margin-top: 2px;
       text-align: center;
-      font-size: 1.28rem;
+      font-size: 1.55rem;
       font-weight: 900;
       color: var(--text);
     }
@@ -559,6 +576,15 @@
       letter-spacing: 0.06em;
     }
 
+
+.match-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
     .loading,
     .empty {
       color: var(--muted-2);
@@ -566,10 +592,95 @@
       font-size: 0.96rem;
     }
 
+
+.rules-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.rule-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+
+.rule-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(214,176,106,0.24);
+}
+
+.rule-card.alert {
+  border-color: rgba(214,176,106,0.28);
+  background:
+    radial-gradient(circle at top right, rgba(214,176,106,0.12), transparent 30%),
+    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
+}
+
+.rule-label {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--muted-2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.rule-value {
+  margin-top: 8px;
+  font-size: 1.15rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.rule-meta {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.rule-blocks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.rule-panel {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.rule-panel h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.rule-panel p {
+  margin: 10px 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+  font-size: 0.94rem;
+}
+
+.rule-highlight {
+  color: var(--gold-2);
+  font-weight: 800;
+}
+
+
     @media (max-width: 980px) {
       .hero-inner,
       .selector-grid,
-      .standings-grid {
+      .rules-grid,
+      .rule-blocks {
         grid-template-columns: 1fr;
       }
     }
@@ -660,16 +771,20 @@
         <div class="hero-badge">🎾 Selectivos TPL</div>
         <h1>Seguimiento de <span class="highlight">selectivos</span> por club</h1>
         <p>
-          Primero selecciona un club. Luego podrás ver sus categorías, cruces por ronda, canchas, horarios y tabla en vivo del selectivo.
+          En esta sección podrás ver bases del selectivo, categorías, cruces por ronda, canchas, horarios y tabla en vivo.
         </p>
       </div>
 
 <aside class="hero-side">
-  <h3>Reglas del selectivo</h3>
+  <h3>Resumen rápido</h3>
   <p>
-    Revisa más abajo el formato, puntaje, clasificación, premio y reglas de puntualidad para la jornada.
+    Selecciona un club para ver sus categorías, cruces, canchas, horarios y tabla en vivo.
+  </p>
+  <p>
+    El formato general del selectivo considera 5 parejas, 5 rondas y puntaje de 3 por victoria, 1 por empate y 0 por derrota.
   </p>
 </aside>
+
     </div>
   </section>
 
@@ -689,107 +804,95 @@
     </div>
 
     <div class="panel-body">
-      <div class="standings-grid">
-        <article class="standing-card">
-          <div class="standing-rank">Formato</div>
-          <div class="standing-name">Todos contra todos</div>
-          <div class="standing-points">
-            <span>5 parejas</span>
-            <span>5 rondas</span>
-            <span>2 canchas</span>
-          </div>
-        </article>
 
-        <article class="standing-card">
-          <div class="standing-rank">Duración</div>
-          <div class="standing-name">22 min por partido</div>
-          <div class="standing-points">
-            <span>+ 2 min cambio</span>
-            <span>Tiempo corrido</span>
-          </div>
-        </article>
 
-        <article class="standing-card">
-          <div class="standing-rank">Puntaje</div>
-          <div class="standing-name">3 / 1 / 0</div>
-          <div class="standing-points">
-            <span>Victoria: 3</span>
-            <span>Empate: 1</span>
-            <span>Derrota: 0</span>
-          </div>
-        </article>
-      </div>
+<div class="rules-grid">
+  <article class="rule-card">
+    <div class="rule-label">Formato</div>
+    <div class="rule-value">Todos contra todos</div>
+    <div class="rule-meta">5 parejas · 5 rondas · 2 canchas</div>
+  </article>
 
-      <div class="selector-grid">
-        <article class="selector-card">
-          <h2 class="selector-title">Sistema de juego</h2>
-          <p class="selector-subtitle">
-            Cada partido dura <strong>22 minutos</strong>. Se juega lo que alcance dentro de ese tiempo y el marcador al finalizar será el resultado oficial del match.
-          </p>
-          <p class="selector-subtitle">
-            Si el partido termina empatado, ambas parejas suman <strong>1 punto</strong>.
-          </p>
-        </article>
+  <article class="rule-card">
+    <div class="rule-label">Duración</div>
+    <div class="rule-value">22 min por partido</div>
+    <div class="rule-meta">+ 2 min de cambio · Tiempo corrido</div>
+  </article>
 
-        <article class="selector-card">
-          <h2 class="selector-title">Criterios de clasificación</h2>
-          <p class="selector-subtitle">
-            La tabla se ordena por:
-          </p>
-          <p class="selector-subtitle">
-            1. Puntos<br>
-            2. Diferencia de games<br>
-            3. Games a favor<br>
-            4. Enfrentamiento directo
-          </p>
-        </article>
-      </div>
+  <article class="rule-card">
+    <div class="rule-label">Puntaje</div>
+    <div class="rule-value">3 / 1 / 0</div>
+    <div class="rule-meta">Victoria: 3 · Empate: 1 · Derrota: 0</div>
+  </article>
 
-      <div class="selector-grid" style="margin-top:18px;">
-        <article class="selector-card">
-          <h2 class="selector-title">Clasificación final</h2>
-          <p class="selector-subtitle">
-            🥇 <strong>1er lugar:</strong> pareja titular del club para la TPL<br>
-            🥈 <strong>2do lugar:</strong> pareja suplente
-          </p>
-          <p class="selector-subtitle">
-            La pareja suplente podrá reemplazar a la titular en caso de ausencia en alguna fecha.
-          </p>
-        </article>
+  <article class="rule-card">
+    <div class="rule-label">Clasificación</div>
+    <div class="rule-value">1° Titular · 2° Suplente</div>
+    <div class="rule-meta">El suplente podrá reemplazar a la titular en caso de ausencia, excepto en la final.</div>
+  </article>
 
-        <article class="selector-card">
-          <h2 class="selector-title">Premio e inscripción</h2>
-          <p class="selector-subtitle">
-            💰 Valor del selectivo: <strong>$7.000 por persona</strong><br>
-            🎽 Premio: <strong>polera oficial del club</strong>
-          </p>
-          <p class="selector-subtitle">
-            Solo la pareja ganadora deberá pagar <strong>$20.000 por persona</strong> para inscribirse en la liga.
-          </p>
-        </article>
-      </div>
+  <article class="rule-card">
+    <div class="rule-label">Premio</div>
+    <div class="rule-value">Polera oficial del club</div>
+    <div class="rule-meta">Valor del selectivo: $7.000 por persona</div>
+  </article>
 
-      <div class="selector-grid" style="margin-top:18px;">
-        <article class="selector-card">
-          <h2 class="selector-title">Puntualidad</h2>
-          <p class="selector-subtitle">
-            Se dará una tolerancia máxima de <strong>5 minutos</strong> desde el inicio de cada ronda.
-          </p>
-          <p class="selector-subtitle">
-            Si una pareja no está en cancha dentro de ese tiempo, comenzará el partido con un marcador de <strong>0-2 en contra</strong>.
-          </p>
-        </article>
+  <article class="rule-card alert">
+    <div class="rule-label">Puntualidad</div>
+    <div class="rule-value">5 min de tolerancia</div>
+    <div class="rule-meta">Luego la pareja comienza 0-2 abajo. Si el retraso llega a 15 minutos, el partido podrá darse por perdido.</div>
+  </article>
+</div>
 
-        <article class="selector-card">
-          <h2 class="selector-title">Importante</h2>
-          <p class="selector-subtitle">
-            El tiempo no se detiene y el partido finalizará al término de la ronda. No habrá calentamiento si el partido ya comenzó.
-          </p>
-          <p class="selector-subtitle">
-            La idea es competir, pasarlo bien y que el formato sea justo para todas las parejas.
-          </p>
-        </article>
-      </div>
+<div class="rule-blocks">
+  <article class="rule-panel">
+    <h3>Sistema de juego</h3>
+    <p>
+      Cada partido dura <span class="rule-highlight">22 minutos</span>. Se juega dentro de ese tiempo y el marcador al finalizar será el resultado oficial del match.
+    </p>
+    <p>
+      Si el partido termina empatado, ambas parejas suman <span class="rule-highlight">1 punto</span>.
+    </p>
+  </article>
+
+  <article class="rule-panel">
+    <h3>Criterios de clasificación</h3>
+    <p>
+      La tabla se ordena por:
+    </p>
+    <p>
+      1. Puntos<br>
+      2. Diferencia de games<br>
+      3. Games a favor<br>
+      4. Enfrentamiento directo
+    </p>
+  </article>
+
+  <article class="rule-panel">
+    <h3>Inscripción a la liga</h3>
+    <p>
+      La pareja ganadora deberá formalizar su inscripción en la liga TPL a más tardar a fines de abril.
+    </p>
+    <p>
+      En caso contrario, se correrá la lista: la pareja que haya obtenido el segundo lugar pasará a ser titular y la del tercer lugar asumirá como suplente.
+    </p>
+  </article>
+
+  <article class="rule-panel">
+    <h3>Importante</h3>
+    <p>
+      El tiempo no se detiene y el partido finalizará al término de la ronda.
+    </p>
+    <p>
+      No habrá calentamiento si el partido ya comenzó. La idea es competir, pasarlo bien y que el formato sea justo para todas las parejas.
+    </p>
+  </article>
+</div>
+
+
+
+
+
     </div>
   </div>
 </section>
@@ -1091,23 +1194,23 @@
                       <span>${category ? formatTime(category.start_time) : "--:--"}</span>
                     </div>
 
-                    <div class="match-main">
-                      <div class="match-side">
-                        <div class="match-pair">${match.pair_1_name}</div>
-                      </div>
 
-                      <div>
-                        <div class="match-vs">VS</div>
-                        <div class="match-score">
-                          ${(match.pair_1_games ?? "-")} - ${(match.pair_2_games ?? "-")}
-                        </div>
-                        <div class="match-status">${normalizeStatus(match.result_status)}</div>
-                      </div>
 
-                      <div class="match-side">
-                        <div class="match-pair">${match.pair_2_name}</div>
-                      </div>
-                    </div>
+<div class="match-main">
+  <div class="match-line">
+    <div class="match-pair">${match.pair_1_name}</div>
+    <div class="match-vs">VS</div>
+    <div class="match-pair">${match.pair_2_name}</div>
+  </div>
+
+  <div class="match-score">
+    ${(match.pair_1_games ?? "-")} - ${(match.pair_2_games ?? "-")}
+  </div>
+
+  <div class="match-status">${normalizeStatus(match.result_status)}</div>
+</div>
+
+
                   </article>
                 `).join("")}
               </div>
