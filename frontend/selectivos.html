@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Selectivos | TPL Chile</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      background: #05080f;
+      color: #fff;
+    }
+
+    .container {
+      width: min(1100px, 92%);
+      margin: auto;
+      padding: 30px 0;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    .nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .nav a {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      text-decoration: none;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .nav a:hover {
+      background: rgba(255,255,255,0.12);
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .category-btn {
+      margin-right: 10px;
+      margin-bottom: 10px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .category-btn.active {
+      background: #d6b06a;
+      color: #081120;
+    }
+
+    .match {
+      padding: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .round {
+      margin-top: 20px;
+      font-weight: 800;
+      color: #d6b06a;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      text-align: left;
+    }
+
+    th {
+      color: #94a3b8;
+      font-size: 0.85rem;
+    }
+
+    .loading {
+      color: #94a3b8;
+      padding: 20px 0;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- NAV -->
+  <div class="nav">
+    <a href="/">Inicio</a>
+    <a href="/teams.html">Equipos</a>
+    <a href="/players.html">Jugadores</a>
+    <a href="/selectivos.html">Selectivos</a>
+  </div>
+
+  <h1>Selectivos TPL</h1>
+
+  <div id="categories"></div>
+
+  <div class="card">
+    <h2>Partidos</h2>
+    <div id="matches" class="loading">Selecciona una categoría</div>
+  </div>
+
+  <div class="card">
+    <h2>Tabla</h2>
+    <div id="standings" class="loading">Selecciona una categoría</div>
+  </div>
+
+</div>
+
+<script>
+const API = "https://liga-backend-f08y.onrender.com";
+
+let currentCategory = null;
+
+async function loadCategories() {
+  const res = await fetch(API + "/selective/1");
+  const data = await res.json();
+
+  const container = document.getElementById("categories");
+
+  container.innerHTML = data.categories.map(cat => `
+    <button class="category-btn" onclick="selectCategory(${cat.id}, this)">
+      ${cat.gender.toUpperCase()} ${cat.category_name}
+    </button>
+  `).join("");
+}
+
+function selectCategory(id, el) {
+  currentCategory = id;
+
+  document.querySelectorAll(".category-btn")
+    .forEach(b => b.classList.remove("active"));
+
+  el.classList.add("active");
+
+  loadMatches();
+  loadStandings();
+}
+
+async function loadMatches() {
+  const container = document.getElementById("matches");
+  container.innerHTML = "Cargando...";
+
+  const res = await fetch(API + `/selective-category/${currentCategory}/matches`);
+  const data = await res.json();
+
+  if (!data.length) {
+    container.innerHTML = "Sin partidos";
+    return;
+  }
+
+  let html = "";
+  let currentRound = null;
+
+  data.forEach(m => {
+    if (m.round_number !== currentRound) {
+      currentRound = m.round_number;
+      html += `<div class="round">Ronda ${currentRound}</div>`;
+    }
+
+    html += `
+      <div class="match">
+        ${m.pair_1_name} vs ${m.pair_2_name}
+        <br>
+        <small>${m.court_name || ''}</small>
+        <br>
+        <strong>
+          ${m.pair_1_games ?? '-'} - ${m.pair_2_games ?? '-'}
+        </strong>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+async function loadStandings() {
+  const container = document.getElementById("standings");
+  container.innerHTML = "Cargando...";
+
+  const res = await fetch(API + `/selective-category/${currentCategory}/standings`);
+  const data = await res.json();
+
+  if (!data.length) {
+    container.innerHTML = "Sin datos";
+    return;
+  }
+
+  container.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Pareja</th>
+          <th>PJ</th>
+          <th>GF</th>
+          <th>GC</th>
+          <th>DG</th>
+          <th>PTS</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${data.map((p, i) => `
+          <tr>
+            <td>${i+1}</td>
+            <td>${p.pair_name}</td>
+            <td>${p.pj}</td>
+            <td>${p.gf}</td>
+            <td>${p.gc}</td>
+            <td>${p.dg}</td>
+            <td><strong>${p.pts}</strong></td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+loadCategories();
+</script>
+
+</body>
+</html>

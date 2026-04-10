@@ -265,6 +265,182 @@ def get_players():
 
     return rows
 
+@app.get("/selectives")
+def get_selectives():
+    query = text("""
+        SELECT
+            id,
+            club_name,
+            title,
+            selective_date,
+            status,
+            notes
+        FROM selectives
+        ORDER BY selective_date, id
+    """)
+
+    with engine.connect() as conn:
+        result = conn.execute(query)
+        rows = [dict(row._mapping) for row in result]
+
+    return rows
+
+
+@app.get("/selective/{selective_id}")
+def get_selective_detail(selective_id: int):
+    with engine.connect() as conn:
+        selective = conn.execute(text("""
+            SELECT
+                id,
+                club_name,
+                title,
+                selective_date,
+                status,
+                notes
+            FROM selectives
+            WHERE id = :selective_id
+        """), {"selective_id": selective_id}).mappings().first()
+
+        if not selective:
+            raise HTTPException(status_code=404, detail="Selectivo no encontrado")
+
+        courts = conn.execute(text("""
+            SELECT
+                id,
+                selective_id,
+                name,
+                display_order
+            FROM selective_courts
+            WHERE selective_id = :selective_id
+            ORDER BY display_order, id
+        """), {"selective_id": selective_id}).mappings().all()
+
+        categories = conn.execute(text("""
+            SELECT
+                id,
+                selective_id,
+                gender,
+                category_name,
+                selective_date,
+                start_time,
+                end_time,
+                match_duration_minutes,
+                changeover_minutes,
+                points_win,
+                points_draw,
+                points_loss
+            FROM selective_categories
+            WHERE selective_id = :selective_id
+            ORDER BY selective_date, start_time, id
+        """), {"selective_id": selective_id}).mappings().all()
+
+    return {
+        "selective": dict(selective),
+        "courts": [dict(c) for c in courts],
+        "categories": [dict(c) for c in categories]
+    }
+
+
+@app.get("/selective-category/{category_id}/matches")
+def get_selective_category_matches(category_id: int):
+    query = text("""
+        SELECT
+            sm.id,
+            sm.selective_category_id,
+            sm.round_number,
+            sm.display_order,
+            sm.court_id,
+            sc.name AS court_name,
+            sm.pair_1_id,
+            p1.pair_name AS pair_1_name,
+            sm.pair_2_id,
+            p2.pair_name AS pair_2_name,
+            sm.pair_1_games,
+            sm.pair_2_games,
+            sm.result_status,
+            sm.played_at,
+            sm.notes
+        FROM selective_matches sm
+        LEFT JOIN selective_courts sc
+          ON sc.id = sm.court_id
+        JOIN selective_pairs p1
+          ON p1.id = sm.pair_1_id
+        JOIN selective_pairs p2
+          ON p2.id = sm.pair_2_id
+        WHERE sm.selective_category_id = :category_id
+        ORDER BY sm.round_number, sm.display_order, sm.id
+    """)
+
+    with engine.connect() as conn:
+        result = conn.execute(query, {"category_id": category_id})
+        rows = [dict(row._mapping) for row in result]
+
+    return rows
+
+
+@app.get("/selective-category/{category_id}/standings")
+def get_selective_category_standings(category_id: int):
+    query = text("""
+        SELECT
+            selective_category_id,
+            pair_id,
+            pair_name,
+            pj,
+            gf,
+            gc,
+            dg,
+            pts
+        FROM selective_standings
+        WHERE selective_category_id = :category_id
+        ORDER BY pts DESC, dg DESC, gf DESC, pair_name
+    """)
+
+    with engine.connect() as conn:
+        result = conn.execute(query, {"category_id": category_id})
+        rows = [dict(row._mapping) for row in result]
+
+    return rows
+
+
+@app.post("/admin/selective-match/{match_id}/result")
+def update_selective_match_result(
+    match_id: int,
+    payload: dict = Body(...),
+    authorization: str = Header(None)
+):
+    verify_admin_jwt(authorization)
+
+    pair_1_games = payload.get("pair_1_games")
+    pair_2_games = payload.get("pair_2_games")
+
+    if pair_1_games is None or pair_2_games is None:
+        raise HTTPException(status_code=400, detail="Debes enviar pair_1_games y pair_2_games")
+
+    query = text("""
+        UPDATE selective_matches
+        SET
+            pair_1_games = :pair_1_games,
+            pair_2_games = :pair_2_games,
+            result_status = 'finished',
+            played_at = NOW(),
+            updated_at = NOW()
+        WHERE id = :match_id
+        RETURNING id
+    """)
+
+    with engine.connect() as conn:
+        result = conn.execute(query, {
+            "match_id": match_id,
+            "pair_1_games": pair_1_games,
+            "pair_2_games": pair_2_games
+        }).fetchone()
+        conn.commit()
+
+    if not result:
+        raise HTTPException(status_code=404, detail="Match no encontrado")
+
+    return {"status": "ok", "match_id": match_id}
+
 
 @app.get("/admin/matches")
 def get_admin_matches(authorization: str = Header(None)):

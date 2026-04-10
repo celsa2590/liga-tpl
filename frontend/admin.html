@@ -542,6 +542,7 @@ img {
 <div class="section-tabs">
   <div id="tabMatches" class="section-tab active">Partidos</div>
   <div id="tabPending" class="section-tab">Inscripciones</div>
+  <div id="tabSelectivos" class="section-tab">Selectivos</div>
 </div>
 
 <div id="matchesSection">
@@ -553,6 +554,31 @@ img {
   <div id="pendingContainer"></div>
 </div>
 
+<div id="selectivosSection" style="display:none;">
+  <div class="card">
+    <div class="head">
+      <div>
+        <div class="match-title">Gestión de selectivos</div>
+        <div class="meta">Carga resultados de cada match y actualiza la tabla automáticamente.</div>
+      </div>
+    </div>
+
+    <div style="display:grid; gap:12px; margin-top:10px;">
+      <label class="small-label" for="selectiveCategorySelect">Categoría</label>
+      <select id="selectiveCategorySelect">
+        <option value="">Selecciona una categoría</option>
+        <option value="1">Femenino D/C</option>
+        <option value="2">Femenino C/B</option>
+        <option value="3">Masculino 5ta</option>
+        <option value="4">Masculino 4ta</option>
+      </select>
+    </div>
+
+    <div id="selectiveMatchesContainer" style="margin-top:18px;">
+      <div class="empty">Selecciona una categoría para ver los cruces.</div>
+    </div>
+  </div>
+</div>
 
   <script>
     const API = "https://liga-backend-f08y.onrender.com";
@@ -1045,17 +1071,16 @@ function switchSection(section) {
 
   document.getElementById("matchesSection").style.display = section === "matches" ? "" : "none";
   document.getElementById("pendingSection").style.display = section === "pending" ? "" : "none";
+  document.getElementById("selectivosSection").style.display = section === "selectivos" ? "" : "none";
 
   document.getElementById("tabMatches").classList.toggle("active", section === "matches");
   document.getElementById("tabPending").classList.toggle("active", section === "pending");
+  document.getElementById("tabSelectivos").classList.toggle("active", section === "selectivos");
 }
 
-document.getElementById("tabMatches").addEventListener("click", () => switchSection("matches"));
-document.getElementById("tabPending").addEventListener("click", async () => {
-  switchSection("pending");
-  await loadPendingPlayers();
+document.getElementById("tabSelectivos").addEventListener("click", () => {
+  switchSection("selectivos");
 });
-
 
 
 
@@ -1104,6 +1129,116 @@ function logoutAdmin() {
   localStorage.removeItem("admin_username");
   window.location.href = "/admin-login.html";
 }
+
+const selectiveCategorySelect = document.getElementById("selectiveCategorySelect");
+const selectiveMatchesContainer = document.getElementById("selectiveMatchesContainer");
+
+async function loadSelectiveMatches(categoryId) {
+  if (!categoryId) {
+    selectiveMatchesContainer.innerHTML = '<div class="empty">Selecciona una categoría para ver los cruces.</div>';
+    return;
+  }
+
+  const res = await fetch(API + `/selective-category/${categoryId}/matches`, {
+    headers: getAuthHeaders()
+  });
+
+  handleUnauthorized(res);
+
+  const matches = await res.json();
+
+  if (!Array.isArray(matches) || matches.length === 0) {
+    selectiveMatchesContainer.innerHTML = '<div class="empty">No hay cruces cargados para esta categoría.</div>';
+    return;
+  }
+
+  selectiveMatchesContainer.innerHTML = matches.map(match => `
+    <div class="game">
+      <div class="game-title">
+        Ronda ${match.round_number} · ${match.court_name || 'Cancha por definir'}
+      </div>
+
+      <div class="team-block">
+        <div class="team-name">${match.pair_1_name}</div>
+      </div>
+
+      <div class="team-block">
+        <div class="team-name">${match.pair_2_name}</div>
+      </div>
+
+      <div class="inline-actions" style="align-items:end;">
+        <div>
+          <div class="small-label">Games ${match.pair_1_name}</div>
+          <input type="number" min="0" id="sm_p1_${match.id}" value="${match.pair_1_games ?? ''}" />
+        </div>
+
+        <div>
+          <div class="small-label">Games ${match.pair_2_name}</div>
+          <input type="number" min="0" id="sm_p2_${match.id}" value="${match.pair_2_games ?? ''}" />
+        </div>
+
+        <button type="button" onclick="saveSelectiveMatch(${match.id})">Guardar</button>
+        <span id="sm_ok_${match.id}" class="ok"></span>
+      </div>
+    </div>
+  `).join("");
+}
+
+async function saveSelectiveMatch(matchId) {
+  const pair1 = document.getElementById(`sm_p1_${matchId}`).value;
+  const pair2 = document.getElementById(`sm_p2_${matchId}`).value;
+
+  if (pair1 === "" || pair2 === "") {
+    alert("Debes ingresar ambos marcadores.");
+    return;
+  }
+
+  const res = await fetch(API + `/admin/selective-match/${matchId}/result`, {
+    method: "POST",
+    headers: getAuthHeaders({
+      "Content-Type": "application/json"
+    }),
+    body: JSON.stringify({
+      pair_1_games: Number(pair1),
+      pair_2_games: Number(pair2)
+    })
+  });
+
+  handleUnauthorized(res);
+
+  if (!res.ok) {
+    alert("No se pudo guardar el resultado.");
+    return;
+  }
+
+  document.getElementById(`sm_ok_${matchId}`).textContent = "Guardado";
+  setTimeout(() => {
+    document.getElementById(`sm_ok_${matchId}`).textContent = "";
+  }, 2000);
+}
+
+function switchSection(section) {
+  currentSection = section;
+
+  document.getElementById("matchesSection").style.display = section === "matches" ? "" : "none";
+  document.getElementById("pendingSection").style.display = section === "pending" ? "" : "none";
+  document.getElementById("selectivosSection").style.display = section === "selectivos" ? "" : "none";
+
+  document.getElementById("tabMatches").classList.toggle("active", section === "matches");
+  document.getElementById("tabPending").classList.toggle("active", section === "pending");
+  document.getElementById("tabSelectivos").classList.toggle("active", section === "selectivos");
+}
+
+document.getElementById("tabSelectivos").addEventListener("click", () => {
+  switchSection("selectivos");
+});
+
+if (selectiveCategorySelect) {
+  selectiveCategorySelect.addEventListener("change", (e) => {
+    loadSelectiveMatches(e.target.value);
+  });
+}
+
   </script>
 </body>
 </html>
