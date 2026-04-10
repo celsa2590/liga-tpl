@@ -554,31 +554,40 @@ img {
   <div id="pendingContainer"></div>
 </div>
 
+
+
 <div id="selectivosSection" style="display:none;">
   <div class="card">
     <div class="head">
       <div>
         <div class="match-title">Gestión de selectivos</div>
-        <div class="meta">Carga resultados de cada match y actualiza la tabla automáticamente.</div>
+        <div class="meta">Primero selecciona el club, luego la categoría y después carga los resultados de cada match.</div>
       </div>
     </div>
 
-    <div style="display:grid; gap:12px; margin-top:10px;">
-      <label class="small-label" for="selectiveCategorySelect">Categoría</label>
-      <select id="selectiveCategorySelect">
-        <option value="">Selecciona una categoría</option>
-        <option value="1">Femenino D/C</option>
-        <option value="2">Femenino C/B</option>
-        <option value="3">Masculino 5ta</option>
-        <option value="4">Masculino 4ta</option>
-      </select>
+    <div style="display:grid; gap:14px; margin-top:10px;">
+      <div>
+        <div class="small-label">Club</div>
+        <select id="selectiveClubSelect" style="margin-top:8px;">
+          <option value="">Selecciona un club</option>
+        </select>
+      </div>
+
+      <div>
+        <div class="small-label">Categoría</div>
+        <select id="selectiveCategorySelect" style="margin-top:8px;" disabled>
+          <option value="">Selecciona una categoría</option>
+        </select>
+      </div>
     </div>
 
     <div id="selectiveMatchesContainer" style="margin-top:18px;">
-      <div class="empty">Selecciona una categoría para ver los cruces.</div>
+      <div class="empty">Selecciona un club para comenzar.</div>
     </div>
   </div>
 </div>
+
+
 
   <script>
     const API = "https://liga-backend-f08y.onrender.com";
@@ -610,6 +619,10 @@ function handleUnauthorized(res) {
 let currentRound = "all";
 let currentSection = "matches";
 let teamPlayersData = [];
+
+let selectivesData = [];
+let activeSelectiveId = null;
+let activeSelectiveCategories = [];
 
     function groupMatches(data) {
       const map = new Map();
@@ -1078,8 +1091,9 @@ function switchSection(section) {
   document.getElementById("tabSelectivos").classList.toggle("active", section === "selectivos");
 }
 
-document.getElementById("tabSelectivos").addEventListener("click", () => {
+document.getElementById("tabSelectivos").addEventListener("click", async () => {
   switchSection("selectivos");
+  await loadSelectivesAdmin();
 });
 
 
@@ -1122,22 +1136,96 @@ async function initAdmin() {
   await loadAdminMatches();
 }
 
+document.getElementById("selectiveClubSelect").addEventListener("change", onSelectiveClubChange);
+document.getElementById("selectiveCategorySelect").addEventListener("change", onSelectiveCategoryChange);
+
 initAdmin().catch(console.error);
 
-function logoutAdmin() {
-  localStorage.removeItem("admin_token");
-  localStorage.removeItem("admin_username");
-  window.location.href = "/admin-login.html";
+async function loadSelectivesAdmin() {
+  const selectiveClubSelect = document.getElementById("selectiveClubSelect");
+  const selectiveCategorySelect = document.getElementById("selectiveCategorySelect");
+  const selectiveMatchesContainer = document.getElementById("selectiveMatchesContainer");
+
+  selectiveMatchesContainer.innerHTML = '<div class="empty">Cargando selectivos...</div>';
+
+  const res = await fetch(API + "/selectives", {
+    headers: getAuthHeaders()
+  });
+
+  handleUnauthorized(res);
+
+  const data = await res.json();
+  selectivesData = Array.isArray(data) ? data : [];
+
+  selectiveClubSelect.innerHTML = '<option value="">Selecciona un club</option>' +
+    selectivesData.map(item => `
+      <option value="${item.id}">
+        ${item.club_name}
+      </option>
+    `).join("");
+
+  selectiveCategorySelect.innerHTML = '<option value="">Selecciona una categoría</option>';
+  selectiveCategorySelect.disabled = true;
+
+  selectiveMatchesContainer.innerHTML = '<div class="empty">Selecciona un club para comenzar.</div>';
 }
 
-const selectiveCategorySelect = document.getElementById("selectiveCategorySelect");
-const selectiveMatchesContainer = document.getElementById("selectiveMatchesContainer");
+async function onSelectiveClubChange() {
+  const selectiveClubSelect = document.getElementById("selectiveClubSelect");
+  const selectiveCategorySelect = document.getElementById("selectiveCategorySelect");
+  const selectiveMatchesContainer = document.getElementById("selectiveMatchesContainer");
 
-async function loadSelectiveMatches(categoryId) {
-  if (!categoryId) {
-    selectiveMatchesContainer.innerHTML = '<div class="empty">Selecciona una categoría para ver los cruces.</div>';
+  const selectiveId = selectiveClubSelect.value;
+  activeSelectiveId = selectiveId ? Number(selectiveId) : null;
+
+  selectiveCategorySelect.innerHTML = '<option value="">Selecciona una categoría</option>';
+  selectiveCategorySelect.disabled = true;
+  selectiveMatchesContainer.innerHTML = '<div class="empty">Selecciona una categoría.</div>';
+
+  if (!activeSelectiveId) {
+    activeSelectiveCategories = [];
     return;
   }
+
+  const res = await fetch(API + `/selective/${activeSelectiveId}`, {
+    headers: getAuthHeaders()
+  });
+
+  handleUnauthorized(res);
+
+  const detail = await res.json();
+  activeSelectiveCategories = Array.isArray(detail.categories) ? detail.categories : [];
+
+  selectiveCategorySelect.innerHTML = '<option value="">Selecciona una categoría</option>' +
+    activeSelectiveCategories.map(cat => `
+      <option value="${cat.id}">
+        ${(cat.gender === "femenino" ? "Femenino" : "Masculino")} · ${cat.category_name}
+      </option>
+    `).join("");
+
+  selectiveCategorySelect.disabled = false;
+}
+
+async function onSelectiveCategoryChange() {
+  const selectiveCategorySelect = document.getElementById("selectiveCategorySelect");
+  const categoryId = selectiveCategorySelect.value;
+
+  if (!categoryId) {
+    document.getElementById("selectiveMatchesContainer").innerHTML = '<div class="empty">Selecciona una categoría.</div>';
+    return;
+  }
+
+  await loadSelectiveMatchesAdmin(categoryId);
+}
+
+function formatSelectiveTime(timeStr) {
+  if (!timeStr) return "--:--";
+  return String(timeStr).slice(0, 5);
+}
+
+async function loadSelectiveMatchesAdmin(categoryId) {
+  const selectiveMatchesContainer = document.getElementById("selectiveMatchesContainer");
+  selectiveMatchesContainer.innerHTML = '<div class="empty">Cargando matches...</div>';
 
   const res = await fetch(API + `/selective-category/${categoryId}/matches`, {
     headers: getAuthHeaders()
@@ -1147,44 +1235,64 @@ async function loadSelectiveMatches(categoryId) {
 
   const matches = await res.json();
 
-  if (!Array.isArray(matches) || matches.length === 0) {
+  if (!Array.isArray(matches) || !matches.length) {
     selectiveMatchesContainer.innerHTML = '<div class="empty">No hay cruces cargados para esta categoría.</div>';
     return;
   }
 
-  selectiveMatchesContainer.innerHTML = matches.map(match => `
-    <div class="game">
-      <div class="game-title">
-        Ronda ${match.round_number} · ${match.court_name || 'Cancha por definir'}
-      </div>
+  const roundsMap = new Map();
+  matches.forEach(match => {
+    const round = match.round_number || 0;
+    if (!roundsMap.has(round)) roundsMap.set(round, []);
+    roundsMap.get(round).push(match);
+  });
 
-      <div class="team-block">
-        <div class="team-name">${match.pair_1_name}</div>
-      </div>
+  const rounds = Array.from(roundsMap.keys()).sort((a, b) => a - b);
 
-      <div class="team-block">
-        <div class="team-name">${match.pair_2_name}</div>
-      </div>
-
-      <div class="inline-actions" style="align-items:end;">
+  selectiveMatchesContainer.innerHTML = rounds.map(round => `
+    <div class="card">
+      <div class="head">
         <div>
-          <div class="small-label">Games ${match.pair_1_name}</div>
-          <input type="number" min="0" id="sm_p1_${match.id}" value="${match.pair_1_games ?? ''}" />
+          <div class="match-title">Ronda ${round}</div>
+          <div class="meta">Carga los resultados de esta ronda.</div>
         </div>
-
-        <div>
-          <div class="small-label">Games ${match.pair_2_name}</div>
-          <input type="number" min="0" id="sm_p2_${match.id}" value="${match.pair_2_games ?? ''}" />
-        </div>
-
-        <button type="button" onclick="saveSelectiveMatch(${match.id})">Guardar</button>
-        <span id="sm_ok_${match.id}" class="ok"></span>
       </div>
+
+      ${roundsMap.get(round).map(match => `
+        <div class="game">
+          <div class="game-title">
+            ${match.court_name || "Cancha por definir"} · ${formatSelectiveTime(match.start_time)}
+          </div>
+
+          <div class="team-block">
+            <div class="team-name">${match.pair_1_name}</div>
+          </div>
+
+          <div class="team-block">
+            <div class="team-name">${match.pair_2_name}</div>
+          </div>
+
+          <div class="inline-actions" style="align-items:end;">
+            <div>
+              <div class="small-label">Games ${match.pair_1_name}</div>
+              <input type="number" min="0" id="sm_p1_${match.id}" value="${match.pair_1_games ?? ""}" />
+            </div>
+
+            <div>
+              <div class="small-label">Games ${match.pair_2_name}</div>
+              <input type="number" min="0" id="sm_p2_${match.id}" value="${match.pair_2_games ?? ""}" />
+            </div>
+
+            <button type="button" onclick="saveSelectiveMatch(${match.id}, ${categoryId})">Guardar</button>
+            <span id="sm_ok_${match.id}" class="ok"></span>
+          </div>
+        </div>
+      `).join("")}
     </div>
   `).join("");
 }
 
-async function saveSelectiveMatch(matchId) {
+async function saveSelectiveMatch(matchId, categoryId) {
   const pair1 = document.getElementById(`sm_p1_${matchId}`).value;
   const pair2 = document.getElementById(`sm_p2_${matchId}`).value;
 
@@ -1215,28 +1323,15 @@ async function saveSelectiveMatch(matchId) {
   setTimeout(() => {
     document.getElementById(`sm_ok_${matchId}`).textContent = "";
   }, 2000);
+
+  await loadSelectiveMatchesAdmin(categoryId);
 }
 
-function switchSection(section) {
-  currentSection = section;
 
-  document.getElementById("matchesSection").style.display = section === "matches" ? "" : "none";
-  document.getElementById("pendingSection").style.display = section === "pending" ? "" : "none";
-  document.getElementById("selectivosSection").style.display = section === "selectivos" ? "" : "none";
-
-  document.getElementById("tabMatches").classList.toggle("active", section === "matches");
-  document.getElementById("tabPending").classList.toggle("active", section === "pending");
-  document.getElementById("tabSelectivos").classList.toggle("active", section === "selectivos");
-}
-
-document.getElementById("tabSelectivos").addEventListener("click", () => {
-  switchSection("selectivos");
-});
-
-if (selectiveCategorySelect) {
-  selectiveCategorySelect.addEventListener("change", (e) => {
-    loadSelectiveMatches(e.target.value);
-  });
+function logoutAdmin() {
+  localStorage.removeItem("admin_token");
+  localStorage.removeItem("admin_username");
+  window.location.href = "/admin-login.html";
 }
 
   </script>

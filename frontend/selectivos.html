@@ -1,248 +1,1012 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HNJSKSNR2C"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HNJSKSNR2C');
+</script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Selectivos | TPL Chile</title>
+  <meta
+    name="description"
+    content="Sigue los selectivos de clubes de TPL Chile con cruces, canchas, horarios y tabla en vivo."
+  />
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&family=Sora:wght@700;800&display=swap" rel="stylesheet">
 
   <style>
+    :root {
+      --bg: #05080f;
+      --panel: rgba(255, 255, 255, 0.04);
+      --line: rgba(255, 255, 255, 0.08);
+      --line-strong: rgba(214, 176, 106, 0.18);
+      --text: #ffffff;
+      --muted: rgba(255, 255, 255, 0.72);
+      --muted-2: rgba(255, 255, 255, 0.55);
+      --gold: #d4af6a;
+      --gold-2: #e6c98f;
+      --blue: #93c5fd;
+      --success: #86efac;
+      --shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
-      font-family: Inter, system-ui, sans-serif;
-      background: #05080f;
-      color: #fff;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top right, #0f1b2d, #06090f),
+        linear-gradient(180deg, #05080f 0%, #07101b 100%);
+      color: var(--text);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
     }
 
     .container {
-      width: min(1100px, 92%);
-      margin: auto;
-      padding: 30px 0;
+      width: min(var(--max), calc(100% - 28px));
+      margin: 0 auto;
     }
 
-    h1 {
-      margin-bottom: 10px;
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(5, 8, 15, 0.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(214, 176, 106, 0.1);
     }
 
-    .nav {
+    .site-header-inner {
+      width: min(var(--max), calc(100% - 28px));
+      min-height: 78px;
+      margin: 0 auto;
       display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
     }
 
-    .nav a {
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-logo {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+      border-radius: 50%;
+      padding: 0;
+      background: none;
+      border: none;
+      box-shadow: none;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 1.05rem;
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-subtitle {
+      margin-top: 4px;
+      font-size: 0.85rem;
+      color: var(--muted-2);
+    }
+
+    .main-nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-link {
       padding: 10px 14px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      text-decoration: none;
-      color: #fff;
+      font-size: 0.92rem;
       font-weight: 700;
+      color: var(--text);
+      transition: 0.18s ease;
     }
 
-    .nav a:hover {
-      background: rgba(255,255,255,0.12);
+    .nav-link:hover,
+    .nav-link.active {
+      background: rgba(214,176,106,0.12);
+      color: var(--gold-2);
     }
 
-    .card {
-      background: rgba(255,255,255,0.05);
-      border-radius: 18px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-
-    .category-btn {
-      margin-right: 10px;
-      margin-bottom: 10px;
-      padding: 10px 16px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      border: none;
-      color: #fff;
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    .category-btn.active {
-      background: #d6b06a;
+    .nav-link.admin {
+      background: var(--gold);
       color: #081120;
     }
 
-    .match {
-      padding: 12px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+    .nav-link.admin:hover {
+      background: var(--gold-2);
+      color: #081120;
     }
 
-    .round {
-      margin-top: 20px;
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 44px 0 26px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 86% 18%, rgba(214,176,106,0.16), transparent 18%),
+        radial-gradient(circle at 12% 84%, rgba(147,197,253,0.08), transparent 16%),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: auto, auto, 34px 34px, 34px 34px;
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      width: min(var(--max), calc(100% - 28px));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+      gap: 28px;
+      align-items: center;
+      padding: 20px 0 28px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(214,176,106,0.1);
+      border: 1px solid rgba(214,176,106,0.24);
+      color: var(--gold-2);
+      font-size: 0.84rem;
       font-weight: 800;
-      color: #d6b06a;
+      margin-bottom: 18px;
+      backdrop-filter: blur(8px);
+    }
+
+    .hero h1 {
+      margin: 0;
+      max-width: 760px;
+      font-family: Sora, Inter, system-ui, sans-serif;
+      font-size: clamp(2.3rem, 5vw, 4.4rem);
+      line-height: 1.03;
+      letter-spacing: -0.02em;
+      font-weight: 800;
+    }
+
+    .highlight {
+      color: var(--gold);
+    }
+
+    .hero p {
+      margin: 18px 0 0;
+      max-width: 620px;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .hero-side,
+    .panel,
+    .match-card,
+    .selector-card,
+    .standing-card,
+    .leader-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-side {
+      padding: 20px;
+    }
+
+    .hero-side h3 {
+      margin: 0;
+      font-size: 1.15rem;
+    }
+
+    .hero-side p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .content {
+      padding-bottom: 42px;
+    }
+
+    .section {
+      padding: 16px 0 0;
+    }
+
+    .selector-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .selector-card {
+      padding: 20px;
+    }
+
+    .selector-title {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+
+    .selector-subtitle {
+      margin: 8px 0 14px;
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .club-buttons,
+    .category-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .club-btn,
+    .category-btn {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: var(--text);
+      font-size: 0.92rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .club-btn:hover,
+    .category-btn:hover,
+    .club-btn.active,
+    .category-btn.active {
+      background: rgba(214,176,106,0.16);
+      border-color: rgba(214,176,106,0.30);
+      color: var(--gold-2);
+    }
+
+    .status-row {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(147,197,253,0.12);
+      border: 1px solid rgba(147,197,253,0.22);
+      color: var(--blue);
+      font-size: 0.84rem;
+      font-weight: 800;
+    }
+
+    .refresh-note {
+      color: var(--muted-2);
+      font-size: 0.88rem;
+    }
+
+    .panel {
+      overflow: hidden;
+    }
+
+    .panel-head {
+      padding: 22px 22px 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: end;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 1.35rem;
+      font-weight: 800;
+    }
+
+    .panel-subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.94rem;
+    }
+
+    .panel-body {
+      padding: 0 22px 22px;
+    }
+
+    .leader-card {
+      padding: 18px;
+      margin-bottom: 18px;
+      border: 1px solid rgba(214,176,106,0.24);
+      background:
+        radial-gradient(circle at top right, rgba(214,176,106,0.14), transparent 30%),
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
+    }
+
+    .leader-eyebrow {
+      color: var(--gold-2);
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .leader-name {
+      margin-top: 8px;
+      font-size: 1.5rem;
+      font-weight: 900;
+    }
+
+    .leader-meta {
+      margin-top: 8px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .standings-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .standing-card {
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .standing-card.gold {
+      border-color: rgba(255,215,0,0.30);
+    }
+
+    .standing-card.silver {
+      border-color: rgba(192,192,192,0.30);
+    }
+
+    .standing-card.bronze {
+      border-color: rgba(205,127,50,0.30);
+    }
+
+    .standing-rank {
+      font-size: 0.84rem;
+      font-weight: 800;
+      color: var(--muted-2);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .standing-name {
+      margin-top: 10px;
+      font-size: 1.08rem;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .standing-points {
+      margin-top: 12px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .standings-table-wrap {
+      overflow-x: auto;
     }
 
     table {
       width: 100%;
+      min-width: 720px;
       border-collapse: collapse;
-      margin-top: 12px;
     }
 
     th, td {
-      padding: 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 14px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
       text-align: left;
     }
 
     th {
-      color: #94a3b8;
-      font-size: 0.85rem;
+      color: var(--muted-2);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
     }
 
-    .loading {
-      color: #94a3b8;
+    td.num, th.num {
+      text-align: center;
+    }
+
+    .matches-wrap {
+      display: grid;
+      gap: 16px;
+    }
+
+    .round-group {
+      display: grid;
+      gap: 12px;
+    }
+
+    .round-title {
+      color: var(--gold-2);
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+    }
+
+    .round-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .match-card {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .match-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 18px 0;
+      color: var(--muted-2);
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .match-main {
+      padding: 12px 18px 18px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .match-side {
+      text-align: center;
+    }
+
+    .match-pair {
+      font-size: 1.15rem;
+      font-weight: 900;
+      line-height: 1.3;
+    }
+
+    .match-meta {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .match-vs {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--gold-2);
+      text-align: center;
+    }
+
+    .match-score {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 1.28rem;
+      font-weight: 900;
+      color: var(--text);
+    }
+
+    .match-status {
+      margin-top: 8px;
+      text-align: center;
+      color: var(--muted-2);
+      font-size: 0.88rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .loading,
+    .empty {
+      color: var(--muted-2);
       padding: 20px 0;
+      font-size: 0.96rem;
     }
 
+    @media (max-width: 980px) {
+      .hero-inner,
+      .selector-grid,
+      .standings-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .site-header-inner {
+        min-height: 72px;
+        align-items: flex-start;
+        padding: 12px 0;
+        flex-direction: column;
+      }
+
+      .main-nav {
+        width: 100%;
+        justify-content: flex-start;
+        gap: 8px;
+      }
+
+      .nav-link {
+        font-size: 0.86rem;
+        padding: 9px 12px;
+      }
+
+      .container,
+      .site-header-inner,
+      .hero-inner {
+        width: min(var(--max), calc(100% - 20px));
+      }
+
+      .hero {
+        padding-top: 28px;
+      }
+
+      .match-main {
+        grid-template-columns: 1fr;
+      }
+
+      .match-vs {
+        order: 2;
+      }
+
+      .match-side:first-child {
+        order: 1;
+      }
+
+      .match-side:last-child {
+        order: 3;
+      }
+
+      .standings-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .panel-head,
+      .panel-body {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+    }
   </style>
 </head>
-
 <body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="brand" href="/">
+        <img class="brand-logo" src="/assets/logos/tpl_logo_trans.png" alt="TPL Chile" />
+        <div>
+          <div class="brand-title">TPL Chile</div>
+          <div class="brand-subtitle">Liga interclubes de pádel</div>
+        </div>
+      </a>
 
-<div class="container">
+      <nav class="main-nav">
+        <a class="nav-link" href="/">Inicio</a>
+        <a class="nav-link" href="/teams.html">Equipos</a>
+        <a class="nav-link" href="/players.html">Jugadores</a>
+        <a class="nav-link active" href="/selectivos.html">Selectivos</a>
+        <a class="nav-link" href="/photos.html">Fotos</a>
+        <a class="nav-link" href="/sponsors.html">Auspiciadores</a>
+        <a class="nav-link admin" href="/admin.html">Admin</a>
+      </nav>
+    </div>
+  </header>
 
-  <!-- NAV -->
-  <div class="nav">
-    <a href="/">Inicio</a>
-    <a href="/teams.html">Equipos</a>
-    <a href="/players.html">Jugadores</a>
-    <a href="/selectivos.html">Selectivos</a>
-  </div>
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-badge">🎾 Selectivos TPL</div>
+        <h1>Seguimiento de <span class="highlight">selectivos</span> por club</h1>
+        <p>
+          Primero selecciona un club. Luego podrás ver sus categorías, cruces por ronda, canchas, horarios y tabla en vivo del selectivo.
+        </p>
+      </div>
 
-  <h1>Selectivos TPL</h1>
+      <aside class="hero-side">
+        <h3>Actualización automática</h3>
+        <p>
+          Esta página se refresca sola cada 20 segundos para que puedas seguir resultados y posiciones sin recargar manualmente.
+        </p>
+      </aside>
+    </div>
+  </section>
 
-  <div id="categories"></div>
+  <main class="content">
+    <div class="container">
+      <section class="section">
+        <div class="selector-grid">
+          <article class="selector-card">
+            <h2 class="selector-title">1. Selecciona el club</h2>
+            <p class="selector-subtitle">Primero elige el club para desplegar sus categorías disponibles.</p>
+            <div id="clubButtons" class="club-buttons">
+              <div class="loading">Cargando clubes...</div>
+            </div>
+          </article>
 
-  <div class="card">
-    <h2>Partidos</h2>
-    <div id="matches" class="loading">Selecciona una categoría</div>
-  </div>
+          <article class="selector-card">
+            <h2 class="selector-title">2. Selecciona la categoría</h2>
+            <p class="selector-subtitle">Luego elige la categoría para ver sus partidos y tabla.</p>
+            <div id="categoryButtons" class="category-buttons">
+              <div class="empty">Selecciona un club primero.</div>
+            </div>
 
-  <div class="card">
-    <h2>Tabla</h2>
-    <div id="standings" class="loading">Selecciona una categoría</div>
-  </div>
+            <div class="status-row">
+              <div id="selectiveStatus" class="status-pill">Sin club seleccionado</div>
+              <div class="refresh-note" id="refreshNote">Actualización automática cada 20 segundos</div>
+            </div>
+          </article>
+        </div>
+      </section>
 
-</div>
+      <section class="section">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2 class="panel-title">Tabla del selectivo</h2>
+              <p class="panel-subtitle" id="standingsSubtitle">Selecciona un club y una categoría para ver la tabla.</p>
+            </div>
+          </div>
 
-<script>
-const API = "https://liga-backend-f08y.onrender.com";
+          <div class="panel-body">
+            <div id="leaderContainer"></div>
+            <div id="topThreeContainer"></div>
+            <div id="standingsContainer" class="loading">Sin categoría seleccionada.</div>
+          </div>
+        </div>
+      </section>
 
-let currentCategory = null;
+      <section class="section">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2 class="panel-title">Cruces y resultados</h2>
+              <p class="panel-subtitle" id="matchesSubtitle">Selecciona un club y una categoría para ver los partidos.</p>
+            </div>
+          </div>
 
-async function loadCategories() {
-  const res = await fetch(API + "/selective/1");
-  const data = await res.json();
+          <div class="panel-body">
+            <div id="matchesContainer" class="loading">Sin categoría seleccionada.</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
 
-  const container = document.getElementById("categories");
+  <script>
+    const API = "https://liga-backend-f08y.onrender.com";
 
-  container.innerHTML = data.categories.map(cat => `
-    <button class="category-btn" onclick="selectCategory(${cat.id}, this)">
-      ${cat.gender.toUpperCase()} ${cat.category_name}
-    </button>
-  `).join("");
-}
+    let selectivesData = [];
+    let activeSelectiveId = null;
+    let activeCategoryId = null;
+    let activeCategoryMap = [];
+    let autoRefreshTimer = null;
 
-function selectCategory(id, el) {
-  currentCategory = id;
-
-  document.querySelectorAll(".category-btn")
-    .forEach(b => b.classList.remove("active"));
-
-  el.classList.add("active");
-
-  loadMatches();
-  loadStandings();
-}
-
-async function loadMatches() {
-  const container = document.getElementById("matches");
-  container.innerHTML = "Cargando...";
-
-  const res = await fetch(API + `/selective-category/${currentCategory}/matches`);
-  const data = await res.json();
-
-  if (!data.length) {
-    container.innerHTML = "Sin partidos";
-    return;
-  }
-
-  let html = "";
-  let currentRound = null;
-
-  data.forEach(m => {
-    if (m.round_number !== currentRound) {
-      currentRound = m.round_number;
-      html += `<div class="round">Ronda ${currentRound}</div>`;
+    function formatDate(dateStr) {
+      if (!dateStr) return "Fecha por confirmar";
+      const date = new Date(dateStr);
+      return date.toLocaleDateString("es-CL", {
+        weekday: "long",
+        day: "2-digit",
+        month: "long"
+      });
     }
 
-    html += `
-      <div class="match">
-        ${m.pair_1_name} vs ${m.pair_2_name}
-        <br>
-        <small>${m.court_name || ''}</small>
-        <br>
-        <strong>
-          ${m.pair_1_games ?? '-'} - ${m.pair_2_games ?? '-'}
-        </strong>
-      </div>
-    `;
-  });
+    function formatTime(timeStr) {
+      if (!timeStr) return "--:--";
+      return String(timeStr).slice(0, 5);
+    }
 
-  container.innerHTML = html;
-}
+    function normalizeStatus(value) {
+      const v = (value || "").toString().trim().toLowerCase();
+      if (v === "finished" || v === "finalizado") return "Finalizado";
+      return "Programado";
+    }
 
-async function loadStandings() {
-  const container = document.getElementById("standings");
-  container.innerHTML = "Cargando...";
+    async function loadSelectives() {
+      const res = await fetch(API + "/selectives");
+      const data = await res.json();
+      selectivesData = Array.isArray(data) ? data : [];
+      renderClubButtons();
+    }
 
-  const res = await fetch(API + `/selective-category/${currentCategory}/standings`);
-  const data = await res.json();
+    function renderClubButtons() {
+      const container = document.getElementById("clubButtons");
 
-  if (!data.length) {
-    container.innerHTML = "Sin datos";
-    return;
-  }
+      if (!selectivesData.length) {
+        container.innerHTML = '<div class="empty">No hay selectivos cargados.</div>';
+        return;
+      }
 
-  container.innerHTML = `
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Pareja</th>
-          <th>PJ</th>
-          <th>GF</th>
-          <th>GC</th>
-          <th>DG</th>
-          <th>PTS</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${data.map((p, i) => `
-          <tr>
-            <td>${i+1}</td>
-            <td>${p.pair_name}</td>
-            <td>${p.pj}</td>
-            <td>${p.gf}</td>
-            <td>${p.gc}</td>
-            <td>${p.dg}</td>
-            <td><strong>${p.pts}</strong></td>
-          </tr>
-        `).join("")}
-      </tbody>
-    </table>
-  `;
-}
+      container.innerHTML = selectivesData.map(item => `
+        <button
+          class="club-btn ${Number(item.id) === Number(activeSelectiveId) ? "active" : ""}"
+          onclick="selectClub(${item.id})">
+          ${item.club_name}
+        </button>
+      `).join("");
+    }
 
-loadCategories();
-</script>
+    async function selectClub(selectiveId) {
+      activeSelectiveId = selectiveId;
+      activeCategoryId = null;
+      renderClubButtons();
 
+      document.getElementById("standingsContainer").innerHTML = '<div class="loading">Selecciona una categoría.</div>';
+      document.getElementById("matchesContainer").innerHTML = '<div class="loading">Selecciona una categoría.</div>';
+      document.getElementById("leaderContainer").innerHTML = "";
+      document.getElementById("topThreeContainer").innerHTML = "";
+
+      const res = await fetch(API + `/selective/${selectiveId}`);
+      const detail = await res.json();
+
+      activeCategoryMap = Array.isArray(detail.categories) ? detail.categories : [];
+
+      document.getElementById("selectiveStatus").textContent =
+        `${detail.selective.club_name} · ${detail.selective.status || "activo"}`;
+
+      renderCategoryButtons();
+    }
+
+    function renderCategoryButtons() {
+      const container = document.getElementById("categoryButtons");
+
+      if (!activeCategoryMap.length) {
+        container.innerHTML = '<div class="empty">Este club aún no tiene categorías cargadas.</div>';
+        return;
+      }
+
+      container.innerHTML = activeCategoryMap.map(cat => `
+        <button
+          class="category-btn ${Number(cat.id) === Number(activeCategoryId) ? "active" : ""}"
+          onclick="selectCategory(${cat.id})">
+          ${cat.gender === "femenino" ? "Femenino" : "Masculino"} · ${cat.category_name}
+        </button>
+      `).join("");
+    }
+
+    async function selectCategory(categoryId) {
+      activeCategoryId = categoryId;
+      renderCategoryButtons();
+      await refreshCategoryData();
+      startAutoRefresh();
+    }
+
+    function getActiveCategory() {
+      return activeCategoryMap.find(item => Number(item.id) === Number(activeCategoryId));
+    }
+
+    async function refreshCategoryData() {
+      if (!activeCategoryId) return;
+
+      const category = getActiveCategory();
+
+      if (category) {
+        document.getElementById("standingsSubtitle").textContent =
+          `${category.gender === "femenino" ? "Femenino" : "Masculino"} · ${category.category_name} · ${formatDate(category.selective_date)} · ${formatTime(category.start_time)} a ${formatTime(category.end_time)}`;
+
+        document.getElementById("matchesSubtitle").textContent =
+          `${category.match_duration_minutes} min de juego · ${category.changeover_minutes} min de cambio`;
+      }
+
+      const [matchesRes, standingsRes] = await Promise.all([
+        fetch(API + `/selective-category/${activeCategoryId}/matches`),
+        fetch(API + `/selective-category/${activeCategoryId}/standings`)
+      ]);
+
+      const matches = await matchesRes.json();
+      const standings = await standingsRes.json();
+
+      renderStandings(standings);
+      renderMatches(matches, category);
+    }
+
+    function renderStandings(data) {
+      const leaderContainer = document.getElementById("leaderContainer");
+      const topThreeContainer = document.getElementById("topThreeContainer");
+      const standingsContainer = document.getElementById("standingsContainer");
+
+      if (!Array.isArray(data) || !data.length) {
+        leaderContainer.innerHTML = "";
+        topThreeContainer.innerHTML = "";
+        standingsContainer.innerHTML = '<div class="empty">No hay tabla disponible todavía.</div>';
+        return;
+      }
+
+      const leader = data[0];
+
+      leaderContainer.innerHTML = `
+        <div class="leader-card">
+          <div class="leader-eyebrow">Líder actual</div>
+          <div class="leader-name">${leader.pair_name}</div>
+          <div class="leader-meta">
+            ${leader.pts} pts · PJ ${leader.pj} · DG ${leader.dg > 0 ? "+" + leader.dg : leader.dg} · GF ${leader.gf}
+          </div>
+        </div>
+      `;
+
+      topThreeContainer.innerHTML = `
+        <div class="standings-grid">
+          ${data.slice(0, 3).map((item, index) => {
+            const cls = index === 0 ? "gold" : index === 1 ? "silver" : "bronze";
+            const label = index === 0 ? "1er lugar" : index === 1 ? "2do lugar" : "3er lugar";
+            return `
+              <article class="standing-card ${cls}">
+                <div class="standing-rank">${label}</div>
+                <div class="standing-name">${item.pair_name}</div>
+                <div class="standing-points">
+                  <span><strong>${item.pts}</strong> pts</span>
+                  <span>PJ ${item.pj}</span>
+                  <span>DG ${item.dg > 0 ? "+" + item.dg : item.dg}</span>
+                </div>
+              </article>
+            `;
+          }).join("")}
+        </div>
+      `;
+
+      standingsContainer.innerHTML = `
+        <div class="standings-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th class="num">#</th>
+                <th>Pareja</th>
+                <th class="num">PJ</th>
+                <th class="num">GF</th>
+                <th class="num">GC</th>
+                <th class="num">DG</th>
+                <th class="num">PTS</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${data.map((item, index) => `
+                <tr>
+                  <td class="num">${index + 1}</td>
+                  <td>${item.pair_name}</td>
+                  <td class="num">${item.pj}</td>
+                  <td class="num">${item.gf}</td>
+                  <td class="num">${item.gc}</td>
+                  <td class="num">${item.dg}</td>
+                  <td class="num"><strong>${item.pts}</strong></td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderMatches(data, category) {
+      const container = document.getElementById("matchesContainer");
+
+      if (!Array.isArray(data) || !data.length) {
+        container.innerHTML = '<div class="empty">No hay cruces cargados todavía.</div>';
+        return;
+      }
+
+      const rounds = new Map();
+
+      data.forEach(match => {
+        const round = match.round_number || 0;
+        if (!rounds.has(round)) rounds.set(round, []);
+        rounds.get(round).push(match);
+      });
+
+      const sortedRounds = Array.from(rounds.keys()).sort((a, b) => a - b);
+
+      container.innerHTML = `
+        <div class="matches-wrap">
+          ${sortedRounds.map(round => `
+            <section class="round-group">
+              <div class="round-title">Ronda ${round}</div>
+
+              <div class="round-grid">
+                ${rounds.get(round).map(match => `
+                  <article class="match-card">
+                    <div class="match-top">
+                      <span>${match.court_name || "Cancha por definir"}</span>
+                      <span>${category ? formatTime(category.start_time) : "--:--"}</span>
+                    </div>
+
+                    <div class="match-main">
+                      <div class="match-side">
+                        <div class="match-pair">${match.pair_1_name}</div>
+                      </div>
+
+                      <div>
+                        <div class="match-vs">VS</div>
+                        <div class="match-score">
+                          ${(match.pair_1_games ?? "-")} - ${(match.pair_2_games ?? "-")}
+                        </div>
+                        <div class="match-status">${normalizeStatus(match.result_status)}</div>
+                      </div>
+
+                      <div class="match-side">
+                        <div class="match-pair">${match.pair_2_name}</div>
+                      </div>
+                    </div>
+                  </article>
+                `).join("")}
+              </div>
+            </section>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function startAutoRefresh() {
+      if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+
+      autoRefreshTimer = setInterval(() => {
+        if (activeCategoryId) {
+          refreshCategoryData();
+        }
+      }, 20000);
+    }
+
+    loadSelectives();
+  </script>
 </body>
 </html>
