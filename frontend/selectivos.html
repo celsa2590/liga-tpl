@@ -505,6 +505,46 @@
       letter-spacing: 0.02em;
     }
 
+
+.stage-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+}
+
+.stage-badge.group-a {
+  background: rgba(147,197,253,0.12);
+  color: #93c5fd;
+  border-color: rgba(147,197,253,0.24);
+}
+
+.stage-badge.group-b {
+  background: rgba(196,181,253,0.12);
+  color: #c4b5fd;
+  border-color: rgba(196,181,253,0.24);
+}
+
+.stage-badge.semifinal {
+  background: rgba(214,176,106,0.12);
+  color: #e6c98f;
+  border-color: rgba(214,176,106,0.28);
+}
+
+.stage-badge.final {
+  background: rgba(214,176,106,0.2);
+  color: #fff3cf;
+  border-color: rgba(214,176,106,0.38);
+  box-shadow: 0 0 0 1px rgba(214,176,106,0.08) inset;
+}
+
     .round-grid {
       display: grid;
       gap: 12px;
@@ -1422,21 +1462,21 @@ function renderMatches(data, category, standings = [], groupStandings = null) {
   container.innerHTML = `
     ${(groupAMatchRows.length || groupAStandings.length) ? `
       <section class="round-group" style="margin-bottom:20px;">
-        <div class="round-title">Grupo A</div>
+        <div class="round-title"><span class="stage-badge group-a">Grupo A</span></div>
         ${renderRoundGroups(groupAMatchRows, groupAStandings)}
       </section>
     ` : ""}
 
     ${(groupBMatchRows.length || groupBStandings.length) ? `
       <section class="round-group" style="margin-bottom:20px;">
-        <div class="round-title">Grupo B</div>
+        <div class="round-title"><span class="stage-badge group-b">Grupo B</span></div>
         ${renderRoundGroups(groupBMatchRows, groupBStandings)}
       </section>
     ` : ""}
 
     ${semifinalMatches.length ? `
       <section class="round-group" style="margin-bottom:20px;">
-        <div class="round-title">Semifinales</div>
+        <div class="round-title"><span class="stage-badge semifinal">Semifinales</span></div>
         <div class="round-grid">
           ${semifinalMatches.map(match => renderMatchCard(match, category)).join("")}
         </div>
@@ -1445,7 +1485,7 @@ function renderMatches(data, category, standings = [], groupStandings = null) {
 
     ${finalMatches.length ? `
       <section class="round-group">
-        <div class="round-title">Final</div>
+        <div class="round-title"><span class="stage-badge final">Final</span></div>
         <div class="round-grid">
           ${finalMatches.map(match => renderMatchCard(match, category)).join("")}
         </div>
