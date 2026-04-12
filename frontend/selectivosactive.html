@@ -839,6 +839,38 @@
       }
 
 
+.summary-block {
+  margin-top: 12px;
+}
+
+.summary-label {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--muted-2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.summary-text {
+  margin-top: 4px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.summary-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+  margin: 16px 0;
+}
+
+.summary-foot {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
 .match-line {
   flex-direction: column;
   gap: 8px;
@@ -893,18 +925,45 @@
         </p>
       </div>
 
+
 <aside class="hero-side">
   <h3>Resumen rápido</h3>
-  <p>
-    Categorias D/C y B/C finalizadas. 
-    Campeonas D/C: <span class="highlight">Solange y Marcela</span>
-    Campeonas C/B: <span class="highlight">Jaz y Kari</span>
-    Próximante 5ta y 4ta en juego. Sábado 18/04.
-  </p>
-  <p>
-    El formato general del selectivo considera 22 minutos por partido y puntaje de 3 por victoria, 1 por empate y 0 por derrota.
+
+  <div class="summary-block">
+    <div class="summary-label">Categorías finalizadas</div>
+    <div class="summary-text">
+      D/C y C/B
+    </div>
+  </div>
+
+  <div class="summary-block">
+    <div class="summary-label">Campeonas D/C</div>
+    <div class="summary-text highlight">
+      Solange y Marcela
+    </div>
+  </div>
+
+  <div class="summary-block">
+    <div class="summary-label">Campeonas C/B</div>
+    <div class="summary-text highlight">
+      Jaz y Kari
+    </div>
+  </div>
+
+  <div class="summary-block">
+    <div class="summary-label">Próximas categorías</div>
+    <div class="summary-text">
+      5ta y 4ta en juego · Sábado 18/04
+    </div>
+  </div>
+
+  <div class="summary-divider"></div>
+
+  <p class="summary-foot">
+    Formato general: partidos de 22 minutos · 3 pts victoria · 1 empate · 0 derrota.
   </p>
 </aside>
+
 
     </div>
   </section>
@@ -975,37 +1034,6 @@
 
 
 
-<div class="rule-blocks">
-
-  <!-- D/C -->
-  <article class="rule-panel rule-category" id="rules-dc" style="display:none;">
-    <h3>Formato D/C</h3>
-    <p>
-      Todos contra todos · 5 parejas · 5 rondas.
-    </p>
-    <p>
-      En cada ronda descansa una pareja.
-    </p>
-  </article>
-
-  <!-- C/B -->
-  <article class="rule-panel rule-category" id="rules-cb" style="display:none;">
-    <h3>Formato C/B</h3>
-    <p>
-      2 grupos de 3 parejas.
-    </p>
-    <p>
-      Todos contra todos dentro de cada grupo.
-    </p>
-    <p>
-      Clasifican a semifinal las 2 mejores parejas de cada grupo. Final: ganadoras de semifinales.
-    </p>
-  </article>
-
-</div>
-
-
-
 
     </div>
   </div>
@@ -1031,6 +1059,54 @@
 
         </div>
       </section>
+
+
+<section class="section">
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <h2 class="panel-title">Formato de la categoría</h2>
+        <p class="panel-subtitle">
+          El formato cambia según la categoría seleccionada.
+        </p>
+      </div>
+    </div>
+
+    <div class="panel-body">
+      <div class="rule-blocks">
+
+        <!-- D/C -->
+        <article class="rule-panel rule-category" id="rules-dc" style="display:none;">
+          <h3>Formato D/C</h3>
+          <p>Todos contra todos · 5 parejas · 5 rondas.</p>
+          <p>En cada ronda descansa una pareja.</p>
+        </article>
+
+        <!-- C/B -->
+        <article class="rule-panel rule-category" id="rules-cb" style="display:none;">
+          <h3>Formato C/B</h3>
+          <p>2 grupos de 3 parejas.</p>
+          <p>Todos contra todos dentro de cada grupo.</p>
+          <p>Clasifican a semifinal las 2 mejores parejas de cada grupo. Final: ganadoras de semifinales.</p>
+        </article>
+
+        <!-- 5ta -->
+        <article class="rule-panel rule-category" id="rules-5ta" style="display:none;">
+          <h3>Formato 5ta</h3>
+          <p>Próximamente información del formato.</p>
+        </article>
+
+        <!-- 4ta -->
+        <article class="rule-panel rule-category" id="rules-4ta" style="display:none;">
+          <h3>Formato 4ta</h3>
+          <p>Próximamente información del formato.</p>
+        </article>
+
+      </div>
+    </div>
+  </div>
+</section>
+
 
       <section class="section">
         <div class="panel">
@@ -1214,26 +1290,30 @@ function categoryUsesGroups(category) {
   return category.category_name === "C/B";
 }
 
+
 function updateRulesByCategory() {
   const category = getActiveCategory();
 
-  // Oculta todas
   document.querySelectorAll(".rule-category").forEach(el => {
     el.style.display = "none";
   });
 
   if (!category) return;
 
-  const name = category.category_name.toLowerCase();
+  const name = (category.category_name || "").toLowerCase();
 
-  if (name.includes("d")) {
+  if (name === "d/c") {
     document.getElementById("rules-dc").style.display = "block";
-  }
-
-  if (name.includes("c/b") || name.includes("b")) {
+  } else if (name === "c/b") {
     document.getElementById("rules-cb").style.display = "block";
+  } else if (name === "5ta") {
+    document.getElementById("rules-5ta").style.display = "block";
+  } else if (name === "4ta") {
+    document.getElementById("rules-4ta").style.display = "block";
   }
 }
+
+
 
 async function refreshCategoryData() {
   if (!activeCategoryId) return;
