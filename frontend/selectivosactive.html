@@ -262,7 +262,7 @@
 
     .selector-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 18px;
     }
 
@@ -384,6 +384,50 @@
         radial-gradient(circle at top right, rgba(214,176,106,0.14), transparent 30%),
         linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
     }
+
+
+.champions-card {
+  padding: 18px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(214,176,106,0.24);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(circle at top right, rgba(214,176,106,0.14), transparent 30%),
+    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
+  box-shadow: var(--shadow);
+}
+
+.champions-label {
+  color: var(--gold-2);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.champions-title {
+  margin-top: 8px;
+  font-size: 1.35rem;
+  font-weight: 900;
+}
+
+.champions-meta {
+  margin-top: 10px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.champions-status {
+  display: inline-flex;
+  margin-top: 12px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(134,239,172,0.12);
+  border: 1px solid rgba(134,239,172,0.25);
+  color: var(--success);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
 
     .leader-eyebrow {
       color: var(--gold-2);
@@ -843,16 +887,19 @@
     <div class="hero-inner">
       <div>
         <div class="hero-badge">🎾 Selectivos TPL</div>
-        <h1>Seguimiento de <span class="highlight">selectivos</span> por club</h1>
+        <h1>Selectivos <span class="highlight">Espacio Active</span></h1>
         <p>
-          En esta sección podrás ver bases del selectivo, categorías, cruces por ronda, canchas, horarios y tabla en vivo.
+          En esta sección podrás ver las bases del selectivo de Espacio Active, sus categorías, cruces por ronda, canchas, horarios y tabla.
         </p>
       </div>
 
 <aside class="hero-side">
   <h3>Resumen rápido</h3>
   <p>
-    Selecciona un club para ver sus categorías, cruces, canchas, horarios y tabla en vivo.
+    Categorias D/C y B/C finalizadas. 
+    Campeonas D/C: <span class="highlight">Solange y Marcela</span>
+    Campeonas C/B: <span class="highlight">Jaz y Kari</span>
+    Próximante 5ta y 4ta en juego. Sábado 18/04.
   </p>
   <p>
     El formato general del selectivo considera 22 minutos por partido y puntaje de 3 por victoria, 1 por empate y 0 por derrota.
@@ -968,26 +1015,20 @@
 
       <section class="section">
         <div class="selector-grid">
-          <article class="selector-card">
-            <h2 class="selector-title">1. Selecciona el club</h2>
-            <p class="selector-subtitle">Primero elige el club para desplegar sus categorías disponibles.</p>
-            <div id="clubButtons" class="club-buttons">
-              <div class="loading">Cargando clubes...</div>
-            </div>
-          </article>
 
-          <article class="selector-card">
-            <h2 class="selector-title">2. Selecciona la categoría</h2>
-            <p class="selector-subtitle">Luego elige la categoría para ver sus partidos y tabla.</p>
-            <div id="categoryButtons" class="category-buttons">
-              <div class="empty">Selecciona un club primero.</div>
-            </div>
+<article class="selector-card">
+  <h2 class="selector-title">Selecciona la categoría</h2>
+  <p class="selector-subtitle">Elige la categoría para ver campeonas, tabla y cruces del selectivo de Espacio Active.</p>
+  <div id="categoryButtons" class="category-buttons">
+    <div class="loading">Cargando categorías...</div>
+  </div>
 
-            <div class="status-row">
-              <div id="selectiveStatus" class="status-pill">Sin club seleccionado</div>
-              <div class="refresh-note" id="refreshNote">Actualización automática cada 20 segundos</div>
-            </div>
-          </article>
+  <div class="status-row">
+    <div id="selectiveStatus" class="status-pill">Espacio Active · cargando</div>
+    <div class="refresh-note" id="refreshNote">Actualización automática cada 20 segundos</div>
+  </div>
+</article>
+
         </div>
       </section>
 
@@ -1000,11 +1041,13 @@
             </div>
           </div>
 
-          <div class="panel-body">
-            <div id="leaderContainer"></div>
-            <div id="topThreeContainer"></div>
-            <div id="standingsContainer" class="loading">Sin categoría seleccionada.</div>
-          </div>
+<div class="panel-body">
+  <div id="championsContainer"></div>
+  <div id="leaderContainer"></div>
+  <div id="topThreeContainer"></div>
+  <div id="standingsContainer" class="loading">Sin categoría seleccionada.</div>
+</div>
+
         </div>
       </section>
 
@@ -1028,10 +1071,10 @@
   <script>
     const API = "https://liga-backend-f08y.onrender.com";
 
-    let selectivesData = [];
     let activeSelectiveId = null;
     let activeCategoryId = null;
     let activeCategoryMap = [];
+
     let activeStandings = [];
     let activeGroupStandings = null;
     let autoRefreshTimer = null;
@@ -1057,88 +1100,114 @@
       return "Programado";
     }
 
-
-async function loadSelectives() {
-  const container = document.getElementById("clubButtons");
-
+async function loadActiveSelective() {
   try {
     const res = await fetch(API + "/selectives");
     const data = await res.json();
-    selectivesData = Array.isArray(data) ? data : [];
-    renderClubButtons();
+    const allSelectives = Array.isArray(data) ? data : [];
+
+    const activeSelective = allSelectives.find(item =>
+      (item.club_name || "").toLowerCase().includes("espacio active")
+    );
+
+    if (!activeSelective) {
+      document.getElementById("categoryButtons").innerHTML =
+        '<div class="empty">No se encontró el selectivo de Espacio Active.</div>';
+      document.getElementById("selectiveStatus").textContent = "Espacio Active no disponible";
+      return;
+    }
+
+    activeSelectiveId = activeSelective.id;
+
+    const detailRes = await fetch(API + `/selective/${activeSelectiveId}`);
+    const detail = await detailRes.json();
+
+    activeCategoryMap = Array.isArray(detail.categories) ? detail.categories : [];
+
+    document.getElementById("selectiveStatus").textContent =
+      `Espacio Active · ${normalizeStatus(detail.selective.status || "activo")}`;
+
+    renderCategoryButtons();
   } catch (error) {
-    console.error("Error cargando selectivos:", error);
-    container.innerHTML = '<div class="empty">No se pudieron cargar los clubes.</div>';
+    console.error("Error cargando selectivo Espacio Active:", error);
+    document.getElementById("categoryButtons").innerHTML =
+      '<div class="empty">No se pudo cargar Espacio Active.</div>';
+    document.getElementById("selectiveStatus").textContent = "Error al cargar";
   }
 }
 
 
-    function renderClubButtons() {
-      const container = document.getElementById("clubButtons");
+function renderCategoryButtons() {
+  const container = document.getElementById("categoryButtons");
 
-      if (!selectivesData.length) {
-        container.innerHTML = '<div class="empty">No hay selectivos cargados.</div>';
-        return;
-      }
+  if (!activeCategoryMap.length) {
+    container.innerHTML = '<div class="empty">Espacio Active aún no tiene categorías cargadas.</div>';
+    return;
+  }
 
-      container.innerHTML = selectivesData.map(item => `
-        <button
-          class="club-btn ${Number(item.id) === Number(activeSelectiveId) ? "active" : ""}"
-          onclick="selectClub(${item.id})">
-          ${item.club_name}
-        </button>
-      `).join("");
-    }
+  container.innerHTML = activeCategoryMap.map(cat => `
+    <button
+      class="category-btn ${Number(cat.id) === Number(activeCategoryId) ? "active" : ""}"
+      onclick="selectCategory(${cat.id})">
+      ${cat.category_name}
+    </button>
+  `).join("");
+}
 
-    async function selectClub(selectiveId) {
-      activeSelectiveId = selectiveId;
-      activeCategoryId = null;
-      renderClubButtons();
 
-      document.getElementById("standingsContainer").innerHTML = '<div class="loading">Selecciona una categoría.</div>';
-      document.getElementById("matchesContainer").innerHTML = '<div class="loading">Selecciona una categoría.</div>';
-      document.getElementById("leaderContainer").innerHTML = "";
-      document.getElementById("topThreeContainer").innerHTML = "";
+async function selectCategory(categoryId) {
+  activeCategoryId = categoryId;
+  updateRulesByCategory();
+  renderCategoryButtons();
+  renderChampionsCard();
+  await refreshCategoryData();
+  startAutoRefresh();
+}
 
-      const res = await fetch(API + `/selective/${selectiveId}`);
-      const detail = await res.json();
-
-      activeCategoryMap = Array.isArray(detail.categories) ? detail.categories : [];
-
-      document.getElementById("selectiveStatus").textContent =
-        `${detail.selective.club_name} · ${detail.selective.status || "activo"}`;
-
-      renderCategoryButtons();
-    }
-
-    function renderCategoryButtons() {
-      const container = document.getElementById("categoryButtons");
-
-      if (!activeCategoryMap.length) {
-        container.innerHTML = '<div class="empty">Este club aún no tiene categorías cargadas.</div>';
-        return;
-      }
-
-      container.innerHTML = activeCategoryMap.map(cat => `
-        <button
-          class="category-btn ${Number(cat.id) === Number(activeCategoryId) ? "active" : ""}"
-          onclick="selectCategory(${cat.id})">
-          ${cat.gender === "femenino" ? "Femenino" : "Masculino"} · ${cat.category_name}
-        </button>
-      `).join("");
-    }
-
-    async function selectCategory(categoryId) {
-      activeCategoryId = categoryId;
-      updateRulesByCategory();
-      renderCategoryButtons();
-      await refreshCategoryData();
-      startAutoRefresh();
-    }
 
     function getActiveCategory() {
       return activeCategoryMap.find(item => Number(item.id) === Number(activeCategoryId));
     }
+
+
+function renderChampionsCard() {
+  const container = document.getElementById("championsContainer");
+  const category = getActiveCategory();
+
+  if (!category) {
+    container.innerHTML = "";
+    return;
+  }
+
+  const name = (category.category_name || "").trim().toUpperCase();
+
+  if (name === "D/C") {
+    container.innerHTML = `
+      <article class="champions-card">
+        <div class="champions-label">Campeonas</div>
+        <div class="champions-title">Campeonas D/C: Solange - Marcela</div>
+        <div class="champions-meta">Categoría finalizada.</div>
+        <div class="champions-status">Finalizado</div>
+      </article>
+    `;
+    return;
+  }
+
+  if (name === "C/B") {
+    container.innerHTML = `
+      <article class="champions-card">
+        <div class="champions-label">Campeonas</div>
+        <div class="champions-title">Campeonas C/B: Jaz - Kari</div>
+        <div class="champions-meta">Categoría finalizada.</div>
+        <div class="champions-status">Finalizado</div>
+      </article>
+    `;
+    return;
+  }
+
+  container.innerHTML = "";
+}
+
 
 function categoryUsesGroups(category) {
   if (!category) return false;
@@ -1177,6 +1246,17 @@ async function refreshCategoryData() {
 
     document.getElementById("matchesSubtitle").textContent =
       `${category.match_duration_minutes} min de juego · ${category.changeover_minutes} min de cambio`;
+
+    const normalizedName = (category.category_name || "").trim().toUpperCase();
+
+    if (normalizedName === "D/C" || normalizedName === "C/B") {
+      document.getElementById("selectiveStatus").textContent =
+        `Espacio Active · ${normalizedName} · Finalizado`;
+    } else {
+      document.getElementById("selectiveStatus").textContent =
+        `Espacio Active · ${category.category_name}`;
+    }
+
   }
 
   const matchesRes = await fetch(API + `/selective-category/${activeCategoryId}/matches`);
@@ -1514,7 +1594,7 @@ function renderMatches(data, category, standings = [], groupStandings = null) {
       }, 20000);
     }
 
-    loadSelectives();
+    loadActiveSelective();
   </script>
 </body>
 </html>
