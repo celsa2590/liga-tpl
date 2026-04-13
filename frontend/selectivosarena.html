@@ -1204,12 +1204,13 @@ if (!data || !Array.isArray(data.finalists) || !data.finalists.length) {
     cb: "Las dos primeras parejas del americano de C/B avanzan a la final.",
     quinta: "Cada americano clasifica una pareja a la final de 5ta/4ta.",
     cuarta: "Cada americano clasifica una pareja a la final de 4ta/3era."
+}
   };
 
   subtitle.textContent = finalTextMap[categoryKey] || "Selecciona una categoría para ver las parejas que avanzan a la final.";
   container.innerHTML = '<div class="empty">Aún no hay parejas clasificadas a la final.</div>';
   return;
-}
+
 
       subtitle.textContent = `Cada americano clasifica una pareja a la final de ${labelMap[categoryKey] || "la categoría"}.`;
 
