@@ -341,6 +341,23 @@
   background: rgba(255,255,255,0.2);
 }
 
+
+.photo-info {
+  padding: 10px 12px 14px;
+}
+
+.photo-title {
+  margin: 0;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.photo-meta {
+  margin-top: 4px;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.65);
+}
+
   </style>
 </head>
 
@@ -407,58 +424,99 @@
     </div>
   </section>
 
-  <main>
-    <div class="container">
-      <section class="section">
-        <div class="gallery-card">
-          <h2 class="section-title">Galería destacada</h2>
-          <p class="section-subtitle">
-            Aqui encontrarás fotos de partidos, equipos, premiaciones o selectivos.
+
+
+
+
+<section class="section">
+  <div class="container">
+    <div class="panel">
+
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title">Galería destacada</h2>
+          <p class="panel-subtitle">
+            Aquí encontrarás fotos de partidos, equipos, premiaciones o selectivos.
           </p>
+        </div>
+      </div>
 
-
-<h2 class="section-title">Selectivos Espacio Active</h2>
-<p class="section-subtitle">
-  Jornada de selectivos en Espacio Active.
-</p>
-
-<div class="photos-grid">
-
-  <article class="photo-card">
-    <img src="/assets/photos/selectivos-espacio-active/1.jpg" alt="Selectivo Espacio Active 1" onclick="openLightbox(this.src, this.alt)">
-  </article>
-
-  <article class="photo-card">
-    <img src="/assets/photos/selectivos-espacio-active/2.jpg" alt="Selectivo Espacio Active 2" onclick="openLightbox(this.src, this.alt)">
-  </article>
-
-  <article class="photo-card">
-    <img src="/assets/photos/selectivos-espacio-active/3.jpg" alt="Selectivo Espacio Active 3" onclick="openLightbox(this.src, this.alt)">
-  </article>
-
-  <article class="photo-card">
-    <img src="/assets/photos/selectivos-espacio-active/4.jpg" alt="Selectivo Espacio Active 4" onclick="openLightbox(this.src, this.alt)">
-  </article>
-
-  <article class="photo-card">
-    <img src="/assets/photos/selectivos-espacio-active/5.jpg" alt="Selectivo Espacio Active 5" onclick="openLightbox(this.src, this.alt)">
-  </article>
-
-  <article class="photo-card">
-    <img src="/assets/photos/selectivos-espacio-active/6.jpg" alt="Selectivo Espacio Active 6" onclick="openLightbox(this.src, this.alt)">
-  </article>
-
-</div>
+    </div>
+  </div>
+</section>
 
 
 
-<div style="margin-top:12px;">
-  <a class="nav-link admin" 
-     href="https://drive.google.com/drive/u/6/folders/1m4vS-clZmwaEiRmVkDlf-oQ__s_oO69d"
-     target="_blank">
-    Ver todas las fotos / Descargar
-  </a>
-</div>
+<section class="section">
+  <div class="container">
+    <div class="panel">
+
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title">Selectivos Espacio Active</h2>
+          <p class="panel-subtitle">
+            Jornada de selectivos en Espacio Active.
+          </p>
+        </div>
+      </div>
+
+      <div class="panel-body">
+
+        <div class="photos-grid">
+
+          <article class="photo-card">
+
+  <img src="/assets/photos/selectivos-espacio-active/1.jpg"
+       alt="Parejas participantes del selectivo"
+       onclick="openLightbox(this.src, this.alt)">
+
+  <div class="photo-info">
+    <p class="photo-title">Inicio del selectivo</p>
+    <p class="photo-meta">Espacio Active · Abril 2026</p>
+  </div>
+
+          </article>
+
+          <article class="photo-card">
+            <img src="/assets/photos/selectivos-espacio-active/2.jpg" onclick="openLightbox(this.src)">
+          </article>
+
+          <article class="photo-card">
+            <img src="/assets/photos/selectivos-espacio-active/3.jpg" onclick="openLightbox(this.src)">
+          </article>
+
+          <article class="photo-card">
+            <img src="/assets/photos/selectivos-espacio-active/4.jpg" onclick="openLightbox(this.src)">
+          </article>
+
+          <article class="photo-card">
+            <img src="/assets/photos/selectivos-espacio-active/5.jpg" onclick="openLightbox(this.src)">
+          </article>
+
+          <article class="photo-card">
+            <img src="/assets/photos/selectivos-espacio-active/6.jpg" onclick="openLightbox(this.src)">
+          </article>
+
+        </div>
+
+        <div style="margin-top:18px;">
+          <a class="nav-link admin"
+             href="TU_LINK_DRIVE"
+             target="_blank">
+            Ver todas las fotos / Descargar
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+
+
+
 
 <div id="lightbox" class="lightbox" onclick="closeLightbox()">
   <button class="lightbox-close" onclick="closeLightbox(event)">×</button>
