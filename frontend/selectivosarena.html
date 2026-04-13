@@ -531,6 +531,43 @@
     }
 
 
+.finalists-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.finalist-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
+  border: 1px solid rgba(214,176,106,0.22);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+.finalist-slot {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--muted-2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.finalist-name {
+  margin-top: 8px;
+  font-size: 1.08rem;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.finalist-meta {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+
   </style>
 </head>
 <body>
@@ -732,6 +769,25 @@
         </div>
       </section>
 
+
+<section class="section">
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <h2 class="panel-title">Clasificadas a la final</h2>
+        <p class="panel-subtitle" id="finalistsSubtitle">
+          Selecciona una categoría para ver las parejas que avanzan a la final.
+        </p>
+      </div>
+    </div>
+
+    <div class="panel-body">
+      <div id="finalistsContainer" class="empty">Sin categoría seleccionada.</div>
+    </div>
+  </div>
+</section>
+
+
       <section class="section">
         <div class="panel">
           <div class="panel-head">
@@ -795,12 +851,77 @@
         titleMap[categoryKey] || "Arena · Programado";
     }
 
-    window.addEventListener("DOMContentLoaded", () => {
-      const defaultBtn = document.querySelector('.category-btn[data-category="dc"]');
-      if (defaultBtn) {
-        selectCategory("dc", defaultBtn);
-      }
-    });
+    loadArenaStandings(categoryKey);
+    loadArenaMatches(categoryKey);
+    loadArenaFinalists(categoryKey);
+
+  }
+
+<script>
+  async function loadArenaFinalists(categoryKey) {
+    const categoryId = arenaCategoryMap[categoryKey];
+    const container = document.getElementById("finalistsContainer");
+    const subtitle = document.getElementById("finalistsSubtitle");
+
+    if (!categoryId) {
+      container.innerHTML = '<div class="empty">Categoría no disponible.</div>';
+      return;
+    }
+
+    container.innerHTML = '<div class="empty">Cargando parejas finalistas...</div>';
+
+    const res = await fetch(API + `/selective-category/${categoryId}/finalists`);
+    const data = await res.json();
+
+    if (!data || !Array.isArray(data.finalists) || !data.finalists.length) {
+      container.innerHTML = '<div class="empty">Aún no hay parejas clasificadas a la final.</div>';
+      return;
+    }
+
+    const labelMap = {
+      dc: "D/C",
+      cb: "C/B",
+      quinta: "5ta/4ta",
+      cuarta: "4ta/3era"
+    };
+
+    if (data.mode === "top2") {
+      subtitle.textContent = `Las dos primeras parejas del americano de ${labelMap[categoryKey] || "la categoría"} avanzan a la final.`;
+
+      container.innerHTML = `
+        <div class="finalists-grid">
+          ${data.finalists.map((item, idx) => `
+            <article class="finalist-card">
+              <div class="finalist-slot">${idx === 0 ? "Finalista 1" : "Finalista 2"}</div>
+              <div class="finalist-name">${item.pair_name}</div>
+              <div class="finalist-meta">
+                ${item.pts} pts · DG ${item.dg} · GF ${item.gf}
+              </div>
+            </article>
+          `).join("")}
+        </div>
+      `;
+      return;
+    }
+
+    subtitle.textContent = `Cada americano clasifica una pareja a la final de ${labelMap[categoryKey] || "la categoría"}.`;
+
+    container.innerHTML = `
+      <div class="finalists-grid">
+        ${data.finalists.map((item, idx) => `
+          <article class="finalist-card">
+            <div class="finalist-slot">${idx === 0 ? "Cupo 1" : "Cupo 2"}</div>
+            <div class="finalist-name">${item.pair_name}</div>
+            <div class="finalist-meta">
+              ${item.source_label || "Clasificada por americano"}
+            </div>
+          </article>
+        `).join("")}
+      </div>
+    `;
+  }
+</script>
+
   </script>
 </body>
 </html>

@@ -1228,10 +1228,33 @@ async function onSelectiveClubChange() {
   categorySelect.disabled = false;
 }
 
+
+
+
+function isArenaSelective() {
+  const selected = selectivesData.find(item => Number(item.id) === Number(activeSelectiveId));
+  if (!selected) return false;
+  return (selected.club_name || "").toLowerCase().includes("arena");
+}
+
 function categoryUsesGroups(category) {
   if (!category) return false;
+
+  if (isArenaSelective()) return false;
+
   return category.category_name === "C/B";
 }
+
+function categoryUsesSingleStandings(category) {
+  if (!category) return false;
+
+  if (isArenaSelective()) return true;
+
+  return category.category_name === "D/C";
+}
+
+
+
 
 async function onSelectiveCategoryChange() {
   const categorySelect = document.getElementById("selectiveCategorySelect");
@@ -1247,17 +1270,27 @@ async function onSelectiveCategoryChange() {
 
   activeSelectiveCategory = activeSelectiveCategories.find(c => Number(c.id) === categoryId) || null;
 
-  if (categoryUsesGroups(activeSelectiveCategory)) {
-    await loadSelectiveGroupManager(categoryId);
-    await loadSelectiveGroupStandings(categoryId);
-    await loadSelectiveStageActions(categoryId);
+
+
+if (categoryUsesGroups(activeSelectiveCategory)) {
+  await loadSelectiveGroupManager(categoryId);
+  await loadSelectiveGroupStandings(categoryId);
+  await loadSelectiveStageActions(categoryId);
+} else {
+  document.getElementById("selectiveGroupManager").style.display = "none";
+
+  if (categoryUsesSingleStandings(activeSelectiveCategory)) {
+    await loadSelectiveStandings(categoryId);
+    await loadSelectiveArenaActions(categoryId);
   } else {
-    document.getElementById("selectiveGroupManager").style.display = "none";
     document.getElementById("selectiveStandingsContainer").style.display = "none";
     document.getElementById("selectiveActionsContainer").style.display = "none";
   }
+}
 
-  await loadSelectiveMatchesAdmin(categoryId);
+await loadSelectiveMatchesAdmin(categoryId);
+
+
 }
 
 async function loadSelectiveGroupManager(categoryId) {
@@ -1402,6 +1435,82 @@ async function loadSelectiveGroupStandings(categoryId) {
   `;
 }
 
+
+
+
+
+async function loadSelectiveStandings(categoryId) {
+  const container = document.getElementById("selectiveStandingsContainer");
+  container.style.display = "block";
+  container.innerHTML = '<div class="empty">Cargando tabla...</div>';
+
+  const res = await fetch(API + `/selective-category/${categoryId}/standings`, {
+    headers: getAuthHeaders()
+  });
+
+  handleUnauthorized(res);
+
+  const rows = await res.json();
+
+  if (!Array.isArray(rows) || !rows.length) {
+    container.innerHTML = `
+      <div class="card">
+        <div class="head">
+          <div>
+            <div class="match-title">Tabla del selectivo</div>
+            <div class="meta">Aún no hay resultados cargados.</div>
+          </div>
+        </div>
+        <div class="empty">Sin datos para mostrar.</div>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="card">
+      <div class="head">
+        <div>
+          <div class="match-title">Tabla del selectivo</div>
+          <div class="meta">Posiciones actualizadas según resultados ingresados.</div>
+        </div>
+      </div>
+
+      <table class="pending-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Pareja</th>
+            <th>PJ</th>
+            <th>GF</th>
+            <th>GC</th>
+            <th>DG</th>
+            <th>PTS</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map((item, idx) => `
+            <tr>
+              <td>${idx + 1}</td>
+              <td><strong>${item.pair_name}</strong></td>
+              <td>${item.pj}</td>
+              <td>${item.gf}</td>
+              <td>${item.gc}</td>
+              <td>${item.dg}</td>
+              <td><strong>${item.pts}</strong></td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+
+
+
+
+
 async function loadSelectiveStageActions(categoryId) {
   const container = document.getElementById("selectiveActionsContainer");
   container.style.display = "block";
@@ -1503,7 +1612,7 @@ async function loadSelectiveMatchesAdmin(categoryId) {
   });
 
   function renderStageTitle(stage) {
-    if (stage === "group_stage") return "Fase de grupos";
+    if (stage === "group_stage") return "Fase clasificatoria";
     if (stage === "semifinal") return "Semifinales";
     if (stage === "final") return "Final";
     return "Rondas";
@@ -1589,6 +1698,96 @@ async function saveSelectiveMatch(matchId, categoryId) {
     await loadSelectiveGroupStandings(categoryId);
   }
 }
+
+
+
+
+async function loadSelectiveArenaActions(categoryId) {
+  const container = document.getElementById("selectiveActionsContainer");
+  container.style.display = "block";
+
+  container.innerHTML = `
+    <div class="card">
+      <div class="head">
+        <div>
+          <div class="match-title">Acciones del selectivo</div>
+          <div class="meta">Genera primero los cruces del americano y luego la final automática con el top 2.</div>
+        </div>
+      </div>
+
+      <div class="inline-actions">
+        <button type="button" onclick="generateArenaRoundRobin(${categoryId})">
+          Generar cruces
+        </button>
+        <span id="arena_round_ok" class="ok"></span>
+      </div>
+
+      <div class="inline-actions">
+        <button type="button" onclick="generateArenaFinal(${categoryId})">
+          Generar final
+        </button>
+        <span id="arena_final_ok" class="ok"></span>
+      </div>
+    </div>
+  `;
+}
+
+
+
+
+async function generateArenaRoundRobin(categoryId) {
+  const res = await fetch(API + `/admin/selective-category/${categoryId}/generate-round-robin`, {
+    method: "POST",
+    headers: getAuthHeaders({
+      "Content-Type": "application/json"
+    }),
+    body: JSON.stringify({})
+  });
+
+  handleUnauthorized(res);
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    alert(data.detail || "No se pudieron generar los cruces.");
+    return;
+  }
+
+  const ok = document.getElementById("arena_round_ok");
+  if (ok) ok.textContent = "Cruces generados";
+
+  setTimeout(() => {
+    const el = document.getElementById("arena_round_ok");
+    if (el) el.textContent = "";
+  }, 1800);
+
+  await loadSelectiveMatchesAdmin(categoryId);
+}
+
+
+
+async function generateArenaFinal(categoryId) {
+  const res = await fetch(API + `/admin/selective-category/${categoryId}/generate-final-arena`, {
+    method: "POST",
+    headers: getAuthHeaders({
+      "Content-Type": "application/json"
+    }),
+    body: JSON.stringify({})
+  });
+
+  handleUnauthorized(res);
+
+  if (!res.ok) {
+    alert("No se pudo generar la final.");
+    return;
+  }
+
+  document.getElementById("arena_final_ok").textContent = "Final generada";
+
+  await loadSelectiveStandings(categoryId);
+  await loadSelectiveMatchesAdmin(categoryId);
+}
+
 
 
 

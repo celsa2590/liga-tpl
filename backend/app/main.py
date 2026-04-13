@@ -491,6 +491,212 @@ def get_selective_category_group_standings(category_id: int):
     return grouped
 
 
+
+@app.get("/selective-category/{category_id}/finalists")
+def get_selective_category_finalists(category_id: int):
+    with engine.connect() as conn:
+        category = conn.execute(text("""
+            SELECT
+                id,
+                selective_id,
+                gender,
+                category_name
+            FROM selective_categories
+            WHERE id = :category_id
+        """), {"category_id": category_id}).mappings().first()
+
+        if not category:
+            raise HTTPException(status_code=404, detail="Categoría no encontrada")
+
+        # CASO FEMENINO:
+        # las primeras 2 del americano pasan directo a la final
+        if (category["gender"] or "").lower() == "femenino":
+            rows = conn.execute(text("""
+                SELECT
+                    pair_id,
+                    pair_name,
+                    pts,
+                    dg,
+                    gf
+                FROM selective_standings
+                WHERE selective_category_id = :category_id
+                ORDER BY pts DESC, dg DESC, gf DESC, pair_name
+                LIMIT 2
+            """), {"category_id": category_id}).mappings().all()
+
+            return {
+                "mode": "top2",
+                "category_id": category_id,
+                "finalists": [dict(r) for r in rows]
+            }
+
+        # CASO MASCULINO:
+        # aquí el backend debe devolver las 2 parejas ya definidas
+        # por ahora lo sacamos desde una tabla de soporte
+        rows = conn.execute(text("""
+            SELECT
+                selective_category_id,
+                slot_number,
+                pair_id,
+                pair_name,
+                source_label
+            FROM selective_finalists
+            WHERE selective_category_id = :category_id
+            ORDER BY slot_number
+        """), {"category_id": category_id}).mappings().all()
+
+        return {
+            "mode": "slots",
+            "category_id": category_id,
+            "finalists": [dict(r) for r in rows]
+        }
+
+
+@app.post("/admin/selective-category/{category_id}/generate-round-robin")
+def generate_selective_round_robin(
+    category_id: int,
+    payload: dict = Body(default={}),
+    authorization: str = Header(None)
+):
+    verify_admin_jwt(authorization)
+
+    court_ids = payload.get("court_ids", [])
+
+    with engine.connect() as conn:
+        category = conn.execute(text("""
+            SELECT
+                id,
+                selective_id,
+                category_name
+            FROM selective_categories
+            WHERE id = :category_id
+        """), {"category_id": category_id}).mappings().first()
+
+        if not category:
+            raise HTTPException(status_code=404, detail="Categoría no encontrada")
+
+        pairs = conn.execute(text("""
+            SELECT
+                id,
+                pair_name
+            FROM selective_pairs
+            WHERE selective_category_id = :category_id
+            ORDER BY pair_name, id
+        """), {"category_id": category_id}).mappings().all()
+
+        if len(pairs) < 2:
+            raise HTTPException(status_code=400, detail="Debes tener al menos 2 parejas para generar cruces")
+
+        existing = conn.execute(text("""
+            SELECT id
+            FROM selective_matches
+            WHERE selective_category_id = :category_id
+              AND stage = 'group_stage'
+            LIMIT 1
+        """), {"category_id": category_id}).fetchone()
+
+        if existing:
+            raise HTTPException(status_code=400, detail="Los cruces ya fueron generados para esta categoría")
+
+        # obtener canchas del selectivo si no se enviaron manualmente
+        if not court_ids:
+            db_courts = conn.execute(text("""
+                SELECT id
+                FROM selective_courts
+                WHERE selective_id = :selective_id
+                ORDER BY display_order, id
+            """), {"selective_id": category["selective_id"]}).fetchall()
+
+            court_ids = [row.id for row in db_courts]
+
+        if not court_ids:
+            court_ids = [None]
+
+        # round robin tipo "circle method"
+        participants = [dict(p) for p in pairs]
+
+        is_odd = len(participants) % 2 == 1
+        if is_odd:
+            participants.append({"id": None, "pair_name": "BYE"})
+
+        n = len(participants)
+        rounds = []
+        arr = participants[:]
+
+        for _ in range(n - 1):
+            current_round = []
+            for i in range(n // 2):
+                p1 = arr[i]
+                p2 = arr[n - 1 - i]
+
+                # evitar BYE
+                if p1["id"] is not None and p2["id"] is not None:
+                    current_round.append((p1, p2))
+
+            rounds.append(current_round)
+
+            # rotación manteniendo fijo el primero
+            arr = [arr[0]] + [arr[-1]] + arr[1:-1]
+
+        display_order = 1
+
+        for round_idx, matches in enumerate(rounds, start=1):
+            for match_idx, (p1, p2) in enumerate(matches, start=1):
+                court_id = court_ids[(match_idx - 1) % len(court_ids)]
+
+                conn.execute(text("""
+                    INSERT INTO selective_matches
+                    (
+                        selective_category_id,
+                        round_number,
+                        display_order,
+                        court_id,
+                        pair_1_id,
+                        pair_2_id,
+                        pair_1_games,
+                        pair_2_games,
+                        result_status,
+                        stage,
+                        created_at,
+                        updated_at
+                    )
+                    VALUES
+                    (
+                        :category_id,
+                        :round_number,
+                        :display_order,
+                        :court_id,
+                        :pair_1_id,
+                        :pair_2_id,
+                        NULL,
+                        NULL,
+                        'scheduled',
+                        'group_stage',
+                        NOW(),
+                        NOW()
+                    )
+                """), {
+                    "category_id": category_id,
+                    "round_number": round_idx,
+                    "display_order": display_order,
+                    "court_id": court_id,
+                    "pair_1_id": p1["id"],
+                    "pair_2_id": p2["id"]
+                })
+
+                display_order += 1
+
+        conn.commit()
+
+    return {
+        "status": "ok",
+        "message": "Cruces round robin generados"
+    }
+
+
+
+
+
 @app.post("/admin/selective-category/{category_id}/generate-semifinals")
 def generate_selective_semifinals(
     category_id: int,
@@ -625,6 +831,69 @@ def generate_selective_final(
         conn.commit()
 
     return {"status": "ok", "message": "Final generada"}
+
+
+@app.post("/admin/selective-category/{category_id}/generate-final-arena")
+def generate_selective_final_arena(
+    category_id: int,
+    payload: dict = Body(default={}),
+    authorization: str = Header(None)
+):
+    verify_admin_jwt(authorization)
+
+    court_id = payload.get("court_id")
+
+    with engine.connect() as conn:
+
+        # 1. Obtener tabla
+        standings = conn.execute(text("""
+            SELECT
+                pair_id,
+                pair_name,
+                pts,
+                dg,
+                gf
+            FROM selective_standings
+            WHERE selective_category_id = :category_id
+            ORDER BY pts DESC, dg DESC, gf DESC, pair_name
+        """), {"category_id": category_id}).mappings().all()
+
+        if len(standings) < 2:
+            raise HTTPException(status_code=400, detail="No hay suficientes parejas")
+
+        pair1 = standings[0]["pair_id"]
+        pair2 = standings[1]["pair_id"]
+
+        # 2. Verificar si ya existe final
+        existing = conn.execute(text("""
+            SELECT id
+            FROM selective_matches
+            WHERE selective_category_id = :category_id
+              AND stage = 'final'
+        """), {"category_id": category_id}).fetchone()
+
+        if existing:
+            raise HTTPException(status_code=400, detail="La final ya fue generada")
+
+        # 3. Crear final
+        conn.execute(text("""
+            INSERT INTO selective_matches
+            (selective_category_id, round_number, display_order, court_id,
+             pair_1_id, pair_2_id, result_status, stage, created_at, updated_at)
+            VALUES
+            (:category_id, 5, 1, :court_id,
+             :pair1, :pair2, 'scheduled', 'final', NOW(), NOW())
+        """), {
+            "category_id": category_id,
+            "court_id": court_id,
+            "pair1": pair1,
+            "pair2": pair2
+        })
+
+        conn.commit()
+
+    return {"status": "ok", "message": "Final Arena generada"}
+
 
 
 
