@@ -814,7 +814,7 @@
                 <p>Masculino · 26/04 y 02/05 · 14:30 a 16:30.</p>
                 <p>Americano / hexagonal todos contra todos.</p>
                 <p>Victoria: 3 puntos · Empate: 1 punto.</p>
-                <p>Las 2 primeras parejas clasifican a la final masculina del 09/05.</p>
+                <p>En el americano del 26/04 clasifica una pareja y en el americano del 02/05 clasifica la segunda pareja para la final del 09/05.</p>
               </article>
 
               <article class="rule-panel" id="rules-cuarta">
@@ -822,7 +822,7 @@
                 <p>Masculino · 26/04 y 02/05 · 17:00 a 19:00.</p>
                 <p>Americano / hexagonal todos contra todos.</p>
                 <p>Victoria: 3 puntos · Empate: 1 punto.</p>
-                <p>Las 2 primeras parejas clasifican a la final masculina del 09/05.</p>
+                <p>En el americano del 26/04 clasifica una pareja y en el americano del 02/05 clasifica la segunda pareja para la final del 09/05.</p>
               </article>
             </div>
           </div>
@@ -1127,117 +1127,76 @@
     }
   }
 
-  async function loadArenaFinalists(categoryId, categoryKey) {
-    const container = document.getElementById("finalistsContainer");
-    const subtitle = document.getElementById("finalistsSubtitle");
-    if (!container || !subtitle) return;
 
-    if (!categoryId) {
-      container.innerHTML = '<div class="empty">Categoría no disponible.</div>';
-      return;
-    }
+async function loadArenaFinalists(categoryId, categoryKey) {
+  const container = document.getElementById("finalistsContainer");
+  const subtitle = document.getElementById("finalistsSubtitle");
+  if (!container || !subtitle) return;
 
-    container.innerHTML = '<div class="empty">Cargando parejas finalistas...</div>';
-
-    try {
-      const res = await fetch(API + `/selective-category/${categoryId}/finalists`);
-      const data = await res.json();
-
-      if (!data || !Array.isArray(data.finalists) || !data.finalists.length) {
-        container.innerHTML = '<div class="empty">Aún no hay parejas clasificadas a la final.</div>';
-        return;
-      }
-
-
-
-const labelMap = {
-  dc: "D/C",
-  cb: "C/B",
-  quinta: "5ta/4ta",
-  cuarta: "4ta/3era"
-};
-
-const finalTextMap = {
-  dc: "Las dos primeras parejas del americano de D/C avanzan a la final.",
-  cb: "Las dos primeras parejas del americano de C/B avanzan a la final.",
-  quinta: "Cada americano clasifica una pareja a la final de 5ta/4ta.",
-  cuarta: "Cada americano clasifica una pareja a la final de 4ta/3era."
-};
-
-subtitle.textContent = finalTextMap[categoryKey] || "Selecciona una categoría para ver las parejas que avanzan a la final.";
-
-
-if (data.mode === "top2") {
-  container.innerHTML = `
-    <div class="finalists-grid">
-      ${data.finalists.map((item, idx) => `
-        <article class="finalist-card">
-          <div class="finalist-slot">${idx === 0 ? "Finalista 1" : "Finalista 2"}</div>
-          <div class="finalist-name">${item.pair_name}</div>
-          <div class="finalist-meta">
-            ${item.pts} pts · DG ${item.dg} · GF ${item.gf}
-          </div>
-        </article>
-      `).join("")}
-    </div>
-  `;
-  return;
-}
-
-container.innerHTML = `
-  <div class="finalists-grid">
-    ${data.finalists.map((item, idx) => `
-      <article class="finalist-card">
-        <div class="finalist-slot">${idx === 0 ? "Cupo 1" : "Cupo 2"}</div>
-        <div class="finalist-name">${item.pair_name}</div>
-        <div class="finalist-meta">
-          ${item.source_label || "Clasificada por americano"}
-        </div>
-      </article>
-    `).join("")}
-  </div>
-`;
-
-if (!data || !Array.isArray(data.finalists) || !data.finalists.length) {
   const finalTextMap = {
     dc: "Las dos primeras parejas del americano de D/C avanzan a la final.",
     cb: "Las dos primeras parejas del americano de C/B avanzan a la final.",
     quinta: "Cada americano clasifica una pareja a la final de 5ta/4ta.",
     cuarta: "Cada americano clasifica una pareja a la final de 4ta/3era."
-}
   };
 
-  subtitle.textContent = finalTextMap[categoryKey] || "Selecciona una categoría para ver las parejas que avanzan a la final.";
-  container.innerHTML = '<div class="empty">Aún no hay parejas clasificadas a la final.</div>';
-  return;
+  subtitle.textContent =
+    finalTextMap[categoryKey] || "Selecciona una categoría para ver las parejas que avanzan a la final.";
 
+  if (!categoryId) {
+    container.innerHTML = '<div class="empty">Categoría no disponible.</div>';
+    return;
+  }
 
-      subtitle.textContent = `Cada americano clasifica una pareja a la final de ${labelMap[categoryKey] || "la categoría"}.`;
+  container.innerHTML = '<div class="empty">Cargando parejas finalistas...</div>';
 
+  try {
+    const res = await fetch(API + `/selective-category/${categoryId}/finalists`);
+    const data = await res.json();
+
+    if (!data || !Array.isArray(data.finalists) || !data.finalists.length) {
+      container.innerHTML = '<div class="empty">Aún no hay parejas clasificadas a la final.</div>';
+      return;
+    }
+
+    if (data.mode === "top2") {
       container.innerHTML = `
         <div class="finalists-grid">
           ${data.finalists.map((item, idx) => `
             <article class="finalist-card">
-              <div class="finalist-slot">${idx === 0 ? "Cupo 1" : "Cupo 2"}</div>
+              <div class="finalist-slot">${idx === 0 ? "Finalista 1" : "Finalista 2"}</div>
               <div class="finalist-name">${item.pair_name}</div>
               <div class="finalist-meta">
-                ${item.source_label || "Clasificada por americano"}
+                ${item.pts} pts · DG ${item.dg} · GF ${item.gf}
               </div>
             </article>
           `).join("")}
         </div>
       `;
-    } catch (error) {
-      console.error("Error cargando finalistas:", error);
-      container.innerHTML = '<div class="empty">No se pudieron cargar las parejas finalistas.</div>';
+      return;
     }
-  }
 
-  window.addEventListener("DOMContentLoaded", () => {
-    const defaultBtn = document.querySelector('.category-btn[data-category="dc"]');
-    if (defaultBtn) {
-      selectCategory("dc", defaultBtn);
-    }
+    container.innerHTML = `
+      <div class="finalists-grid">
+        ${data.finalists.map((item, idx) => `
+          <article class="finalist-card">
+            <div class="finalist-slot">${idx === 0 ? "Cupo 1" : "Cupo 2"}</div>
+            <div class="finalist-name">${item.pair_name}</div>
+            <div class="finalist-meta">
+              ${item.source_label || "Clasificada por americano"}
+            </div>
+          </article>
+        `).join("")}
+      </div>
+    `;
+  } catch (error) {
+    console.error("Error cargando finalistas:", error);
+    container.innerHTML = '<div class="empty">No se pudieron cargar las parejas finalistas.</div>';
+  }
+}
+
+
+
   });
 </script>
 </body>
