@@ -712,6 +712,14 @@
               <button class="category-btn" data-category="cuarta" onclick="selectCategory('cuarta', this)">4ta/3era</button>
             </div>
 
+
+<div id="arenaDateWrap" style="display:none; margin-top:14px;">
+  <div class="small-label" style="margin-bottom:8px;">Fecha</div>
+  <select id="arenaDateSelect" onchange="onArenaDateChange()" style="width:100%;">
+    <option value="">Selecciona una fecha</option>
+  </select>
+</div>
+
             <div class="status-row">
               <div id="selectiveStatus" class="status-pill">Arena · Programado</div>
               <div class="refresh-note">Información general cargada</div>
@@ -781,6 +789,43 @@
       </div>
     </div>
 
+
+<section class="section">
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <h2 class="panel-title">Tabla del selectivo</h2>
+        <p class="panel-subtitle">
+          Posiciones actualizadas según resultados cargados.
+        </p>
+      </div>
+    </div>
+
+    <div class="panel-body">
+      <div id="standingsContainer" class="empty">Sin categoría seleccionada.</div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <h2 class="panel-title">Cruces y final</h2>
+        <p class="panel-subtitle">
+          Aquí podrás ver los partidos clasificatorios y la final.
+        </p>
+      </div>
+    </div>
+
+    <div class="panel-body">
+      <div id="matchesContainer" class="empty">Sin categoría seleccionada.</div>
+    </div>
+  </div>
+</section>
+
+
     <div class="panel-body">
       <div id="finalistsContainer" class="empty">Sin categoría seleccionada.</div>
     </div>
@@ -819,49 +864,229 @@
   </main>
 
    <script>
-    function selectCategory(categoryKey, button) {
-      document.querySelectorAll(".category-btn").forEach(btn => btn.classList.remove("active"));
-      if (button) button.classList.add("active");
-
-      document.querySelectorAll(".rule-panel").forEach(panel => {
-        panel.style.display = "none";
-      });
-
-      const panelMap = {
-        dc: "rules-dc",
-        cb: "rules-cb",
-        quinta: "rules-quinta",
-        cuarta: "rules-cuarta"
-      };
-
-      const titleMap = {
-        dc: "Arena · D/C · Programado",
-        cb: "Arena · C/B · Programado",
-        quinta: "Arena · 5ta/4ta · Programado",
-        cuarta: "Arena · 4ta/3era · Programado"
-      };
-
-      const panelId = panelMap[categoryKey];
-      if (panelId) {
-        const panel = document.getElementById(panelId);
-        if (panel) panel.style.display = "block";
-      }
-
-      document.getElementById("selectiveStatus").textContent =
-        titleMap[categoryKey] || "Arena · Programado";
-    }
-
-    loadArenaStandings(categoryKey);
-    loadArenaMatches(categoryKey);
-    loadArenaFinalists(categoryKey);
-
-  }
 
 <script>
-  async function loadArenaFinalists(categoryKey) {
-    const categoryId = arenaCategoryMap[categoryKey];
+  const API = "https://liga-backend-f08y.onrender.com";
+
+
+const arenaCategoryMap = {
+  dc: [{ id: 5, label: "25/04 · 14:30 a 16:30" }],
+  cb: [{ id: 6, label: "25/04 · 17:00 a 19:00" }],
+  quinta: [
+    { id: 11, label: "Fecha 1 · 26/04 · 14:30 a 16:30" },
+    { id: 13, label: "Fecha 2 · 02/05 · 14:30 a 16:30" }
+  ],
+  cuarta: [
+    { id: 12, label: "Fecha 1 · 26/04 · 17:00 a 19:00" },
+    { id: 14, label: "Fecha 2 · 02/05 · 17:00 a 19:00" }
+  ]
+};
+
+let currentArenaCategoryKey = null;
+let currentArenaCategoryId = null;
+
+
+function selectCategory(categoryKey, button) {
+  document.querySelectorAll(".category-btn").forEach(btn => btn.classList.remove("active"));
+  if (button) button.classList.add("active");
+
+  document.querySelectorAll(".rule-panel").forEach(panel => {
+    panel.style.display = "none";
+  });
+
+  const panelMap = {
+    dc: "rules-dc",
+    cb: "rules-cb",
+    quinta: "rules-quinta",
+    cuarta: "rules-cuarta"
+  };
+
+  const titleMap = {
+    dc: "Arena · D/C · Programado",
+    cb: "Arena · C/B · Programado",
+    quinta: "Arena · 5ta/4ta · Programado",
+    cuarta: "Arena · 4ta/3era · Programado"
+  };
+
+  const panelId = panelMap[categoryKey];
+  if (panelId) {
+    const panel = document.getElementById(panelId);
+    if (panel) panel.style.display = "block";
+  }
+
+  document.getElementById("selectiveStatus").textContent =
+    titleMap[categoryKey] || "Arena · Programado";
+
+  currentArenaCategoryKey = categoryKey;
+
+  const options = arenaCategoryMap[categoryKey] || [];
+  const dateWrap = document.getElementById("arenaDateWrap");
+  const dateSelect = document.getElementById("arenaDateSelect");
+
+  if (options.length <= 1) {
+    dateWrap.style.display = "none";
+    currentArenaCategoryId = options[0]?.id || null;
+
+    if (currentArenaCategoryId) {
+      loadArenaStandings(currentArenaCategoryId, categoryKey);
+      loadArenaMatches(currentArenaCategoryId, categoryKey);
+      loadArenaFinalists(currentArenaCategoryId, categoryKey);
+    }
+    return;
+  }
+
+  dateWrap.style.display = "block";
+  dateSelect.innerHTML = '<option value="">Selecciona una fecha</option>' +
+    options.map(item => `<option value="${item.id}">${item.label}</option>`).join("");
+
+  currentArenaCategoryId = null;
+  document.getElementById("standingsContainer").innerHTML = '<div class="empty">Selecciona una fecha para ver la tabla.</div>';
+  document.getElementById("matchesContainer").innerHTML = '<div class="empty">Selecciona una fecha para ver los partidos.</div>';
+  document.getElementById("finalistsContainer").innerHTML = '<div class="empty">Selecciona una fecha para ver las parejas clasificadas.</div>';
+}
+
+
+function onArenaDateChange() {
+  const dateSelect = document.getElementById("arenaDateSelect");
+  const categoryId = parseInt(dateSelect.value, 10);
+
+  if (!categoryId || !currentArenaCategoryKey) {
+    return;
+  }
+
+  currentArenaCategoryId = categoryId;
+
+  loadArenaStandings(categoryId, currentArenaCategoryKey);
+  loadArenaMatches(categoryId, currentArenaCategoryKey);
+  loadArenaFinalists(categoryId, currentArenaCategoryKey);
+}
+
+
+
+  async function loadArenaStandings(categoryId, categoryKey) {
+    const container = document.getElementById("standingsContainer");
+
+    if (!container) return;
+
+    if (!categoryId) {
+      container.innerHTML = '<div class="empty">Categoría no disponible.</div>';
+      return;
+    }
+
+    container.innerHTML = '<div class="empty">Cargando tabla...</div>';
+
+    try {
+      const res = await fetch(API + `/selective-category/${categoryId}/standings`);
+      const rows = await res.json();
+
+      if (!Array.isArray(rows) || !rows.length) {
+        container.innerHTML = '<div class="empty">Aún no hay resultados cargados.</div>';
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="standings-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Pareja</th>
+                <th class="num">PJ</th>
+                <th class="num">GF</th>
+                <th class="num">GC</th>
+                <th class="num">DG</th>
+                <th class="num">PTS</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.map((item, idx) => `
+                <tr>
+                  <td>${idx + 1}</td>
+                  <td><strong>${item.pair_name}</strong></td>
+                  <td class="num">${item.pj}</td>
+                  <td class="num">${item.gf}</td>
+                  <td class="num">${item.gc}</td>
+                  <td class="num">${item.dg}</td>
+                  <td class="num"><strong>${item.pts}</strong></td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } catch (error) {
+      console.error("Error cargando tabla:", error);
+      container.innerHTML = '<div class="empty">No se pudo cargar la tabla.</div>';
+    }
+  }
+
+  async function loadArenaMatches(categoryId, categoryKey) {
+    const container = document.getElementById("matchesContainer");
+
+    if (!container) return;
+
+    if (!categoryId) {
+      container.innerHTML = '<div class="empty">Categoría no disponible.</div>';
+      return;
+    }
+
+    container.innerHTML = '<div class="empty">Cargando partidos...</div>';
+
+    try {
+      const res = await fetch(API + `/selective-category/${categoryId}/matches`);
+      const rows = await res.json();
+
+      if (!Array.isArray(rows) || !rows.length) {
+        container.innerHTML = '<div class="empty">Aún no hay partidos cargados.</div>';
+        return;
+      }
+
+      const groupMatches = rows.filter(item => item.stage === "group_stage");
+      const finalMatch = rows.find(item => item.stage === "final");
+
+      container.innerHTML = `
+        ${groupMatches.length ? `
+          <div class="placeholder-card" style="margin-bottom:16px;">
+            <div class="placeholder-title">Fase clasificatoria</div>
+            <div class="placeholder-text">
+              ${groupMatches.map(item => `
+                <div style="margin-top:10px;">
+                  <strong>${item.pair_1_name}</strong> vs <strong>${item.pair_2_name}</strong>
+                  ${item.pair_1_games != null && item.pair_2_games != null
+                    ? ` · ${item.pair_1_games} - ${item.pair_2_games}`
+                    : ' · pendiente'}
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        ` : ''}
+
+        ${finalMatch ? `
+          <div class="placeholder-card">
+            <div class="placeholder-title">Final</div>
+            <div class="placeholder-text">
+              <strong>${finalMatch.pair_1_name}</strong> vs <strong>${finalMatch.pair_2_name}</strong><br>
+              09/05 · Mejor de 3 sets
+              ${finalMatch.pair_1_games != null && finalMatch.pair_2_games != null
+                ? `<br>Resultado: ${finalMatch.pair_1_games} - ${finalMatch.pair_2_games}`
+                : '<br>Pendiente'}
+            </div>
+          </div>
+        ` : `
+          <div class="empty">La final aún no ha sido generada.</div>
+        `}
+      `;
+    } catch (error) {
+      console.error("Error cargando partidos:", error);
+      container.innerHTML = '<div class="empty">No se pudieron cargar los partidos.</div>';
+    }
+  }
+
+  async function loadArenaFinalists(categoryId, categoryKey) {
     const container = document.getElementById("finalistsContainer");
     const subtitle = document.getElementById("finalistsSubtitle");
+
+    if (!container || !subtitle) return;
 
     if (!categoryId) {
       container.innerHTML = '<div class="empty">Categoría no disponible.</div>';
@@ -870,58 +1095,68 @@
 
     container.innerHTML = '<div class="empty">Cargando parejas finalistas...</div>';
 
-    const res = await fetch(API + `/selective-category/${categoryId}/finalists`);
-    const data = await res.json();
+    try {
+      const res = await fetch(API + `/selective-category/${categoryId}/finalists`);
+      const data = await res.json();
 
-    if (!data || !Array.isArray(data.finalists) || !data.finalists.length) {
-      container.innerHTML = '<div class="empty">Aún no hay parejas clasificadas a la final.</div>';
-      return;
-    }
+      if (!data || !Array.isArray(data.finalists) || !data.finalists.length) {
+        container.innerHTML = '<div class="empty">Aún no hay parejas clasificadas a la final.</div>';
+        return;
+      }
 
-    const labelMap = {
-      dc: "D/C",
-      cb: "C/B",
-      quinta: "5ta/4ta",
-      cuarta: "4ta/3era"
-    };
+      const labelMap = {
+        dc: "D/C",
+        cb: "C/B",
+        quinta: "5ta/4ta",
+        cuarta: "4ta/3era"
+      };
 
-    if (data.mode === "top2") {
-      subtitle.textContent = `Las dos primeras parejas del americano de ${labelMap[categoryKey] || "la categoría"} avanzan a la final.`;
+      if (data.mode === "top2") {
+        subtitle.textContent = `Las dos primeras parejas del americano de ${labelMap[categoryKey] || "la categoría"} avanzan a la final.`;
+
+        container.innerHTML = `
+          <div class="finalists-grid">
+            ${data.finalists.map((item, idx) => `
+              <article class="finalist-card">
+                <div class="finalist-slot">${idx === 0 ? "Finalista 1" : "Finalista 2"}</div>
+                <div class="finalist-name">${item.pair_name}</div>
+                <div class="finalist-meta">
+                  ${item.pts} pts · DG ${item.dg} · GF ${item.gf}
+                </div>
+              </article>
+            `).join("")}
+          </div>
+        `;
+        return;
+      }
+
+      subtitle.textContent = `Cada americano clasifica una pareja a la final de ${labelMap[categoryKey] || "la categoría"}.`;
 
       container.innerHTML = `
         <div class="finalists-grid">
           ${data.finalists.map((item, idx) => `
             <article class="finalist-card">
-              <div class="finalist-slot">${idx === 0 ? "Finalista 1" : "Finalista 2"}</div>
+              <div class="finalist-slot">${idx === 0 ? "Cupo 1" : "Cupo 2"}</div>
               <div class="finalist-name">${item.pair_name}</div>
               <div class="finalist-meta">
-                ${item.pts} pts · DG ${item.dg} · GF ${item.gf}
+                ${item.source_label || "Clasificada por americano"}
               </div>
             </article>
           `).join("")}
         </div>
       `;
-      return;
+    } catch (error) {
+      console.error("Error cargando finalistas:", error);
+      container.innerHTML = '<div class="empty">No se pudieron cargar las parejas finalistas.</div>';
     }
-
-    subtitle.textContent = `Cada americano clasifica una pareja a la final de ${labelMap[categoryKey] || "la categoría"}.`;
-
-    container.innerHTML = `
-      <div class="finalists-grid">
-        ${data.finalists.map((item, idx) => `
-          <article class="finalist-card">
-            <div class="finalist-slot">${idx === 0 ? "Cupo 1" : "Cupo 2"}</div>
-            <div class="finalist-name">${item.pair_name}</div>
-            <div class="finalist-meta">
-              ${item.source_label || "Clasificada por americano"}
-            </div>
-          </article>
-        `).join("")}
-      </div>
-    `;
   }
-</script>
 
-  </script>
+  window.addEventListener("DOMContentLoaded", () => {
+    const defaultBtn = document.querySelector('.category-btn[data-category="dc"]');
+    if (defaultBtn) {
+      selectCategory("dc", defaultBtn);
+    }
+  });
+</script>
 </body>
 </html>
