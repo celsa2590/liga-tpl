@@ -778,6 +778,8 @@
       </section>
 
 
+
+
 <section class="section">
   <div class="panel">
     <div class="panel-head">
@@ -789,6 +791,11 @@
       </div>
     </div>
 
+    <div class="panel-body">
+      <div id="finalistsContainer" class="empty">Sin categoría seleccionada.</div>
+    </div>
+  </div>
+</section>
 
 <section class="section">
   <div class="panel">
@@ -806,7 +813,6 @@
     </div>
   </div>
 </section>
-
 
 <section class="section">
   <div class="panel">
@@ -826,11 +832,8 @@
 </section>
 
 
-    <div class="panel-body">
-      <div id="finalistsContainer" class="empty">Sin categoría seleccionada.</div>
-    </div>
-  </div>
-</section>
+
+
 
 
       <section class="section">
@@ -863,109 +866,100 @@
     </div>
   </main>
 
-   <script>
 
 <script>
   const API = "https://liga-backend-f08y.onrender.com";
 
-
-const arenaCategoryMap = {
-  dc: [{ id: 5, label: "25/04 · 14:30 a 16:30" }],
-  cb: [{ id: 6, label: "25/04 · 17:00 a 19:00" }],
-  quinta: [
-    { id: 11, label: "Fecha 1 · 26/04 · 14:30 a 16:30" },
-    { id: 13, label: "Fecha 2 · 02/05 · 14:30 a 16:30" }
-  ],
-  cuarta: [
-    { id: 12, label: "Fecha 1 · 26/04 · 17:00 a 19:00" },
-    { id: 14, label: "Fecha 2 · 02/05 · 17:00 a 19:00" }
-  ]
-};
-
-let currentArenaCategoryKey = null;
-let currentArenaCategoryId = null;
-
-
-function selectCategory(categoryKey, button) {
-  document.querySelectorAll(".category-btn").forEach(btn => btn.classList.remove("active"));
-  if (button) button.classList.add("active");
-
-  document.querySelectorAll(".rule-panel").forEach(panel => {
-    panel.style.display = "none";
-  });
-
-  const panelMap = {
-    dc: "rules-dc",
-    cb: "rules-cb",
-    quinta: "rules-quinta",
-    cuarta: "rules-cuarta"
+  const arenaCategoryMap = {
+    dc: [{ id: 5, label: "25/04 · 14:30 a 16:30" }],
+    cb: [{ id: 6, label: "25/04 · 17:00 a 19:00" }],
+    quinta: [
+      { id: 11, label: "Fecha 1 · 26/04 · 14:30 a 16:30" },
+      { id: 13, label: "Fecha 2 · 02/05 · 14:30 a 16:30" }
+    ],
+    cuarta: [
+      { id: 12, label: "Fecha 1 · 26/04 · 17:00 a 19:00" },
+      { id: 14, label: "Fecha 2 · 02/05 · 17:00 a 19:00" }
+    ]
   };
 
-  const titleMap = {
-    dc: "Arena · D/C · Programado",
-    cb: "Arena · C/B · Programado",
-    quinta: "Arena · 5ta/4ta · Programado",
-    cuarta: "Arena · 4ta/3era · Programado"
-  };
+  let currentArenaCategoryKey = null;
+  let currentArenaCategoryId = null;
 
-  const panelId = panelMap[categoryKey];
-  if (panelId) {
-    const panel = document.getElementById(panelId);
-    if (panel) panel.style.display = "block";
-  }
+  function selectCategory(categoryKey, button) {
+    document.querySelectorAll(".category-btn").forEach(btn => btn.classList.remove("active"));
+    if (button) button.classList.add("active");
 
-  document.getElementById("selectiveStatus").textContent =
-    titleMap[categoryKey] || "Arena · Programado";
+    document.querySelectorAll(".rule-panel").forEach(panel => {
+      panel.style.display = "none";
+    });
 
-  currentArenaCategoryKey = categoryKey;
+    const panelMap = {
+      dc: "rules-dc",
+      cb: "rules-cb",
+      quinta: "rules-quinta",
+      cuarta: "rules-cuarta"
+    };
 
-  const options = arenaCategoryMap[categoryKey] || [];
-  const dateWrap = document.getElementById("arenaDateWrap");
-  const dateSelect = document.getElementById("arenaDateSelect");
+    const titleMap = {
+      dc: "Arena · D/C · Programado",
+      cb: "Arena · C/B · Programado",
+      quinta: "Arena · 5ta/4ta · Programado",
+      cuarta: "Arena · 4ta/3era · Programado"
+    };
 
-  if (options.length <= 1) {
-    dateWrap.style.display = "none";
-    currentArenaCategoryId = options[0]?.id || null;
-
-    if (currentArenaCategoryId) {
-      loadArenaStandings(currentArenaCategoryId, categoryKey);
-      loadArenaMatches(currentArenaCategoryId, categoryKey);
-      loadArenaFinalists(currentArenaCategoryId, categoryKey);
+    const panelId = panelMap[categoryKey];
+    if (panelId) {
+      const panel = document.getElementById(panelId);
+      if (panel) panel.style.display = "block";
     }
-    return;
+
+    document.getElementById("selectiveStatus").textContent =
+      titleMap[categoryKey] || "Arena · Programado";
+
+    currentArenaCategoryKey = categoryKey;
+
+    const options = arenaCategoryMap[categoryKey] || [];
+    const dateWrap = document.getElementById("arenaDateWrap");
+    const dateSelect = document.getElementById("arenaDateSelect");
+
+    if (options.length <= 1) {
+      dateWrap.style.display = "none";
+      currentArenaCategoryId = options[0]?.id || null;
+
+      if (currentArenaCategoryId) {
+        loadArenaStandings(currentArenaCategoryId, categoryKey);
+        loadArenaMatches(currentArenaCategoryId, categoryKey);
+        loadArenaFinalists(currentArenaCategoryId, categoryKey);
+      }
+      return;
+    }
+
+    dateWrap.style.display = "block";
+    dateSelect.innerHTML = '<option value="">Selecciona una fecha</option>' +
+      options.map(item => `<option value="${item.id}">${item.label}</option>`).join("");
+
+    currentArenaCategoryId = null;
+    document.getElementById("standingsContainer").innerHTML = '<div class="empty">Selecciona una fecha para ver la tabla.</div>';
+    document.getElementById("matchesContainer").innerHTML = '<div class="empty">Selecciona una fecha para ver los partidos.</div>';
+    document.getElementById("finalistsContainer").innerHTML = '<div class="empty">Selecciona una fecha para ver las parejas clasificadas.</div>';
   }
 
-  dateWrap.style.display = "block";
-  dateSelect.innerHTML = '<option value="">Selecciona una fecha</option>' +
-    options.map(item => `<option value="${item.id}">${item.label}</option>`).join("");
+  function onArenaDateChange() {
+    const dateSelect = document.getElementById("arenaDateSelect");
+    const categoryId = parseInt(dateSelect.value, 10);
 
-  currentArenaCategoryId = null;
-  document.getElementById("standingsContainer").innerHTML = '<div class="empty">Selecciona una fecha para ver la tabla.</div>';
-  document.getElementById("matchesContainer").innerHTML = '<div class="empty">Selecciona una fecha para ver los partidos.</div>';
-  document.getElementById("finalistsContainer").innerHTML = '<div class="empty">Selecciona una fecha para ver las parejas clasificadas.</div>';
-}
+    if (!categoryId || !currentArenaCategoryKey) return;
 
+    currentArenaCategoryId = categoryId;
 
-function onArenaDateChange() {
-  const dateSelect = document.getElementById("arenaDateSelect");
-  const categoryId = parseInt(dateSelect.value, 10);
-
-  if (!categoryId || !currentArenaCategoryKey) {
-    return;
+    loadArenaStandings(categoryId, currentArenaCategoryKey);
+    loadArenaMatches(categoryId, currentArenaCategoryKey);
+    loadArenaFinalists(categoryId, currentArenaCategoryKey);
   }
-
-  currentArenaCategoryId = categoryId;
-
-  loadArenaStandings(categoryId, currentArenaCategoryKey);
-  loadArenaMatches(categoryId, currentArenaCategoryKey);
-  loadArenaFinalists(categoryId, currentArenaCategoryKey);
-}
-
-
 
   async function loadArenaStandings(categoryId, categoryKey) {
     const container = document.getElementById("standingsContainer");
-
     if (!container) return;
 
     if (!categoryId) {
@@ -1022,7 +1016,6 @@ function onArenaDateChange() {
 
   async function loadArenaMatches(categoryId, categoryKey) {
     const container = document.getElementById("matchesContainer");
-
     if (!container) return;
 
     if (!categoryId) {
@@ -1085,7 +1078,6 @@ function onArenaDateChange() {
   async function loadArenaFinalists(categoryId, categoryKey) {
     const container = document.getElementById("finalistsContainer");
     const subtitle = document.getElementById("finalistsSubtitle");
-
     if (!container || !subtitle) return;
 
     if (!categoryId) {
