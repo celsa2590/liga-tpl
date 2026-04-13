@@ -1189,11 +1189,11 @@ async function loadArenaFinalists(categoryId, categoryKey) {
         `).join("")}
       </div>
     `;
-  } catch (error) {
+   catch (error) {
     console.error("Error cargando finalistas:", error);
     container.innerHTML = '<div class="empty">No se pudieron cargar las parejas finalistas.</div>';
   }
-}
+
 
 
 
