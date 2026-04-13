@@ -567,6 +567,57 @@
   line-height: 1.55;
 }
 
+.date-select-wrap {
+  margin-top: 14px;
+}
+
+.date-select-label {
+  margin-bottom: 8px;
+  font-size: 0.84rem;
+  color: #cbd5e1;
+  font-weight: 700;
+}
+
+.date-select {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  box-shadow: var(--shadow);
+  transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--gold-2) 50%),
+    linear-gradient(135deg, var(--gold-2) 50%, transparent 50%);
+  background-position:
+    calc(100% - 22px) calc(50% - 3px),
+    calc(100% - 16px) calc(50% - 3px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+}
+
+.date-select:hover {
+  border-color: rgba(214,176,106,0.28);
+  background: rgba(255,255,255,0.07);
+}
+
+.date-select:focus {
+  border-color: rgba(214,176,106,0.36);
+  box-shadow: 0 0 0 3px rgba(214,176,106,0.10);
+}
+
+.date-select option {
+  background: #0b1220;
+  color: #ffffff;
+}
 
   </style>
 </head>
@@ -713,12 +764,13 @@
             </div>
 
 
-<div id="arenaDateWrap" style="display:none; margin-top:14px;">
-  <div class="small-label" style="margin-bottom:8px;">Fecha</div>
-  <select id="arenaDateSelect" onchange="onArenaDateChange()" style="width:100%;">
+<div id="arenaDateWrap" class="date-select-wrap" style="display:none;">
+  <div class="date-select-label">Fecha</div>
+  <select id="arenaDateSelect" class="date-select" onchange="onArenaDateChange()">
     <option value="">Selecciona una fecha</option>
   </select>
 </div>
+
 
             <div class="status-row">
               <div id="selectiveStatus" class="status-pill">Arena · Programado</div>
@@ -1096,31 +1148,68 @@
         return;
       }
 
-      const labelMap = {
-        dc: "D/C",
-        cb: "C/B",
-        quinta: "5ta/4ta",
-        cuarta: "4ta/3era"
-      };
 
-      if (data.mode === "top2") {
-        subtitle.textContent = `Las dos primeras parejas del americano de ${labelMap[categoryKey] || "la categoría"} avanzan a la final.`;
 
-        container.innerHTML = `
-          <div class="finalists-grid">
-            ${data.finalists.map((item, idx) => `
-              <article class="finalist-card">
-                <div class="finalist-slot">${idx === 0 ? "Finalista 1" : "Finalista 2"}</div>
-                <div class="finalist-name">${item.pair_name}</div>
-                <div class="finalist-meta">
-                  ${item.pts} pts · DG ${item.dg} · GF ${item.gf}
-                </div>
-              </article>
-            `).join("")}
+const labelMap = {
+  dc: "D/C",
+  cb: "C/B",
+  quinta: "5ta/4ta",
+  cuarta: "4ta/3era"
+};
+
+const finalTextMap = {
+  dc: "Las dos primeras parejas del americano de D/C avanzan a la final.",
+  cb: "Las dos primeras parejas del americano de C/B avanzan a la final.",
+  quinta: "Cada americano clasifica una pareja a la final de 5ta/4ta.",
+  cuarta: "Cada americano clasifica una pareja a la final de 4ta/3era."
+};
+
+subtitle.textContent = finalTextMap[categoryKey] || "Selecciona una categoría para ver las parejas que avanzan a la final.";
+
+
+if (data.mode === "top2") {
+  container.innerHTML = `
+    <div class="finalists-grid">
+      ${data.finalists.map((item, idx) => `
+        <article class="finalist-card">
+          <div class="finalist-slot">${idx === 0 ? "Finalista 1" : "Finalista 2"}</div>
+          <div class="finalist-name">${item.pair_name}</div>
+          <div class="finalist-meta">
+            ${item.pts} pts · DG ${item.dg} · GF ${item.gf}
           </div>
-        `;
-        return;
-      }
+        </article>
+      `).join("")}
+    </div>
+  `;
+  return;
+}
+
+container.innerHTML = `
+  <div class="finalists-grid">
+    ${data.finalists.map((item, idx) => `
+      <article class="finalist-card">
+        <div class="finalist-slot">${idx === 0 ? "Cupo 1" : "Cupo 2"}</div>
+        <div class="finalist-name">${item.pair_name}</div>
+        <div class="finalist-meta">
+          ${item.source_label || "Clasificada por americano"}
+        </div>
+      </article>
+    `).join("")}
+  </div>
+`;
+
+if (!data || !Array.isArray(data.finalists) || !data.finalists.length) {
+  const finalTextMap = {
+    dc: "Las dos primeras parejas del americano de D/C avanzan a la final.",
+    cb: "Las dos primeras parejas del americano de C/B avanzan a la final.",
+    quinta: "Cada americano clasifica una pareja a la final de 5ta/4ta.",
+    cuarta: "Cada americano clasifica una pareja a la final de 4ta/3era."
+  };
+
+  subtitle.textContent = finalTextMap[categoryKey] || "Selecciona una categoría para ver las parejas que avanzan a la final.";
+  container.innerHTML = '<div class="empty">Aún no hay parejas clasificadas a la final.</div>';
+  return;
+}
 
       subtitle.textContent = `Cada americano clasifica una pareja a la final de ${labelMap[categoryKey] || "la categoría"}.`;
 
