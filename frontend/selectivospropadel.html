@@ -1,3 +1,1222 @@
-<h1>Selectivos Arena</h1>
-<p>Próximamente información de los selectivos de este club.</p>
-<a href="selectivos.html">← Volver a elegir club</a>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HNJSKSNR2C"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HNJSKSNR2C');
+</script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Selectivos Propadel | TPL Chile</title>
+  <meta
+    name="description"
+    content="Sigue los selectivos de Propadel con fechas, horarios, formato y finales."
+  />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&family=Sora:wght@700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #05080f;
+      --panel: rgba(255, 255, 255, 0.04);
+      --line: rgba(255, 255, 255, 0.08);
+      --text: #ffffff;
+      --muted: rgba(255, 255, 255, 0.72);
+      --muted-2: rgba(255, 255, 255, 0.55);
+      --gold: #d4af6a;
+      --gold-2: #e6c98f;
+      --blue: #93c5fd;
+      --success: #86efac;
+      --shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+      --radius-lg: 22px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top right, #0f1b2d, #06090f),
+        linear-gradient(180deg, #05080f 0%, #07101b 100%);
+      color: var(--text);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .container {
+      width: min(var(--max), calc(100% - 28px));
+      margin: 0 auto;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(5, 8, 15, 0.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(214, 176, 106, 0.1);
+    }
+
+    .site-header-inner {
+      width: min(var(--max), calc(100% - 28px));
+      min-height: 78px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-logo {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 1.05rem;
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-subtitle {
+      margin-top: 4px;
+      font-size: 0.85rem;
+      color: var(--muted-2);
+    }
+
+    .main-nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-link {
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text);
+      transition: 0.18s ease;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      background: rgba(214,176,106,0.12);
+      color: var(--gold-2);
+    }
+
+    .nav-link.admin {
+      background: var(--gold);
+      color: #081120;
+    }
+
+    .nav-link.admin:hover {
+      background: var(--gold-2);
+      color: #081120;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 44px 0 26px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 86% 18%, rgba(214,176,106,0.16), transparent 18%),
+        radial-gradient(circle at 12% 84%, rgba(147,197,253,0.08), transparent 16%),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: auto, auto, 34px 34px, 34px 34px;
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      width: min(var(--max), calc(100% - 28px));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+      gap: 28px;
+      align-items: center;
+      padding: 20px 0 28px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(214,176,106,0.1);
+      border: 1px solid rgba(214,176,106,0.24);
+      color: var(--gold-2);
+      font-size: 0.84rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+      backdrop-filter: blur(8px);
+    }
+
+    .hero h1 {
+      margin: 0;
+      max-width: 760px;
+      font-family: Sora, Inter, system-ui, sans-serif;
+      font-size: clamp(2.3rem, 5vw, 4.4rem);
+      line-height: 1.03;
+      letter-spacing: -0.02em;
+      font-weight: 800;
+    }
+
+    .highlight {
+      color: var(--gold);
+    }
+
+    .hero p {
+      margin: 18px 0 0;
+      max-width: 620px;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .hero-side,
+    .panel,
+    .selector-card,
+    .rule-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-side {
+      padding: 20px;
+    }
+
+    .hero-side h3 {
+      margin: 0;
+      font-size: 1.15rem;
+    }
+
+    .content {
+      padding-bottom: 42px;
+    }
+
+    .section {
+      padding: 16px 0 0;
+    }
+
+    .summary-block {
+      margin-top: 12px;
+    }
+
+    .summary-label {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--muted-2);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .summary-text {
+      margin-top: 4px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .summary-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.08);
+      margin: 16px 0;
+    }
+
+    .summary-foot {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .panel {
+      overflow: hidden;
+    }
+
+    .panel-head {
+      padding: 22px 22px 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: end;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 1.35rem;
+      font-weight: 800;
+    }
+
+    .panel-subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.94rem;
+    }
+
+    .panel-body {
+      padding: 0 22px 22px;
+    }
+
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .rule-card {
+      padding: 16px;
+      transition: transform 0.18s ease, border-color 0.18s ease;
+    }
+
+    .rule-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(214,176,106,0.24);
+    }
+
+    .rule-card.alert {
+      border-color: rgba(214,176,106,0.28);
+      background:
+        radial-gradient(circle at top right, rgba(214,176,106,0.12), transparent 30%),
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
+    }
+
+    .rule-label {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--muted-2);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .rule-value {
+      margin-top: 8px;
+      font-size: 1.15rem;
+      font-weight: 900;
+      line-height: 1.25;
+    }
+
+    .rule-meta {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    .selector-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    .selector-card {
+      padding: 20px;
+    }
+
+    .selector-title {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+
+    .selector-subtitle {
+      margin: 8px 0 14px;
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .category-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .category-btn {
+      padding: 11px 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--text);
+      font-size: 0.92rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .category-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .category-btn:hover,
+    .category-btn.active {
+      background: rgba(214,176,106,0.16);
+      border-color: rgba(214,176,106,0.32);
+      color: var(--gold-2);
+    }
+
+    .status-row {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(147,197,253,0.12);
+      border: 1px solid rgba(147,197,253,0.22);
+      color: var(--blue);
+      font-size: 0.84rem;
+      font-weight: 800;
+    }
+
+    .refresh-note {
+      color: var(--muted-2);
+      font-size: 0.88rem;
+    }
+
+    .rule-blocks {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 6px;
+    }
+
+    .rule-panel {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 18px;
+      display: none;
+    }
+
+    .rule-panel h3 {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 800;
+    }
+
+    .rule-panel p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.94rem;
+    }
+
+    .placeholder-card {
+      padding: 18px;
+      border: 1px dashed rgba(255,255,255,0.14);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.025);
+    }
+
+    .placeholder-title {
+      color: var(--gold-2);
+      font-size: 0.9rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .placeholder-text {
+      margin-top: 10px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.96rem;
+    }
+
+    .placeholder-list {
+      margin: 12px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    @media (max-width: 980px) {
+      .hero-inner,
+      .rules-grid,
+      .rule-blocks {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .site-header-inner {
+        min-height: 72px;
+        align-items: flex-start;
+        padding: 12px 0;
+        flex-direction: column;
+      }
+
+      .main-nav {
+        width: 100%;
+        justify-content: flex-start;
+        gap: 8px;
+      }
+
+      .nav-link {
+        font-size: 0.86rem;
+        padding: 9px 12px;
+      }
+
+      .container,
+      .site-header-inner,
+      .hero-inner {
+        width: min(var(--max), calc(100% - 20px));
+      }
+
+      .hero {
+        padding-top: 28px;
+      }
+
+      .panel-head,
+      .panel-body {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+    }
+
+
+.finalists-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.finalist-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
+  border: 1px solid rgba(214,176,106,0.22);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+.finalist-slot {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--muted-2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.finalist-name {
+  margin-top: 8px;
+  font-size: 1.08rem;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.finalist-meta {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.date-select-wrap {
+  margin-top: 14px;
+}
+
+.date-select-label {
+  margin-bottom: 8px;
+  font-size: 0.84rem;
+  color: #cbd5e1;
+  font-weight: 700;
+}
+
+.date-select {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  box-shadow: var(--shadow);
+  transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--gold-2) 50%),
+    linear-gradient(135deg, var(--gold-2) 50%, transparent 50%);
+  background-position:
+    calc(100% - 22px) calc(50% - 3px),
+    calc(100% - 16px) calc(50% - 3px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+}
+
+.date-select:hover {
+  border-color: rgba(214,176,106,0.28);
+  background: rgba(255,255,255,0.07);
+}
+
+.date-select:focus {
+  border-color: rgba(214,176,106,0.36);
+  box-shadow: 0 0 0 3px rgba(214,176,106,0.10);
+}
+
+.date-select option {
+  background: #0b1220;
+  color: #ffffff;
+}
+
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="brand" href="/">
+        <img class="brand-logo" src="/assets/logos/tpl_logo_trans.png" alt="TPL Chile" />
+        <div>
+          <div class="brand-title">TPL Chile</div>
+          <div class="brand-subtitle">Liga interclubes de pádel</div>
+        </div>
+      </a>
+
+      <nav class="main-nav">
+        <a class="nav-link" href="/">Inicio</a>
+        <a class="nav-link" href="/teams.html">Equipos</a>
+        <a class="nav-link" href="/players.html">Jugadores</a>
+        <a class="nav-link active" href="/selectivos.html">Selectivos</a>
+        <a class="nav-link" href="/photos.html">Fotos</a>
+        <a class="nav-link" href="/sponsors.html">Auspiciadores</a>
+        <a class="nav-link admin" href="/admin.html">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-badge">🎾 Selectivos TPL</div>
+        <h1>Selectivos <span class="highlight">Propadel</span></h1>
+        <p>
+          En esta sección podrás ver el detalle de los selectivos de Propadel, sus categorías, fechas, horarios, formato y finales.
+        </p>
+      </div>
+
+      <aside class="hero-side">
+
+
+<h3>Resumen rápido</h3>
+
+<div class="summary-block">
+  <div class="summary-label">Femenino</div>
+  <div class="summary-text">
+    D/C · 19/04 · 10:30 · Americano directo
+  </div>
+</div>
+
+<div class="summary-block">
+  <div class="summary-label">Masculino</div>
+  <div class="summary-text">
+    18/04 · 2 americanos · clasifica 1 pareja por cada uno
+  </div>
+</div>
+
+<div class="summary-block">
+  <div class="summary-label">Formato</div>
+  <div class="summary-text">
+    Cuadrangular (4 parejas) · 2 canchas · duración 2 horas
+  </div>
+</div>
+
+<div class="summary-block">
+  <div class="summary-label">Final</div>
+  <div class="summary-text">
+    Sin fecha definida aún
+  </div>
+</div>
+
+<div class="summary-divider"></div>
+
+<p class="summary-foot">
+  Femenino: titular + suplente directa del americano. Masculino: una pareja clasifica por cada americano.
+</p>
+
+
+      </aside>
+    </div>
+  </section>
+
+
+
+
+  <main class="content">
+    <div class="container">
+
+      <section class="section">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2 class="panel-title">Reglas del selectivo</h2>
+              <p class="panel-subtitle">
+                Información general del formato, sistema de clasificación y estructura de las finales.
+              </p>
+            </div>
+          </div>
+
+          <div class="panel-body">
+            <div class="rules-grid">
+              <article class="rule-card">
+                <div class="rule-label">Formato</div>
+                <div class="rule-value">Cuadrangular</div>
+                <div class="rule-meta">4 parejas · 2 canchas · todos contra todos.</div>
+              </article>
+
+              <article class="rule-card">
+                <div class="rule-label">Puntaje</div>
+                <div class="rule-value">3 / 1 / 0</div>
+                <div class="rule-meta">Victoria: 3 · Empate: 1 · Derrota: 0</div>
+              </article>
+
+              <article class="rule-card">
+                <div class="rule-label">Clasificación</div>
+                <div class="rule-value">Americano directo</div>
+                <div class="rule-meta">Cada americano define clasificación</div>
+              </article>
+
+              <article class="rule-card">
+                <div class="rule-label">Femenino</div>
+                <div class="rule-value">Una fecha para cada categoría</div>
+                <div class="rule-meta">1er lugar titular · 2do lugar suplente.</div>
+              </article>
+
+              <article class="rule-card">
+                <div class="rule-label">Masculino</div>
+                <div class="rule-value">Primer Americano 18/04</div>
+                <div class="rule-meta">Cada americano clasifica 1 pareja</div>
+              </article>
+
+              <article class="rule-card alert">
+                <div class="rule-label">Finales</div>
+                <div class="rule-value">Próximamente</div>
+                <div class="rule-meta">Sin fecha definida.</div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="selector-grid">
+          <article class="selector-card">
+            <h2 class="selector-title">Selecciona la categoría</h2>
+            <p class="selector-subtitle">Elige una categoría para ver su detalle específico.</p>
+
+            <div id="categoryButtons" class="category-buttons">
+              <button class="category-btn active" data-category="dc" onclick="selectCategory('dc', this)">D/C</button>
+              <button class="category-btn" data-category="cb" onclick="selectCategory('cb', this)">C/B</button>
+              <button class="category-btn"data-category="quinta" onclick="selectCategory('quinta', this)">5ta/4ta</button>
+              <button class="category-btn" data-category="cuarta" onclick="selectCategory('cuarta', this)">4ta/3era</button>
+            </div>
+
+
+<div id="arenaDateWrap" class="date-select-wrap" style="display:none;">
+  <div class="date-select-label">Fecha</div>
+  <select id="arenaDateSelect" class="date-select" onchange="onArenaDateChange()">
+    <option value="">Selecciona una fecha</option>
+  </select>
+</div>
+
+
+            <div class="status-row">
+              <div id="selectiveStatus" class="status-pill">Arena · Programado</div>
+              <div class="refresh-note">Información general cargada</div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2 class="panel-title">Formato de la categoría</h2>
+              <p class="panel-subtitle">
+                El detalle cambia según la categoría seleccionada.
+              </p>
+            </div>
+          </div>
+
+          <div class="panel-body">
+            <div class="rule-blocks">
+              <article class="rule-panel" id="rules-dc">
+                <h3>Formato D/C</h3>
+                <p>Femenino · 19/04 · 10:30 a 12:30.</p>
+                <p>Americano / cuadrangular todos contra todos.</p>
+                <p>1er lugar: pareja titular.</p>
+                <p>2do lugar: pareja suplente.</p>
+              </article>
+
+              <article class="rule-panel" id="rules-cb">
+                <h3>Formato C/B</h3>
+                <p>Femenino · Fecha por definir.</p>
+                <p>Americano / cuadrangular todos contra todos.</p>
+                <p>Victoria: 3 puntos · Empate: 1 punto.</p>
+                <p>1er lugar: pareja titular.</p>
+                <p>2do lugar: pareja suplente.</p>
+              </article>
+
+              <article class="rule-panel" id="rules-quinta">
+                <h3>Formato 5ta</h3>
+                <p>Masculino · 18/04 · 11:00 a 13:00 y 18:00 a 20:00.</p>
+                <p>Americano cuadrangular (2 horarios).</p>
+                <p>Victoria: 3 puntos · Empate: 1 punto.</p>
+                <p>Cada americano clasifica una pareja.</p>
+              </article>
+
+              <article class="rule-panel" id="rules-cuarta">
+                <h3>Formato 4ta/3era</h3>
+                <p>Masculino · 18/04 · 09:00 a 11:00 y 20:00 a 22:00.</p>
+                <p>Americano cuadrangular (2 horarios).</p>
+                <p>Victoria: 3 puntos · Empate: 1 punto.</p>
+                <p>Cada americano clasifica una pareja.</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
+
+<section class="section">
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <h2 class="panel-title">Clasificadas a la final</h2>
+        <p class="panel-subtitle" id="finalistsSubtitle">
+          Selecciona una categoría para ver las parejas que avanzan a la final.
+        </p>
+      </div>
+    </div>
+
+    <div class="panel-body">
+      <div id="finalistsContainer" class="empty">Sin categoría seleccionada.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <h2 class="panel-title">Tabla del selectivo</h2>
+        <p class="panel-subtitle">
+          Posiciones actualizadas según resultados cargados.
+        </p>
+      </div>
+    </div>
+
+    <div class="panel-body">
+      <div id="standingsContainer" class="empty">Sin categoría seleccionada.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <h2 class="panel-title">Cruces y final</h2>
+        <p class="panel-subtitle">
+          Aquí podrás ver los partidos clasificatorios y la final.
+        </p>
+      </div>
+    </div>
+
+    <div class="panel-body">
+      <div id="matchesContainer" class="empty">Sin categoría seleccionada.</div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+      <section class="section">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2 class="panel-title">Estado del selectivo</h2>
+              <p class="panel-subtitle">Por ahora se muestra la información general. Próximamente se podrán cargar participantes, tabla y resultados.</p>
+            </div>
+          </div>
+
+          <div class="panel-body">
+            <div class="placeholder-card">
+              <div class="placeholder-title">Próximamente</div>
+              <div class="placeholder-text">
+                Esta página quedará preparada para mostrar el desarrollo completo del selectivo de Arena.
+              </div>
+              <ul class="placeholder-list">
+                <li>Participantes por categoría</li>
+                <li>Tabla de posiciones</li>
+                <li>Cruces y resultados</li>
+                <li>Parejas finalistas</li>
+                <li>Resultado de las finales</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+
+<script>
+  const API = "https://liga-backend-f08y.onrender.com";
+
+
+const propadelCategoryMap = {
+  dc: [{ id: 20, label: "19/04 · 10:30" }],
+  cb: [],
+
+  quinta: [
+    { id: 21, label: "09:00 - 11:00" },
+    { id: 22, label: "18:00 - 20:00" }
+  ],
+
+  cuarta: [
+    { id: 23, label: "11:00 - 13:00" },
+    { id: 24, label: "20:00 - 22:00" }
+  ]
+};
+
+
+  let currentArenaCategoryKey = null;
+  let currentArenaCategoryId = null;
+
+  function selectCategory(categoryKey, button) {
+    document.querySelectorAll(".category-btn").forEach(btn => btn.classList.remove("active"));
+    if (button) button.classList.add("active");
+
+    document.querySelectorAll(".rule-panel").forEach(panel => {
+      panel.style.display = "none";
+    });
+
+    const panelMap = {
+      dc: "rules-dc",
+      cb: "rules-cb",
+      quinta: "rules-quinta",
+      cuarta: "rules-cuarta"
+    };
+
+    const titleMap = {
+      dc: "Arena · D/C · Programado",
+      cb: "Arena · C/B · Programado",
+      quinta: "Arena · 5ta/4ta · Programado",
+      cuarta: "Arena · 4ta/3era · Programado"
+    };
+
+    const panelId = panelMap[categoryKey];
+    if (panelId) {
+      const panel = document.getElementById(panelId);
+      if (panel) panel.style.display = "block";
+    }
+
+    document.getElementById("selectiveStatus").textContent =
+      titleMap[categoryKey] || "Arena · Programado";
+
+    currentArenaCategoryKey = categoryKey;
+
+    const options = propadelCategoryMap[categoryKey] || [];
+    const dateWrap = document.getElementById("arenaDateWrap");
+    const dateSelect = document.getElementById("arenaDateSelect");
+
+    if (options.length <= 1) {
+      dateWrap.style.display = "none";
+      currentArenaCategoryId = options[0]?.id || null;
+
+      if (currentArenaCategoryId) {
+        loadArenaStandings(currentArenaCategoryId, categoryKey);
+        loadArenaMatches(currentArenaCategoryId, categoryKey);
+        loadArenaFinalists(currentArenaCategoryId, categoryKey);
+      }
+      return;
+    }
+
+    dateWrap.style.display = "block";
+    dateSelect.innerHTML = '<option value="">Selecciona una fecha</option>' +
+      options.map(item => `<option value="${item.id}">${item.label}</option>`).join("");
+
+    currentArenaCategoryId = null;
+    document.getElementById("standingsContainer").innerHTML = '<div class="empty">Selecciona una fecha para ver la tabla.</div>';
+    document.getElementById("matchesContainer").innerHTML = '<div class="empty">Selecciona una fecha para ver los partidos.</div>';
+    document.getElementById("finalistsContainer").innerHTML = '<div class="empty">Selecciona una fecha para ver las parejas clasificadas.</div>';
+  }
+
+  function onArenaDateChange() {
+    const dateSelect = document.getElementById("arenaDateSelect");
+    const categoryId = parseInt(dateSelect.value, 10);
+
+    if (!categoryId || !currentArenaCategoryKey) return;
+
+    currentArenaCategoryId = categoryId;
+
+    loadArenaStandings(categoryId, currentArenaCategoryKey);
+    loadArenaMatches(categoryId, currentArenaCategoryKey);
+    loadArenaFinalists(categoryId, currentArenaCategoryKey);
+  }
+
+  async function loadArenaStandings(categoryId, categoryKey) {
+    const container = document.getElementById("standingsContainer");
+    if (!container) return;
+
+    if (!categoryId) {
+      container.innerHTML = '<div class="empty">Categoría no disponible.</div>';
+      return;
+    }
+
+    container.innerHTML = '<div class="empty">Cargando tabla...</div>';
+
+    try {
+      const res = await fetch(API + `/selective-category/${categoryId}/standings`);
+      const rows = await res.json();
+
+      if (!Array.isArray(rows) || !rows.length) {
+        container.innerHTML = '<div class="empty">Aún no hay resultados cargados.</div>';
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="standings-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Pareja</th>
+                <th class="num">PJ</th>
+                <th class="num">GF</th>
+                <th class="num">GC</th>
+                <th class="num">DG</th>
+                <th class="num">PTS</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.map((item, idx) => `
+                <tr>
+                  <td>${idx + 1}</td>
+                  <td><strong>${item.pair_name}</strong></td>
+                  <td class="num">${item.pj}</td>
+                  <td class="num">${item.gf}</td>
+                  <td class="num">${item.gc}</td>
+                  <td class="num">${item.dg}</td>
+                  <td class="num"><strong>${item.pts}</strong></td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } catch (error) {
+      console.error("Error cargando tabla:", error);
+      container.innerHTML = '<div class="empty">No se pudo cargar la tabla.</div>';
+    }
+  }
+
+  async function loadArenaMatches(categoryId, categoryKey) {
+    const container = document.getElementById("matchesContainer");
+    if (!container) return;
+
+    if (!categoryId) {
+      container.innerHTML = '<div class="empty">Categoría no disponible.</div>';
+      return;
+    }
+
+    container.innerHTML = '<div class="empty">Cargando partidos...</div>';
+
+    try {
+      const res = await fetch(API + `/selective-category/${categoryId}/matches`);
+      const rows = await res.json();
+
+      if (!Array.isArray(rows) || !rows.length) {
+        container.innerHTML = '<div class="empty">Aún no hay partidos cargados.</div>';
+        return;
+      }
+
+      const groupMatches = rows.filter(item => item.stage === "group_stage");
+      const finalMatch = rows.find(item => item.stage === "final");
+
+      container.innerHTML = `
+        ${groupMatches.length ? `
+          <div class="placeholder-card" style="margin-bottom:16px;">
+            <div class="placeholder-title">Fase clasificatoria</div>
+            <div class="placeholder-text">
+              ${groupMatches.map(item => `
+                <div style="margin-top:10px;">
+                  <strong>${item.pair_1_name}</strong> vs <strong>${item.pair_2_name}</strong>
+                  ${item.pair_1_games != null && item.pair_2_games != null
+                    ? ` · ${item.pair_1_games} - ${item.pair_2_games}`
+                    : ' · pendiente'}
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        ` : ''}
+
+        ${finalMatch ? `
+          <div class="placeholder-card">
+            <div class="placeholder-title">Final</div>
+            <div class="placeholder-text">
+              <strong>${finalMatch.pair_1_name}</strong> vs <strong>${finalMatch.pair_2_name}</strong><br>
+              09/05 · Mejor de 3 sets
+              ${finalMatch.pair_1_games != null && finalMatch.pair_2_games != null
+                ? `<br>Resultado: ${finalMatch.pair_1_games} - ${finalMatch.pair_2_games}`
+                : '<br>Pendiente'}
+            </div>
+          </div>
+        ` : `
+          <div class="empty">La final aún no ha sido generada.</div>
+        `}
+      `;
+    } catch (error) {
+      console.error("Error cargando partidos:", error);
+      container.innerHTML = '<div class="empty">No se pudieron cargar los partidos.</div>';
+    }
+  }
+
+
+async function loadArenaFinalists(categoryId, categoryKey) {
+  const container = document.getElementById("finalistsContainer");
+  const subtitle = document.getElementById("finalistsSubtitle");
+  if (!container || !subtitle) return;
+
+
+const finalTextMap = {
+  dc: "La mejor pareja clasifica como titular y la segunda como suplente.",
+  cb: "La mejor pareja clasifica como titular y la segunda como suplente.",
+  quinta: "Cada americano clasifica una pareja a la final de campeones.",
+  cuarta: "Cada americano clasifica una pareja a la final de campeones."
+};
+
+
+  subtitle.textContent =
+    finalTextMap[categoryKey] || "Selecciona una categoría para ver las parejas que avanzan a la final.";
+
+  if (!categoryId) {
+    container.innerHTML = '<div class="empty">Categoría no disponible.</div>';
+    return;
+  }
+
+  container.innerHTML = '<div class="empty">Cargando parejas finalistas...</div>';
+
+  try {
+    const res = await fetch(API + `/selective-category/${categoryId}/finalists`);
+    const data = await res.json();
+
+    if (!data || !Array.isArray(data.finalists) || !data.finalists.length) {
+      container.innerHTML = '<div class="empty">Aún no hay parejas clasificadas a la final.</div>';
+      return;
+    }
+
+    if (data.mode === "top2") {
+      container.innerHTML = `
+        <div class="finalists-grid">
+          ${data.finalists.map((item, idx) => `
+            <article class="finalist-card">
+              <div class="finalist-slot">${idx === 0 ? "Finalista 1" : "Finalista 2"}</div>
+              <div class="finalist-name">${item.pair_name}</div>
+              <div class="finalist-meta">
+                ${item.pts} pts · DG ${item.dg} · GF ${item.gf}
+              </div>
+            </article>
+          `).join("")}
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = `
+      <div class="finalists-grid">
+        ${data.finalists.map((item, idx) => `
+          <article class="finalist-card">
+            <div class="finalist-slot">${idx === 0 ? "Cupo 1" : "Cupo 2"}</div>
+            <div class="finalist-name">${item.pair_name}</div>
+            <div class="finalist-meta">
+              ${item.source_label || "Clasificada por americano"}
+            </div>
+          </article>
+        `).join("")}
+      </div>
+    `;
+  } catch (error) {
+    console.error("Error cargando finalistas:", error);
+    container.innerHTML = '<div class="empty">No se pudieron cargar las parejas finalistas.</div>';
+  }
+}
+
+
+window.addEventListener("DOMContentLoaded", () => {
+  const defaultBtn = document.querySelector('.category-btn[data-category="dc"]');
+  if (defaultBtn) {
+    selectCategory("dc", defaultBtn);
+  }
+});
+
+</script>
+</body>
+</html>
