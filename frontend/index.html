@@ -1687,12 +1687,62 @@
       }
     }
 
-    Promise.allSettled([loadStandings(), loadMatches(), loadNextRound()]).then(results => {
-      const hasError = results.some(result => result.status === "rejected");
-      if (hasError) {
-        console.error("Se produjo un error cargando parte de la portada", results);
-      }
+
+async function loadHomeData() {
+  const response = await fetch(`${API}/home`);
+  const data = await response.json();
+
+  const standings = data.standings || [];
+  const matches = data.matches || [];
+  const nextRound = data.next_round || { round_number: null, date: null };
+
+  // standings
+  document.getElementById("standingsBadge").textContent = `${standings.length} equipos`;
+  document.getElementById("heroTeamsCount").textContent = standings.length;
+
+  renderDesktopStandings(standings);
+  renderMobileStandings(standings);
+  renderTeamsSpotlight(standings);
+
+  const leader = standings[0];
+  if (leader) {
+    document.getElementById("miniLeaderValue").textContent = leader.team_name;
+    document.getElementById("miniLeaderText").textContent =
+      `${leader.total_points ?? 0} puntos y posición #${leader.position}.`;
+  }
+
+  // matches
+  const ties = groupMatchesByTie(matches);
+  renderHeroNext(ties);
+  renderCalendar(ties);
+  document.getElementById("miniMatchesValue").textContent = `${matches.length}`;
+
+  // next round
+  if (!nextRound.date) {
+    document.getElementById("nextRoundBadge").textContent = "🏆 Calendario en actualización";
+    document.getElementById("miniRoundValue").textContent = "Por definir";
+    document.getElementById("miniRoundText").textContent =
+      "Aún no hay una jornada futura publicada.";
+  } else {
+    const label = new Date(nextRound.date).toLocaleDateString("es-CL", {
+      day: "2-digit",
+      month: "long"
     });
+
+    document.getElementById("nextRoundBadge").textContent = `🏆 Próxima jornada · ${label}`;
+    document.getElementById("miniRoundValue").textContent = `Jornada ${nextRound.round_number}`;
+    document.getElementById("miniRoundText").textContent =
+      `La próxima fecha comienza el ${label}.`;
+  }
+}
+
+
+
+loadHomeData().catch(error => {
+  console.error("Se produjo un error cargando la portada", error);
+});
+
+
   </script>
 
 </body>

@@ -552,6 +552,93 @@ def get_selective_category_finalists(category_id: int):
         }
 
 
+
+@app.get("/home")
+def get_home_data():
+    standings_query = text("""
+        SELECT
+            ROW_NUMBER() OVER (
+                ORDER BY total_points DESC, sets_diff DESC, won_games DESC, team_name ASC
+            ) AS position,
+            season_name,
+            team_id,
+            team_name,
+            club_name,
+            played_games,
+            won_games,
+            lost_games,
+            sets_for,
+            sets_against,
+            sets_diff,
+            bonus_points,
+            total_points
+        FROM standings
+        WHERE season_name = 'Liga San Miguel 2026'
+        ORDER BY total_points DESC, sets_diff DESC, won_games DESC, team_name ASC
+    """)
+
+    matches_query = text("""
+        SELECT
+            match_id,
+            season_name,
+            round_number,
+            home_team_id,
+            home_team_name,
+            away_team_id,
+            away_team_name,
+            game_number,
+            category,
+            venue_club,
+            scheduled_at,
+            home_player_1,
+            home_player_2,
+            away_player_1,
+            away_player_2,
+            home_sets,
+            away_sets,
+            result_status
+        FROM match_schedule
+        WHERE season_name = 'Liga San Miguel 2026'
+        ORDER BY round_number, scheduled_at
+    """)
+
+    next_round_query = text("""
+        SELECT
+            round_number,
+            MIN(scheduled_at) AS next_date
+        FROM match_schedule
+        WHERE season_name = 'Liga San Miguel 2026'
+          AND scheduled_at >= NOW()
+        GROUP BY round_number
+        ORDER BY next_date
+        LIMIT 1
+    """)
+
+    try:
+        with engine.connect() as conn:
+            standings_result = conn.execute(standings_query)
+            standings_rows = [dict(row._mapping) for row in standings_result]
+
+            matches_result = conn.execute(matches_query)
+            matches_rows = [dict(row._mapping) for row in matches_result]
+
+            next_round_result = conn.execute(next_round_query).fetchone()
+
+        next_round = {
+            "round_number": next_round_result.round_number if next_round_result else None,
+            "date": next_round_result.next_date.isoformat() if next_round_result and next_round_result.next_date else None
+        }
+
+        return {
+            "standings": standings_rows,
+            "matches": matches_rows,
+            "next_round": next_round
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error cargando portada: {str(e)}")
+
+
 @app.post("/admin/selective-category/{category_id}/generate-round-robin")
 def generate_selective_round_robin(
     category_id: int,
