@@ -1019,6 +1019,25 @@
   100% { background-position: -200% 0; }
 }
 
+.hero-bg {
+  background-image: url('assets/img/padel-hero.jpg'); /* tu foto */
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.hero-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 8, 15, 0.85); /* oscurece para que se lea */
+}
+
+.hero-bg .container {
+  position: relative;
+  z-index: 2;
+}
+
   </style>
 </head>
 <body>
@@ -1044,20 +1063,17 @@
     </div>
   </header>
 
-  <section class="hero">
+  <section class="hero hero-bg">
     <div class="hero-inner">
       <div class="hero-main">
         <div class="hero-badge" id="nextRoundBadge">🏆 Próxima jornada</div>
         <img class="hero-logo-big" src="/assets/logos/tpl_logo_trans.png" alt="Logo TPL Chile" />
         <h1>La liga interclub de pádel <span class="highlight">TPL Chile</span></h1>
-        <p>Donde los clubes compiten, crecen y construyen historia.</p>
-<p class="hero-badge">
-  4 clubes · 6 partidos + final · ranking actualizado en cada fecha
-</p>
+        <p>Ranking, resultados y competencia real entre clubes.</p>
 
         <div class="hero-actions">
-          <a class="btn btn-primary" href="#tabla">Ver ranking</a>
-          <a class="btn btn-secondary" href="#calendario">Ver calendario</a>
+          <a class="hero-btn primary" href="#tabla">Ver ranking</a>
+          <a class="hero-btn secondary" href="#calendario">Ver calendario</a>
           <a class="hero-btn secondary" href="/registration.html" id="registerPlayersBtn">Inscripciones</a>
         </div>
 
