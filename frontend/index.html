@@ -1001,6 +1001,24 @@
   border: 1px solid rgba(214,176,106,0.3);
 }
 
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.05) 25%,
+    rgba(255,255,255,0.12) 50%,
+    rgba(255,255,255,0.05) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 10px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
   </style>
 </head>
 <body>
@@ -1205,7 +1223,9 @@
 
               <p class="section-subtitle">Sigue la carrera de tu equipo favorito durante toda la temporada.</p>
             </div>
-            <div class="badge" id="standingsBadge">Cargando...</div>
+            <div class="badge" id="standingsBadge">
+             <div class="skeleton" style="width:80px; height:14px;"></div>
+            </div>
           </div>
 
           <div class="standings-wrap">
