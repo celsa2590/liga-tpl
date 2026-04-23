@@ -784,9 +784,12 @@
     .mini-list {
       padding: 0 18px 18px;
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
     }
+
+.mini-list.cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
 
     .mini-card, .summary-card { padding: 16px; }
     .mini-card h3, .summary-card h3 {
@@ -1040,7 +1043,7 @@
 }
 
 @media (max-width: 900px) {
-  .mini-list {
+  .mini-list.cols-3 {
     grid-template-columns: 1fr;
   }
 }
@@ -1183,7 +1186,7 @@
         </div>
       </div>
 
-      <div class="mini-list">
+      <div class="mini-list cols-3">
         <div class="mini-card">
           <h3>Próxima jornada</h3>
           <p id="miniRoundText">Estamos revisando la fecha más cercana de la temporada.</p>
@@ -1212,7 +1215,7 @@
         </div>
       </div>
 
-      <div class="mini-list">
+      <div class="mini-list cols-3">
         <a class="mini-card" href="/players.html">
           <h3>Jugadores</h3>
           <p>Revisa el ranking individual, estadísticas y seguimiento por jugador.</p>
@@ -1242,7 +1245,7 @@
       </div>
     </div>
 
-    <div class="mini-list">
+    <div class="mini-list cols-3">
       <div class="mini-card">
         <h3>💰 Costos Liga TPL</h3>
         <p style="margin-top:10px;">
@@ -1322,51 +1325,64 @@
         </div>
       </section>
 
-      <section class="section" id="fechas">
-        <div class="grid-2">
-          <div class="section-card">
-            <div class="section-head">
-              <div>
-                <h2 class="section-title">Calendario y resultados</h2>
-                <p class="section-subtitle">Revisa cada jornada en modo resumen y abre solo los cruces que quieras ver en detalle.</p>
-              </div>
-              <div class="badge">Calendario oficial</div>
-            </div>
-            <div class="calendar-wrap" id="eventsList">
-              <div class="skeleton" style="height:110px; margin-bottom:12px; border-radius:18px;"></div>
-              <div class="skeleton" style="height:110px; border-radius:18px;"></div>
-            </div>
-          </div>
 
-          <div style="display:grid; gap:20px;">
-            <div class="section-card">
-              <div class="section-head">
-                <div>
-                  <h2 class="section-title">Resumen rápido</h2>
-                  <p class="section-subtitle">Lo esencial de la temporada en bloques simples.</p>
-                </div>
-              </div>
-              <div class="mini-list">
+<section class="section" id="fechas">
+  <div class="grid-2">
+    <div class="section-card">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Calendario y resultados</h2>
+          <p class="section-subtitle">Revisa cada jornada en modo resumen y abre solo los cruces que quieras ver en detalle.</p>
+        </div>
+        <div class="badge">Calendario oficial</div>
+      </div>
 
+      <div class="calendar-wrap" id="eventsList">
+        <div class="skeleton" style="height:110px; margin-bottom:12px; border-radius:18px;"></div>
+        <div class="skeleton" style="height:110px; border-radius:18px;"></div>
+      </div>
+    </div>
 
-
-            <div class="section-card">
-              <div class="section-head">
-                <div>
-                  <h2 class="section-title">Equipos destacados</h2>
-                  <p class="section-subtitle">Acceso rápido a los clubes mejor posicionados.</p>
-                </div>
-              </div>
-              <div class="teams-spotlight" id="teamsSpotlight">
-                <div class="skeleton" style="height:92px; border-radius:18px;"></div>
-                <div class="skeleton" style="height:92px; border-radius:18px;"></div>
-                <div class="skeleton" style="height:92px; border-radius:18px;"></div>
-                <div class="skeleton" style="height:92px; border-radius:18px;"></div>
-              </div>
-            </div>
+    <div style="display:grid; gap:20px;">
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Resumen rápido</h2>
+            <p class="section-subtitle">Lo esencial de la temporada en bloques simples.</p>
           </div>
         </div>
-      </section>
+
+        <div class="mini-list">
+          <div class="mini-card">
+            <h3>🎾 Selectivo TPL</h3>
+            <p>Revisa los selectivos activos y las parejas ya confirmadas por club.</p>
+            <a href="/selectivos.html" class="hero-btn secondary" style="margin-top:12px; display:inline-flex;">
+              Ver selectivos
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Equipos destacados</h2>
+            <p class="section-subtitle">Acceso rápido a los clubes mejor posicionados.</p>
+          </div>
+        </div>
+
+        <div class="teams-spotlight" id="teamsSpotlight">
+          <div class="skeleton" style="height:92px; border-radius:18px;"></div>
+          <div class="skeleton" style="height:92px; border-radius:18px;"></div>
+          <div class="skeleton" style="height:92px; border-radius:18px;"></div>
+          <div class="skeleton" style="height:92px; border-radius:18px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
 
       <p class="footer-note">Portal oficial de TPL Chile.</p>
     </div>
