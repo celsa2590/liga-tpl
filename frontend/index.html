@@ -1049,13 +1049,18 @@
       <div class="hero-main">
         <div class="hero-badge" id="nextRoundBadge">🏆 Próxima jornada</div>
         <img class="hero-logo-big" src="/assets/logos/tpl_logo_trans.png" alt="Logo TPL Chile" />
-        <h1>La liga interclubes de <span class="highlight">pádel</span></h1>
+        <h1>La liga interclub de pádel <span class="highlight">TPL Chile</span></h1>
         <p>Donde los clubes compiten, crecen y construyen historia.</p>
+<p class="hero-badge">
+  4 clubes · 6 partidos + final · ranking actualizado en cada fecha
+</p>
 
         <div class="hero-actions">
-          <a class="hero-btn primary" href="#tabla">Ver tabla de posiciones</a>
-          <a class="hero-btn secondary" href="#fechas">Ver próximas fechas</a>
-          <a class="hero-btn secondary" href="/registration.html" id="registerPlayersBtn">Inscribe a tus jugadores aquí</a>
+          <a class="btn btn-primary" href="#tabla">Ver ranking</a>
+          <a class="btn btn-secondary" href="#calendario">Ver calendario</a>
+          <a class="hero-btn secondary" href="/registration.html" id="registerPlayersBtn">Inscripciones</a>
+        </div>
+
         </div>
 
         <div class="hero-metrics">
@@ -1129,7 +1134,6 @@
 </div>
 
 
-        </div>
       </div>
 
       <aside class="hero-aside">
@@ -1138,7 +1142,8 @@
           <h2 id="heroNextTitle">La próxima jornada está por comenzar</h2>
           <p id="heroNextText">Aquí verás los encuentros más cercanos de la temporada y su horario general.</p>
           <div class="hero-next-list" id="heroNextMatches">
-            <div class="loading">Cargando próximos encuentros...</div>
+            <div class="skeleton" style="height:64px; margin-bottom:10px; border-radius:14px;"></div>
+            <div class="skeleton" style="height:64px; border-radius:14px;"></div>
           </div>
         </div>
 
@@ -1253,7 +1258,9 @@
           </div>
 
           <div class="mobile-standings" id="mobileStandings">
-            <div class="loading">Cargando ranking...</div>
+            <div class="skeleton" style="height:60px; margin-bottom:12px;"></div>
+            <div class="skeleton" style="height:60px; margin-bottom:12px;"></div>
+            <div class="skeleton" style="height:60px;"></div>
           </div>
         </div>
       </section>
@@ -1269,7 +1276,8 @@
               <div class="badge">Calendario oficial</div>
             </div>
             <div class="calendar-wrap" id="eventsList">
-              <div class="loading">Cargando fechas...</div>
+              <div class="skeleton" style="height:110px; margin-bottom:12px; border-radius:18px;"></div>
+              <div class="skeleton" style="height:110px; border-radius:18px;"></div>
             </div>
           </div>
 
@@ -1331,7 +1339,10 @@
                 </div>
               </div>
               <div class="teams-spotlight" id="teamsSpotlight">
-                <div class="loading">Cargando equipos...</div>
+                <div class="skeleton" style="height:92px; border-radius:18px;"></div>
+                <div class="skeleton" style="height:92px; border-radius:18px;"></div>
+                <div class="skeleton" style="height:92px; border-radius:18px;"></div>
+                <div class="skeleton" style="height:92px; border-radius:18px;"></div>
               </div>
             </div>
           </div>
