@@ -952,6 +952,29 @@ img {
   border: 1px solid rgba(255,255,255,0.08);
 }
 
+.table-help {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  color: rgba(255,255,255,0.65);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.table-help span {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.table-help strong {
+  width: 100%;
+  color: rgba(255,255,255,0.9);
+}
+
+
   </style>
 </head>
 <body>
@@ -987,6 +1010,19 @@ img {
   <div class="panel-header">
     <h3 class="panel-title">Tabla completa</h3>
     <p class="panel-subtitle">Detalle de rendimiento por club.</p>
+
+<div class="table-help">
+  <strong>Cómo leer la tabla:</strong>
+  <span><b>PJ</b>: fechas jugadas</span>
+  <span><b>PG</b>: fechas ganadas</span>
+  <span><b>PP</b>: fechas perdidas</span>
+  <span><b>PF</b>: partidos a favor</span>
+  <span><b>PC</b>: partidos en contra</span>
+  <span><b>Dif</b>: diferencia de partidos</span>
+  <span><b>Bonus</b>: punto extra por ganar 4-0</span>
+  <span><b>Pts</b>: puntos totales</span>
+</div>
+
   </div>
 
   <div class="table-wrap">

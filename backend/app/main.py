@@ -154,7 +154,13 @@ def get_standings():
     query = text("""
         SELECT
             ROW_NUMBER() OVER (
-                ORDER BY total_points DESC, sets_diff DESC, won_games DESC, team_name ASC
+                ORDER BY
+                    total_points DESC,
+                    (won_games - lost_games) DESC,
+                    won_games DESC,
+                    sets_diff DESC,
+                    sets_for DESC,
+                    team_name ASC
             ) AS position,
             season_name,
             team_id,
@@ -163,6 +169,7 @@ def get_standings():
             played_games,
             won_games,
             lost_games,
+            (won_games - lost_games) AS games_diff,
             sets_for,
             sets_against,
             sets_diff,
@@ -170,7 +177,13 @@ def get_standings():
             total_points
         FROM standings
         WHERE season_name = 'Liga San Miguel 2026'
-        ORDER BY total_points DESC, sets_diff DESC, won_games DESC, team_name ASC
+        ORDER BY
+            total_points DESC,
+            (won_games - lost_games) DESC,
+            won_games DESC,
+            sets_diff DESC,
+            sets_for DESC,
+            team_name ASC
     """)
 
     with engine.connect() as conn:
@@ -178,6 +191,7 @@ def get_standings():
         rows = [dict(row._mapping) for row in result]
 
     return rows
+
 
 
 @app.get("/matches")
