@@ -784,6 +784,7 @@
     .mini-list {
       padding: 0 18px 18px;
       display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
     }
 
@@ -1038,6 +1039,12 @@
   z-index: 2;
 }
 
+@media (max-width: 900px) {
+  .mini-list {
+    grid-template-columns: 1fr;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -1068,13 +1075,13 @@
       <div class="hero-main">
         <div class="hero-badge" id="nextRoundBadge">🏆 Próxima jornada</div>
         <img class="hero-logo-big" src="/assets/logos/tpl_logo_trans.png" alt="Logo TPL Chile" />
-        <h1>La liga interclub de pádel <span class="highlight">TPL Chile</span></h1>
+        <h1><span class="highlight">TPL Chile</span></h1>
+        <h2>La liga interclub de pádel</h2>
         <p>Ranking, resultados y competencia real entre clubes.</p>
 
         <div class="hero-actions">
           <a class="hero-btn primary" href="#tabla">Ver ranking</a>
           <a class="hero-btn secondary" href="#calendario">Ver calendario</a>
-          <a class="hero-btn secondary" href="/registration.html" id="registerPlayersBtn">Inscripciones</a>
         </div>
 
 
@@ -1094,59 +1101,7 @@
             <div class="metric-value">Por Comenzar</div>
             <div class="metric-sub">Consulta la tabla, revisa los cruces y sigue el avance de cada fecha.</div>
           </div>
-<div class="mini-card">
-  <h3>💰 Costos Liga TPL</h3>
 
-  <p style="margin-top:10px;">
-    Inscripción a la Liga:
-    <strong style="color:#d4af6a;">$20.000 por persona</strong>
-  </p>
-
-  <p style="margin-top:10px;">
-    Valor por partido:
-    <strong>$5.000</strong> el cuarto de cancha
-  </p>
-
-  <p style="font-size:0.85rem; color:rgba(255,255,255,0.6); margin-top:6px;">
-    Incluye pelotas nuevas en cada encuentro.
-  </p>
-</div>
-
-
-<div class="mini-card">
-  <h3>🏆 Premios Liga TPL</h3>
-
-  <p style="margin-top:10px;">
-    3era-4ta:
-    <strong style="color:#d4af6a;">$200.000</strong>
-  </p>
-
-  <p>5ta:
-    <strong>$100.000</strong>
-  </p>
-
-  <p>C/B:
-    <strong>$140.000</strong>
-  </p>
-
-  <p>D/C:
-    <strong>$80.000</strong>
-  </p>
-</div>
-
-
-<div class="mini-card">
-  <h3>📜 Bases del torneo</h3>
-
-  <p>
-    Revisa las reglas oficiales, formato de competencia,
-    sistema de puntaje y condiciones de la Liga TPL.
-  </p>
-
-  <a href="/bases.html" class="hero-btn secondary" style="margin-top:12px; display:inline-flex;">
-    Ver bases completas
-  </a>
-</div>
 
       </div>
 
@@ -1236,7 +1191,112 @@
 
   <main class="content">
     <div class="container">
-      <section class="section" id="tabla">
+  
+<section class="section" id="resumen-app">
+  <div class="grid-2">
+    <div class="section-card">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Resumen TPL</h2>
+          <p class="section-subtitle">Lo más importante de la temporada en un vistazo rápido.</p>
+        </div>
+      </div>
+
+      <div class="mini-list">
+        <div class="mini-card">
+          <h3>Próxima jornada</h3>
+          <p id="miniRoundText">Estamos revisando la fecha más cercana de la temporada.</p>
+          <div class="mini-value" id="miniRoundValue">--</div>
+        </div>
+
+        <div class="mini-card">
+          <h3>Líder actual</h3>
+          <p id="miniLeaderText">El equipo que encabeza la tabla aparecerá aquí.</p>
+          <div class="mini-value" id="miniLeaderValue">--</div>
+        </div>
+
+        <div class="mini-card">
+          <h3>Partidos cargados</h3>
+          <p>Encuentros registrados en el calendario y disponibles para seguimiento.</p>
+          <div class="mini-value" id="miniMatchesValue">--</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Accesos rápidos</h2>
+          <p class="section-subtitle">Entra directo a lo que más se usa dentro de TPL Chile.</p>
+        </div>
+      </div>
+
+      <div class="mini-list">
+        <a class="mini-card" href="/players.html">
+          <h3>Jugadores</h3>
+          <p>Revisa el ranking individual, estadísticas y seguimiento por jugador.</p>
+        </a>
+
+        <a class="mini-card" href="/teams.html">
+          <h3>Equipos</h3>
+          <p>Consulta clubes, posiciones, resultados y rendimiento general.</p>
+        </a>
+
+        <a class="mini-card" href="/photos.html">
+          <h3>Fotos</h3>
+          <p>Explora la galería de selectivos, jornadas y momentos destacados.</p>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="info-liga">
+  <div class="section-card">
+    <div class="section-head">
+      <div>
+        <h2 class="section-title">Información de la liga</h2>
+        <p class="section-subtitle">Datos clave para jugadores, clubes y auspiciadores.</p>
+      </div>
+    </div>
+
+    <div class="mini-list">
+      <div class="mini-card">
+        <h3>💰 Costos Liga TPL</h3>
+        <p style="margin-top:10px;">
+          Inscripción a la Liga:
+          <strong style="color:#d4af6a;">$20.000 por persona</strong>
+        </p>
+        <p style="margin-top:10px;">
+          Valor por partido:
+          <strong>$5.000</strong> el cuarto de cancha
+        </p>
+        <p style="font-size:0.85rem; color:rgba(255,255,255,0.6); margin-top:6px;">
+          Incluye pelotas nuevas en cada encuentro.
+        </p>
+      </div>
+
+      <div class="mini-card">
+        <h3>🏆 Premios Liga TPL</h3>
+        <p style="margin-top:10px;">3era-4ta: <strong style="color:#d4af6a;">$200.000</strong></p>
+        <p>5ta: <strong>$100.000</strong></p>
+        <p>C/B: <strong>$140.000</strong></p>
+        <p>D/C: <strong>$80.000</strong></p>
+      </div>
+
+      <div class="mini-card">
+        <h3>📜 Bases del torneo</h3>
+        <p>Revisa las reglas oficiales, formato de competencia, sistema de puntaje y condiciones de la Liga TPL.</p>
+        <a href="/bases.html" class="hero-btn secondary" style="margin-top:12px; display:inline-flex;">
+          Ver bases completas
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+    <section class="section" id="tabla">
         <div class="section-card">
           <div class="section-head">
             <div>
@@ -1306,44 +1366,6 @@
                 </div>
               </div>
               <div class="mini-list">
-                <div class="mini-card">
-  <h3>Próxima jornada</h3>
-  <p id="miniRoundText">Estamos revisando la fecha más cercana de la temporada.</p>
-  <p style="margin-top:10px;">
-    Sedes Ganadoras para primera jornada <br>
-  </p>
- <h3>Arena Padel y Espacio Active</h3>
-  <div class="mini-value" id="miniRoundValue">--</div>
-</div>
-
-
-<div class="mini-card">
-  <h3>🎾 Selectivo TPL – Espacio Active</h3>
-  <p style="margin-top:10px;">
-    📅 11 y 18 de abril<br>
-  </p>
-  <p style="margin-top:10px;">
-    💰 $7.000 por persona<br>
-    🏆 Premio: selección oficial + polera del club
-  </p>
-  <p style="margin-top:10px; font-size:0.85rem; color:rgba(255,255,255,0.6);">
-    Inscripciones abiertas
-  </p>
-<h3>Próximamente Revueltas</h3>
-</div>
-
-             <div class="mini-card">
-                  <h3>Líder actual</h3>
-                  <p id="miniLeaderText">El equipo que encabeza la tabla aparecerá aquí.</p>
-                  <div class="mini-value" id="miniLeaderValue">--</div>
-                </div>
-
-
-                <div class="mini-card">
-                  <h3>Partidos cargados</h3>
-                  <p>Encuentros registrados en el calendario y disponibles para seguimiento.</p>
-                  <div class="mini-value" id="miniMatchesValue">--</div>
-                </div>
 
 
 
