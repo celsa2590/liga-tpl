@@ -161,7 +161,7 @@
       overflow: hidden;
       padding: 44px 0 26px;
   background:
-    linear-gradient(rgba(5,8,15,0.85), rgba(5,8,15,0.95)),
+    linear-gradient(rgba(5,8,15,0.6), rgba(5,8,15,0.85)),
     url('/assets/padel_portada.jpg') center/cover no-repeat;
     }
 
@@ -868,10 +868,11 @@
     }
 
     @media (max-width: 980px) {
-      .hero-inner,
-      .grid-2 {
-        grid-template-columns: 1fr;
+      .hero-inner {
+        min-height: auto !important;
       }
+     }    
+
 
       .hero-inner {
         min-height: auto;
@@ -1113,45 +1114,6 @@
             <div class="skeleton" style="height:64px; border-radius:14px;"></div>
           </div>
         </div>
-
-
-<div class="hero-card">
-  <div class="eyebrow">🎾 Selectivo TPL</div>
-
-  <h2>Inscripciones activas</h2>
-
-  <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
-
-    <div class="mini-card">
-      <strong>Arena</strong>
-      <p style="margin:4px 0; color:var(--text-secondary);">
-        4 categorías disponibles
-      </p>
-    </div>
-
-    <div class="mini-card">
-      <strong>Propadel</strong>
-      <p style="margin:4px 0; color:var(--text-secondary);">
-        2 categorías disponibles
-      </p>
-    </div>
-
-    <div class="mini-card">
-      <strong>Revueltas</strong>
-      <p style="margin:4px 0; color:var(--text-secondary);">
-        Próximamente
-      </p>
-    </div>
-
-  </div>
-
-  <a href="/selectivos.html" class="hero-btn secondary" style="margin-top:12px;">
-    Ver detalles
-  </a>
-</div>
-
-
-
 
       </aside>
     </div>
