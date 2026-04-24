@@ -887,35 +887,36 @@
 
 
 
+<section class="section">
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <h2 class="panel-title">Tabla del selectivo</h2>
+        <p class="panel-subtitle">Posiciones actualizadas según resultados ingresados.</p>
+      </div>
+    </div>
 
+    <div class="panel-body" id="standingsContainer">
+      <div class="loading">Cargando tabla...</div>
+    </div>
+  </div>
+</section>
 
+<section class="section">
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <h2 class="panel-title">Cruces y resultados</h2>
+        <p class="panel-subtitle">22 min de juego · 2 min de cambio</p>
+      </div>
+    </div>
 
-      <section class="section">
-        <div class="panel">
-          <div class="panel-head">
-            <div>
-              <h2 class="panel-title">Estado del selectivo</h2>
-              <p class="panel-subtitle">Por ahora se muestra la información general. Próximamente se podrán cargar participantes, tabla y resultados.</p>
-            </div>
-          </div>
+    <div class="panel-body" id="matchesContainer">
+      <div class="loading">Cargando cruces...</div>
+    </div>
+  </div>
+</section>
 
-          <div class="panel-body">
-            <div class="placeholder-card">
-              <div class="placeholder-title">Próximamente</div>
-              <div class="placeholder-text">
-                Esta página quedará preparada para mostrar el desarrollo completo del selectivo de Arena.
-              </div>
-              <ul class="placeholder-list">
-                <li>Participantes por categoría</li>
-                <li>Tabla de posiciones</li>
-                <li>Cruces y resultados</li>
-                <li>Parejas finalistas</li>
-                <li>Resultado de las finales</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
 
     </div>
   </main>
@@ -1068,66 +1069,118 @@
     }
   }
 
-  async function loadArenaMatches(categoryId, categoryKey) {
-    const container = document.getElementById("matchesContainer");
-    if (!container) return;
+ 
 
-    if (!categoryId) {
-      container.innerHTML = '<div class="empty">Categoría no disponible.</div>';
+async function loadArenaMatches(categoryId, categoryKey) {
+  const container = document.getElementById("matchesContainer");
+  if (!container) return;
+
+  if (!categoryId) {
+    container.innerHTML = '<div class="empty">Categoría no disponible.</div>';
+    return;
+  }
+
+  container.innerHTML = '<div class="empty">Cargando partidos...</div>';
+
+  try {
+    const res = await fetch(API + `/selective-category/${categoryId}/matches`);
+    const rows = await res.json();
+
+    if (!Array.isArray(rows) || !rows.length) {
+      container.innerHTML = '<div class="empty">Aún no hay partidos cargados.</div>';
       return;
     }
 
-    container.innerHTML = '<div class="empty">Cargando partidos...</div>';
+    const groupMatches = rows.filter(item => item.stage === "group_stage");
+    const finalMatches = rows.filter(item => item.stage === "final");
 
-    try {
-      const res = await fetch(API + `/selective-category/${categoryId}/matches`);
-      const rows = await res.json();
+    const groupedByRound = new Map();
 
-      if (!Array.isArray(rows) || !rows.length) {
-        container.innerHTML = '<div class="empty">Aún no hay partidos cargados.</div>';
-        return;
-      }
+    groupMatches.forEach(item => {
+      const round = item.round_number || 1;
+      if (!groupedByRound.has(round)) groupedByRound.set(round, []);
+      groupedByRound.get(round).push(item);
+    });
 
-      const groupMatches = rows.filter(item => item.stage === "group_stage");
-      const finalMatch = rows.find(item => item.stage === "final");
-
-      container.innerHTML = `
-        ${groupMatches.length ? `
-          <div class="placeholder-card" style="margin-bottom:16px;">
-            <div class="placeholder-title">Fase clasificatoria</div>
-            <div class="placeholder-text">
-              ${groupMatches.map(item => `
-                <div style="margin-top:10px;">
-                  <strong>${item.pair_1_name}</strong> vs <strong>${item.pair_2_name}</strong>
-                  ${item.pair_1_games != null && item.pair_2_games != null
-                    ? ` · ${item.pair_1_games} - ${item.pair_2_games}`
-                    : ' · pendiente'}
-                </div>
-              `).join("")}
-            </div>
+    const roundsHtml = Array.from(groupedByRound.entries())
+      .sort((a, b) => Number(a[0]) - Number(b[0]))
+      .map(([round, matches]) => `
+        <div class="round-group">
+          <div class="round-title">Ronda ${round}</div>
+          <div class="round-grid">
+            ${matches
+              .sort((a, b) => Number(a.display_order || 0) - Number(b.display_order || 0))
+              .map(renderArenaMatchCard)
+              .join("")}
           </div>
-        ` : ''}
+        </div>
+      `).join("");
 
-        ${finalMatch ? `
-          <div class="placeholder-card">
-            <div class="placeholder-title">Final</div>
-            <div class="placeholder-text">
-              <strong>${finalMatch.pair_1_name}</strong> vs <strong>${finalMatch.pair_2_name}</strong><br>
-              09/05 · Mejor de 3 sets
-              ${finalMatch.pair_1_games != null && finalMatch.pair_2_games != null
-                ? `<br>Resultado: ${finalMatch.pair_1_games} - ${finalMatch.pair_2_games}`
-                : '<br>Pendiente'}
-            </div>
-          </div>
-        ` : `
-          <div class="empty">La final aún no ha sido generada.</div>
-        `}
-      `;
-    } catch (error) {
-      console.error("Error cargando partidos:", error);
-      container.innerHTML = '<div class="empty">No se pudieron cargar los partidos.</div>';
-    }
+    const finalsHtml = finalMatches.length ? `
+      <div class="round-group">
+        <div class="round-title">Final</div>
+        <div class="round-grid">
+          ${finalMatches.map(renderArenaMatchCard).join("")}
+        </div>
+      </div>
+    ` : "";
+
+    container.innerHTML = `
+      <div class="matches-wrap">
+        ${roundsHtml || '<div class="empty">Aún no hay cruces de fase clasificatoria.</div>'}
+        ${finalsHtml}
+      </div>
+    `;
+  } catch (error) {
+    console.error("Error cargando partidos:", error);
+    container.innerHTML = '<div class="empty">No se pudieron cargar los partidos.</div>';
   }
+}
+
+
+function renderArenaMatchCard(item) {
+  const hasResult = item.pair_1_games !== null && item.pair_2_games !== null;
+
+  const courtName = item.court_name || item.court || "Cancha por definir";
+  const timeText = item.played_at
+    ? new Date(item.played_at).toLocaleTimeString("es-CL", {
+        hour: "2-digit",
+        minute: "2-digit"
+      })
+    : "14:30";
+
+  const statusText = hasResult ? "Finalizado" : "Programado";
+
+  return `
+    <article class="match-card">
+      <div class="match-top">
+        <span>${courtName}</span>
+        <span>${timeText}</span>
+      </div>
+
+      <div class="match-main">
+        <div class="match-line">
+          <div class="match-side">
+            <div class="match-pair">${item.pair_1_name || "Pareja por definir"}</div>
+          </div>
+
+          <div class="match-vs">vs</div>
+
+          <div class="match-side">
+            <div class="match-pair">${item.pair_2_name || "Pareja por definir"}</div>
+          </div>
+        </div>
+
+        <div class="match-score">
+          ${hasResult ? `${item.pair_1_games} - ${item.pair_2_games}` : "Por jugar"}
+        </div>
+
+        <div class="match-status">${statusText}</div>
+      </div>
+    </article>
+  `;
+}
+
 
 
 async function loadArenaFinalists(categoryId, categoryKey) {
