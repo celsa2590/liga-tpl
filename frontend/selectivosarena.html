@@ -1431,29 +1431,26 @@ function normalizeArenaStatus(value) {
 
 
 function formatArenaMatchTime(match, categoryKey) {
-  let baseTime;
+  const fallback = {
+    dc: "14:30",
+    cb: "17:00",
+    quinta: "14:30",
+    cuarta: "17:00"
+  };
 
-  if (match.played_at) {
-    baseTime = new Date(match.played_at);
-  } else {
-    const fallback = {
-      dc: "14:30",
-      cb: "17:00",
-      quinta: "14:30",
-      cuarta: "17:00"
-    };
+  const startStr = fallback[categoryKey] || "14:30";
+  const [hour, minute] = startStr.split(":").map(Number);
 
-    const timeStr = fallback[categoryKey] || "00:00";
+  const roundNumber = Number(match.round_number || 1);
 
-    // Crear fecha base hoy con esa hora
-    const [h, m] = timeStr.split(":");
-    baseTime = new Date();
-    baseTime.setHours(parseInt(h), parseInt(m), 0, 0);
-  }
+  const startTime = new Date();
+  startTime.setHours(hour, minute, 0, 0);
 
-  // Clonar fecha para no modificar la original
-  const endTime = new Date(baseTime);
-  endTime.setMinutes(endTime.getMinutes() + 24); // 👈 22 + 2
+  // Cada ronda avanza 24 minutos: 22 min de juego + 2 min cambio
+  startTime.setMinutes(startTime.getMinutes() + ((roundNumber - 1) * 24));
+
+  const endTime = new Date(startTime);
+  endTime.setMinutes(endTime.getMinutes() + 22);
 
   const format = (date) =>
     date.toLocaleTimeString("es-CL", {
@@ -1461,10 +1458,8 @@ function formatArenaMatchTime(match, categoryKey) {
       minute: "2-digit"
     });
 
-  return `${format(baseTime)} - ${format(endTime)}`;
+  return `${format(startTime)} - ${format(endTime)}`;
 }
-
-
 
 
 
