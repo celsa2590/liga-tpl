@@ -619,6 +619,220 @@
   color: #ffffff;
 }
 
+.leader-card,
+.standing-card,
+.match-card,
+.rest-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.leader-card {
+  padding: 18px;
+  margin-bottom: 18px;
+  border-color: rgba(214,176,106,0.24);
+}
+
+.leader-eyebrow {
+  color: var(--gold-2);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.leader-name {
+  margin-top: 8px;
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+
+.leader-meta {
+  margin-top: 8px;
+  color: var(--muted);
+}
+
+.standings-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.standing-card {
+  padding: 16px;
+}
+
+.standing-card.gold {
+  border-color: rgba(255,215,0,0.30);
+}
+
+.standing-card.silver {
+  border-color: rgba(192,192,192,0.30);
+}
+
+.standing-card.bronze {
+  border-color: rgba(205,127,50,0.30);
+}
+
+.standing-rank {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: var(--muted-2);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.standing-name {
+  margin-top: 10px;
+  font-size: 1.08rem;
+  font-weight: 900;
+}
+
+.standing-points {
+  margin-top: 12px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: var(--muted);
+}
+
+.standings-table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 14px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  text-align: left;
+}
+
+th {
+  color: var(--muted-2);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 800;
+}
+
+td.num,
+th.num {
+  text-align: center;
+}
+
+.matches-wrap {
+  display: grid;
+  gap: 16px;
+}
+
+.round-group {
+  display: grid;
+  gap: 12px;
+}
+
+.round-title {
+  color: var(--gold-2);
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.round-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.match-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.match-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 18px 0;
+  color: var(--muted-2);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.match-main {
+  padding: 14px 18px 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.match-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.match-pair {
+  font-size: 1.12rem;
+  font-weight: 900;
+}
+
+.match-vs {
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--gold-2);
+}
+
+.match-score {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+
+.match-status {
+  text-align: center;
+  color: var(--muted-2);
+  font-size: 0.88rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.rest-card {
+  padding: 14px 16px;
+  border-style: dashed;
+}
+
+.rest-title {
+  color: var(--muted-2);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.rest-list {
+  margin-top: 8px;
+  color: var(--muted);
+}
+
+@media (max-width: 760px) {
+  .standings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  table {
+    min-width: 620px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -889,37 +1103,6 @@
   </div>
 </section>
 
-
-
-<section class="section">
-  <div class="panel">
-    <div class="panel-head">
-      <div>
-        <h2 class="panel-title">Tabla del selectivo</h2>
-        <p class="panel-subtitle">Posiciones actualizadas según resultados ingresados.</p>
-      </div>
-    </div>
-
-    <div class="panel-body" id="standingsContainer">
-      <div class="loading">Cargando tabla...</div>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="panel">
-    <div class="panel-head">
-      <div>
-        <h2 class="panel-title">Cruces y resultados</h2>
-        <p class="panel-subtitle">22 min de juego · 2 min de cambio</p>
-      </div>
-    </div>
-
-    <div class="panel-body" id="matchesContainer">
-      <div class="loading">Cargando cruces...</div>
-    </div>
-  </div>
-</section>
 
 
 
@@ -1265,48 +1448,8 @@ function formatArenaMatchTime(match, categoryKey) {
 }
 
 
-function renderArenaMatchCard(item) {
-  const hasResult = item.pair_1_games !== null && item.pair_2_games !== null;
 
-  const courtName = item.court_name || item.court || "Cancha por definir";
-  const timeText = item.played_at
-    ? new Date(item.played_at).toLocaleTimeString("es-CL", {
-        hour: "2-digit",
-        minute: "2-digit"
-      })
-    : "14:30";
 
-  const statusText = hasResult ? "Finalizado" : "Programado";
-
-  return `
-    <article class="match-card">
-      <div class="match-top">
-        <span>${courtName}</span>
-        <span>${timeText}</span>
-      </div>
-
-      <div class="match-main">
-        <div class="match-line">
-          <div class="match-side">
-            <div class="match-pair">${item.pair_1_name || "Pareja por definir"}</div>
-          </div>
-
-          <div class="match-vs">vs</div>
-
-          <div class="match-side">
-            <div class="match-pair">${item.pair_2_name || "Pareja por definir"}</div>
-          </div>
-        </div>
-
-        <div class="match-score">
-          ${hasResult ? `${item.pair_1_games} - ${item.pair_2_games}` : "Por jugar"}
-        </div>
-
-        <div class="match-status">${statusText}</div>
-      </div>
-    </article>
-  `;
-}
 
 
 
