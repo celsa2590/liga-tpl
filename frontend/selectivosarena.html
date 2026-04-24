@@ -1429,24 +1429,40 @@ function normalizeArenaStatus(value) {
   return "Programado";
 }
 
+
 function formatArenaMatchTime(match, categoryKey) {
+  let baseTime;
+
   if (match.played_at) {
-    return new Date(match.played_at).toLocaleTimeString("es-CL", {
+    baseTime = new Date(match.played_at);
+  } else {
+    const fallback = {
+      dc: "14:30",
+      cb: "17:00",
+      quinta: "14:30",
+      cuarta: "17:00"
+    };
+
+    const timeStr = fallback[categoryKey] || "00:00";
+
+    // Crear fecha base hoy con esa hora
+    const [h, m] = timeStr.split(":");
+    baseTime = new Date();
+    baseTime.setHours(parseInt(h), parseInt(m), 0, 0);
+  }
+
+  // Clonar fecha para no modificar la original
+  const endTime = new Date(baseTime);
+  endTime.setMinutes(endTime.getMinutes() + 24); // 👈 22 + 2
+
+  const format = (date) =>
+    date.toLocaleTimeString("es-CL", {
       hour: "2-digit",
       minute: "2-digit"
     });
-  }
 
-  const fallback = {
-    dc: "14:30",
-    cb: "17:00",
-    quinta: "14:30",
-    cuarta: "17:00"
-  };
-
-  return fallback[categoryKey] || "--:--";
+  return `${format(baseTime)} - ${format(endTime)}`;
 }
-
 
 
 
