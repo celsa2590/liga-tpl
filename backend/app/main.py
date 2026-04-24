@@ -826,28 +826,6 @@ def generate_selective_semifinals(
     with engine.connect() as conn:
 
 
-category = conn.execute(text("""
-    SELECT id, selective_id
-    FROM selective_categories
-    WHERE id = :category_id
-"""), {"category_id": category_id}).mappings().first()
-
-if not category:
-    raise HTTPException(status_code=404, detail="Categoría no encontrada")
-
-courts = conn.execute(text("""
-    SELECT id
-    FROM selective_courts
-    WHERE selective_id = :selective_id
-    ORDER BY display_order, id
-"""), {"selective_id": category["selective_id"]}).mappings().all()
-
-if not court_a_id:
-    court_a_id = courts[0]["id"] if len(courts) >= 1 else None
-
-if not court_b_id:
-    court_b_id = courts[1]["id"] if len(courts) >= 2 else court_a_id
-
         standings = conn.execute(text("""
             SELECT
                 group_name,
@@ -917,24 +895,6 @@ def generate_selective_final(
 
     with engine.connect() as conn:
 
-category = conn.execute(text("""
-    SELECT id, selective_id
-    FROM selective_categories
-    WHERE id = :category_id
-"""), {"category_id": category_id}).mappings().first()
-
-if not category:
-    raise HTTPException(status_code=404, detail="Categoría no encontrada")
-
-courts = conn.execute(text("""
-    SELECT id
-    FROM selective_courts
-    WHERE selective_id = :selective_id
-    ORDER BY display_order, id
-"""), {"selective_id": category["selective_id"]}).mappings().all()
-
-if not court_id:
-    court_id = courts[0]["id"] if courts else None
 
         semifinals = conn.execute(text("""
             SELECT
