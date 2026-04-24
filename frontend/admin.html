@@ -1683,9 +1683,7 @@ async function generateFinal(categoryId) {
     headers: getAuthHeaders({
       "Content-Type": "application/json"
     }),
-    body: JSON.stringify({
-      court_id: 1
-    })
+    body: JSON.stringify({})
   });
 
   handleUnauthorized(res);
