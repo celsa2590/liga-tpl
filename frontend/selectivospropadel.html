@@ -1186,14 +1186,45 @@ const propadelCategoryMap = {
           <div class="placeholder-card" style="margin-bottom:16px;">
             <div class="placeholder-title">Fase clasificatoria</div>
             <div class="placeholder-text">
-              ${groupMatches.map(item => `
-                <div style="margin-top:10px;">
-                  <strong>${item.pair_1_name}</strong> vs <strong>${item.pair_2_name}</strong>
-                  ${item.pair_1_games != null && item.pair_2_games != null
-                    ? ` · ${item.pair_1_games} - ${item.pair_2_games}`
-                    : ' · pendiente'}
-                </div>
-              `).join("")}
+
+
+
+${groupMatches.map(item => `
+  <div style="
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 14px;
+    margin-top: 10px;
+  ">
+    <div style="
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:0.85rem;
+      color:rgba(255,255,255,0.6);
+      margin-bottom:6px;
+    ">
+      <span>Ronda ${item.round_number || "-"}</span>
+      <span>${item.court_name || ""}</span>
+    </div>
+
+    <div style="font-weight:800;">
+      ${item.pair_1_name} <span style="color:#d4af6a;">vs</span> ${item.pair_2_name}
+    </div>
+
+    <div style="margin-top:6px; font-size:0.95rem;">
+      ${
+        item.pair_1_games != null && item.pair_2_games != null
+          ? `<strong>${item.pair_1_games} - ${item.pair_2_games}</strong>`
+          : `<span style="color:rgba(255,255,255,0.6)">Pendiente</span>`
+      }
+    </div>
+  </div>
+`).join("")}
+
+
+
             </div>
           </div>
         ` : ''}
