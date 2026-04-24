@@ -1729,12 +1729,19 @@ async function loadSelectiveMatchesAdmin(categoryId) {
     grouped[stage].push(match);
   });
 
-  function renderStageTitle(stage) {
-    if (stage === "group_stage") return "Fase clasificatoria";
-    if (stage === "semifinal") return "Semifinales";
-    if (stage === "final") return "Final";
-    return "Rondas";
+
+function renderStageTitle(stage) {
+  if (stage === "group_stage") {
+    return isArenaSelective()
+      ? "Americano todos contra todos"
+      : "Fase clasificatoria";
   }
+
+  if (stage === "semifinal") return "Semifinales";
+  if (stage === "final") return "Final";
+  return "Rondas";
+}
+
 
   container.innerHTML = Object.keys(grouped).map(stage => `
     <div class="card">
