@@ -856,14 +856,17 @@
     <div class="panel-head">
       <div>
         <h2 class="panel-title">Tabla del selectivo</h2>
-        <p class="panel-subtitle">
-          Posiciones actualizadas según resultados cargados.
+        <p class="panel-subtitle" id="standingsSubtitle">
+          Selecciona una categoría para ver la tabla.
         </p>
       </div>
     </div>
 
     <div class="panel-body">
-      <div id="standingsContainer" class="empty">Sin categoría seleccionada.</div>
+      <div id="championsContainer"></div>
+      <div id="leaderContainer"></div>
+      <div id="topThreeContainer"></div>
+      <div id="standingsContainer" class="loading">Sin categoría seleccionada.</div>
     </div>
   </div>
 </section>
@@ -872,10 +875,11 @@
   <div class="panel">
     <div class="panel-head">
       <div>
-        <h2 class="panel-title">Cruces y final</h2>
-        <p class="panel-subtitle">
-          Aquí podrás ver los partidos clasificatorios y la final.
-        </p>
+
+<h2 class="panel-title">Cruces y resultados</h2>
+<p class="panel-subtitle" id="matchesSubtitle">
+  Selecciona una categoría para ver los partidos.
+</p>
       </div>
     </div>
 
@@ -1013,61 +1017,103 @@
     loadArenaFinalists(categoryId, currentArenaCategoryKey);
   }
 
-  async function loadArenaStandings(categoryId, categoryKey) {
-    const container = document.getElementById("standingsContainer");
-    if (!container) return;
 
-    if (!categoryId) {
-      container.innerHTML = '<div class="empty">Categoría no disponible.</div>';
+
+async function loadArenaStandings(categoryId, categoryKey) {
+  const leaderContainer = document.getElementById("leaderContainer");
+  const topThreeContainer = document.getElementById("topThreeContainer");
+  const standingsContainer = document.getElementById("standingsContainer");
+
+  if (!leaderContainer || !topThreeContainer || !standingsContainer) return;
+
+  leaderContainer.innerHTML = "";
+  topThreeContainer.innerHTML = "";
+
+  if (!categoryId) {
+    standingsContainer.innerHTML = '<div class="empty">Categoría no disponible.</div>';
+    return;
+  }
+
+  standingsContainer.innerHTML = '<div class="empty">Cargando tabla...</div>';
+
+  try {
+    const res = await fetch(API + `/selective-category/${categoryId}/standings`);
+    const rows = await res.json();
+
+    if (!Array.isArray(rows) || !rows.length) {
+      standingsContainer.innerHTML = '<div class="empty">Aún no hay resultados cargados.</div>';
       return;
     }
 
-    container.innerHTML = '<div class="empty">Cargando tabla...</div>';
+    const leader = rows[0];
 
-    try {
-      const res = await fetch(API + `/selective-category/${categoryId}/standings`);
-      const rows = await res.json();
-
-      if (!Array.isArray(rows) || !rows.length) {
-        container.innerHTML = '<div class="empty">Aún no hay resultados cargados.</div>';
-        return;
-      }
-
-      container.innerHTML = `
-        <div class="standings-table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Pareja</th>
-                <th class="num">PJ</th>
-                <th class="num">GF</th>
-                <th class="num">GC</th>
-                <th class="num">DG</th>
-                <th class="num">PTS</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${rows.map((item, idx) => `
-                <tr>
-                  <td>${idx + 1}</td>
-                  <td><strong>${item.pair_name}</strong></td>
-                  <td class="num">${item.pj}</td>
-                  <td class="num">${item.gf}</td>
-                  <td class="num">${item.gc}</td>
-                  <td class="num">${item.dg}</td>
-                  <td class="num"><strong>${item.pts}</strong></td>
-                </tr>
-              `).join("")}
-            </tbody>
-          </table>
+    leaderContainer.innerHTML = `
+      <div class="leader-card">
+        <div class="leader-eyebrow">Líder actual</div>
+        <div class="leader-name">${leader.pair_name}</div>
+        <div class="leader-meta">
+          ${leader.pts} pts · PJ ${leader.pj} · DG ${leader.dg > 0 ? "+" + leader.dg : leader.dg} · GF ${leader.gf}
         </div>
-      `;
-    } catch (error) {
-      console.error("Error cargando tabla:", error);
-      container.innerHTML = '<div class="empty">No se pudo cargar la tabla.</div>';
-    }
+      </div>
+    `;
+
+    topThreeContainer.innerHTML = `
+      <div class="standings-grid">
+        ${rows.slice(0, 3).map((item, index) => {
+          const cls = index === 0 ? "gold" : index === 1 ? "silver" : "bronze";
+          const label = index === 0 ? "1er lugar" : index === 1 ? "2do lugar" : "3er lugar";
+
+          return `
+            <article class="standing-card ${cls}">
+              <div class="standing-rank">${label}</div>
+              <div class="standing-name">${item.pair_name}</div>
+              <div class="standing-points">
+                <span><strong>${item.pts}</strong> pts</span>
+                <span>PJ ${item.pj}</span>
+                <span>DG ${item.dg > 0 ? "+" + item.dg : item.dg}</span>
+              </div>
+            </article>
+          `;
+        }).join("")}
+      </div>
+    `;
+
+    standingsContainer.innerHTML = `
+      <div class="standings-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="num">#</th>
+              <th>Pareja</th>
+              <th class="num">PJ</th>
+              <th class="num">GF</th>
+              <th class="num">GC</th>
+              <th class="num">DG</th>
+              <th class="num">PTS</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map((item, index) => `
+              <tr>
+                <td class="num">${index + 1}</td>
+                <td>${item.pair_name}</td>
+                <td class="num">${item.pj}</td>
+                <td class="num">${item.gf}</td>
+                <td class="num">${item.gc}</td>
+                <td class="num">${item.dg}</td>
+                <td class="num"><strong>${item.pts}</strong></td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
+  } catch (error) {
+    console.error("Error cargando tabla:", error);
+    standingsContainer.innerHTML = '<div class="empty">No se pudo cargar la tabla.</div>';
   }
+}
+
 
  
 
@@ -1094,47 +1140,131 @@ async function loadArenaMatches(categoryId, categoryKey) {
     const groupMatches = rows.filter(item => item.stage === "group_stage");
     const finalMatches = rows.filter(item => item.stage === "final");
 
-    const groupedByRound = new Map();
+    const standingsRes = await fetch(API + `/selective-category/${categoryId}/standings`);
+    const standingsRows = await standingsRes.json();
 
-    groupMatches.forEach(item => {
-      const round = item.round_number || 1;
-      if (!groupedByRound.has(round)) groupedByRound.set(round, []);
-      groupedByRound.get(round).push(item);
-    });
+    function getRestingPairs(roundMatches, standingsRows) {
+      const allPairs = standingsRows.map(item => item.pair_name);
+      const playingPairs = new Set();
 
-    const roundsHtml = Array.from(groupedByRound.entries())
-      .sort((a, b) => Number(a[0]) - Number(b[0]))
-      .map(([round, matches]) => `
-        <div class="round-group">
-          <div class="round-title">Ronda ${round}</div>
-          <div class="round-grid">
-            ${matches
-              .sort((a, b) => Number(a.display_order || 0) - Number(b.display_order || 0))
-              .map(renderArenaMatchCard)
-              .join("")}
+      roundMatches.forEach(match => {
+        if (match.pair_1_name) playingPairs.add(match.pair_1_name);
+        if (match.pair_2_name) playingPairs.add(match.pair_2_name);
+      });
+
+      return allPairs.filter(name => !playingPairs.has(name));
+    }
+
+    function renderMatchCard(match) {
+      return `
+        <article class="match-card">
+          <div class="match-top">
+            <span>${match.court_name || "Cancha por definir"}</span>
+            <span>${formatArenaMatchTime(match, categoryKey)}</span>
           </div>
+
+          <div class="match-main">
+            <div class="match-line">
+              <div class="match-pair">${match.pair_1_name || "Pareja por definir"}</div>
+              <div class="match-vs">VS</div>
+              <div class="match-pair">${match.pair_2_name || "Pareja por definir"}</div>
+            </div>
+
+            <div class="match-score">
+              ${(match.pair_1_games ?? "-")} - ${(match.pair_2_games ?? "-")}
+            </div>
+
+            <div class="match-status">${normalizeArenaStatus(match.result_status)}</div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderRoundGroups(matchesRows) {
+      const rounds = new Map();
+
+      matchesRows.forEach(match => {
+        const round = match.round_number || 0;
+        if (!rounds.has(round)) rounds.set(round, []);
+        rounds.get(round).push(match);
+      });
+
+      const sortedRounds = Array.from(rounds.keys()).sort((a, b) => a - b);
+
+      return `
+        <div class="matches-wrap">
+          ${sortedRounds.map(round => {
+            const roundMatches = rounds.get(round)
+              .sort((a, b) => Number(a.display_order || 0) - Number(b.display_order || 0));
+
+            const restingPairs = getRestingPairs(roundMatches, standingsRows || []);
+
+            return `
+              <section class="round-group">
+                <div class="round-title">Ronda ${round}</div>
+
+                ${restingPairs.length ? `
+                  <div class="rest-card">
+                    <div class="rest-title">${restingPairs.length === 1 ? "Pareja que descansa" : "Parejas que descansan"}</div>
+                    <div class="rest-list">${restingPairs.join("<br>")}</div>
+                  </div>
+                ` : ""}
+
+                <div class="round-grid">
+                  ${roundMatches.map(renderMatchCard).join("")}
+                </div>
+              </section>
+            `;
+          }).join("")}
         </div>
-      `).join("");
+      `;
+    }
+
+    const groupHtml = groupMatches.length
+      ? renderRoundGroups(groupMatches)
+      : '<div class="empty">Aún no hay cruces clasificatorios.</div>';
 
     const finalsHtml = finalMatches.length ? `
-      <div class="round-group">
-        <div class="round-title">Final</div>
-        <div class="round-grid">
-          ${finalMatches.map(renderArenaMatchCard).join("")}
-        </div>
+      <div class="matches-wrap" style="margin-top:16px;">
+        <section class="round-group">
+          <div class="round-title">Final</div>
+          <div class="round-grid">
+            ${finalMatches.map(renderMatchCard).join("")}
+          </div>
+        </section>
       </div>
     ` : "";
 
-    container.innerHTML = `
-      <div class="matches-wrap">
-        ${roundsHtml || '<div class="empty">Aún no hay cruces de fase clasificatoria.</div>'}
-        ${finalsHtml}
-      </div>
-    `;
+    container.innerHTML = groupHtml + finalsHtml;
   } catch (error) {
     console.error("Error cargando partidos:", error);
     container.innerHTML = '<div class="empty">No se pudieron cargar los partidos.</div>';
   }
+}
+
+
+function normalizeArenaStatus(value) {
+  const v = (value || "").toString().trim().toLowerCase();
+  if (v === "finished" || v === "finalizado") return "Finalizado";
+  return "Programado";
+}
+
+function formatArenaMatchTime(match, categoryKey) {
+  if (match.played_at) {
+    return new Date(match.played_at).toLocaleTimeString("es-CL", {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+  }
+
+  const fallback = {
+    dc: "14:30",
+    cb: "17:00",
+    quinta: "14:30",
+    cuarta: "17:00"
+  };
+
+  return fallback[categoryKey] || "--:--";
 }
 
 
