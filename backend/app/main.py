@@ -279,6 +279,20 @@ def get_players():
 
     return rows
 
+
+@app.get("/players/ranking")
+def get_player_ranking():
+    query = text("""
+        SELECT *
+        FROM player_ranking
+        ORDER BY ranking_points DESC
+    """)
+
+    with engine.connect() as conn:
+        result = conn.execute(query)
+        return [dict(row._mapping) for row in result]
+
+
 @app.get("/selectives")
 def get_selectives():
     query = text("""
@@ -1188,297 +1202,113 @@ def update_match(match_id: int, payload: dict = Body(...), authorization: str = 
 @app.get("/players/stats")
 def get_players_stats():
     query = text("""
-    WITH player_team AS (
-      SELECT DISTINCT ON (tp.player_id)
-        tp.player_id,
-        tp.team_id
-      FROM team_players tp
-      WHERE tp.active = true
-      ORDER BY tp.player_id, tp.joined_at DESC, tp.id DESC
-    ),
-    player_games AS (
-      SELECT
-        mg.match_id,
-        mg.id AS match_game_id,
-        mg.game_number,
-        mg.category,
-        mg.home_sets,
-        mg.away_sets,
-        m.home_team_id,
-        m.away_team_id,
-        ms.round_number,
-        mg.home_player_1_id AS player_id,
-        'home' AS side
-      FROM match_games mg
-      JOIN matches m ON m.id = mg.match_id
-      LEFT JOIN match_schedule ms
-        ON ms.match_id = mg.match_id
-       AND ms.game_number = mg.game_number
-      WHERE mg.home_player_1_id IS NOT NULL
+        WITH player_points AS (
+            SELECT
+                p.id AS player_id,
+                p.first_name,
+                p.last_name,
+                p.nickname,
+                p.category,
+                p.position,
+                p.photo_url,
+                t.id AS team_id,
+                t.name AS team_name,
+                c.name AS club_name,
 
-      UNION ALL
+                COALESCE(COUNT(mg.id) FILTER (
+                    WHERE mg.home_sets IS NOT NULL AND mg.away_sets IS NOT NULL
+                ), 0) AS matches_played,
 
-      SELECT
-        mg.match_id,
-        mg.id AS match_game_id,
-        mg.game_number,
-        mg.category,
-        mg.home_sets,
-        mg.away_sets,
-        m.home_team_id,
-        m.away_team_id,
-        ms.round_number,
-        mg.home_player_2_id AS player_id,
-        'home' AS side
-      FROM match_games mg
-      JOIN matches m ON m.id = mg.match_id
-      LEFT JOIN match_schedule ms
-        ON ms.match_id = mg.match_id
-       AND ms.game_number = mg.game_number
-      WHERE mg.home_player_2_id IS NOT NULL
+                COALESCE(COUNT(mg.id) FILTER (
+                    WHERE mg.home_sets IS NOT NULL AND mg.away_sets IS NOT NULL
+                    AND (
+                        (p.id IN (mg.home_player_1_id, mg.home_player_2_id) AND mg.home_sets > mg.away_sets)
+                        OR
+                        (p.id IN (mg.away_player_1_id, mg.away_player_2_id) AND mg.away_sets > mg.home_sets)
+                    )
+                ), 0) AS wins,
 
-      UNION ALL
+                COALESCE(COUNT(mg.id) FILTER (
+                    WHERE mg.home_sets IS NOT NULL AND mg.away_sets IS NOT NULL
+                    AND (
+                        (p.id IN (mg.home_player_1_id, mg.home_player_2_id) AND mg.home_sets < mg.away_sets)
+                        OR
+                        (p.id IN (mg.away_player_1_id, mg.away_player_2_id) AND mg.away_sets < mg.home_sets)
+                    )
+                ), 0) AS losses,
 
-      SELECT
-        mg.match_id,
-        mg.id AS match_game_id,
-        mg.game_number,
-        mg.category,
-        mg.home_sets,
-        mg.away_sets,
-        m.home_team_id,
-        m.away_team_id,
-        ms.round_number,
-        mg.away_player_1_id AS player_id,
-        'away' AS side
-      FROM match_games mg
-      JOIN matches m ON m.id = mg.match_id
-      LEFT JOIN match_schedule ms
-        ON ms.match_id = mg.match_id
-       AND ms.game_number = mg.game_number
-      WHERE mg.away_player_1_id IS NOT NULL
+                COALESCE(SUM(
+                    CASE
+                        WHEN p.id IN (mg.home_player_1_id, mg.home_player_2_id) THEN mg.home_sets
+                        WHEN p.id IN (mg.away_player_1_id, mg.away_player_2_id) THEN mg.away_sets
+                        ELSE 0
+                    END
+                ), 0) AS sets_won,
 
-      UNION ALL
+                COALESCE(SUM(
+                    CASE
+                        WHEN p.id IN (mg.home_player_1_id, mg.home_player_2_id) THEN mg.away_sets
+                        WHEN p.id IN (mg.away_player_1_id, mg.away_player_2_id) THEN mg.home_sets
+                        ELSE 0
+                    END
+                ), 0) AS sets_lost,
 
-      SELECT
-        mg.match_id,
-        mg.id AS match_game_id,
-        mg.game_number,
-        mg.category,
-        mg.home_sets,
-        mg.away_sets,
-        m.home_team_id,
-        m.away_team_id,
-        ms.round_number,
-        mg.away_player_2_id AS player_id,
-        'away' AS side
-      FROM match_games mg
-      JOIN matches m ON m.id = mg.match_id
-      LEFT JOIN match_schedule ms
-        ON ms.match_id = mg.match_id
-       AND ms.game_number = mg.game_number
-      WHERE mg.away_player_2_id IS NOT NULL
-    ),
-    player_games_with_team AS (
-      SELECT
-        pg.*,
-        pt.team_id AS player_team_id
-      FROM player_games pg
-      LEFT JOIN player_team pt
-        ON pt.player_id = pg.player_id
-    ),
-    player_stats AS (
-      SELECT
-        pg.player_id,
+                1000 + COALESCE(SUM(
+                    CASE
+                        WHEN mg.home_sets IS NULL OR mg.away_sets IS NULL THEN 0
 
-        COUNT(CASE
-          WHEN pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL THEN 1
-        END) AS matches_played,
+                        -- FINAL: ajustar round_number si la final usa otro número
+                        WHEN m.round_number = 7
+                             AND p.id IN (mg.home_player_1_id, mg.home_player_2_id)
+                             AND mg.home_sets > mg.away_sets THEN 30
 
-        COUNT(CASE
-          WHEN pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
-           AND (
-             (pg.side = 'home' AND pg.home_sets > pg.away_sets) OR
-             (pg.side = 'away' AND pg.away_sets > pg.home_sets)
-           )
-          THEN 1
-        END) AS wins,
+                        WHEN m.round_number = 7
+                             AND p.id IN (mg.away_player_1_id, mg.away_player_2_id)
+                             AND mg.away_sets > mg.home_sets THEN 30
 
-        COUNT(CASE
-          WHEN pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
-           AND (
-             (pg.side = 'home' AND pg.home_sets < pg.away_sets) OR
-             (pg.side = 'away' AND pg.away_sets < pg.home_sets)
-           )
-          THEN 1
-        END) AS losses,
+                        WHEN m.round_number = 7 THEN 0
 
-        COALESCE(SUM(CASE
-          WHEN pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
-          THEN CASE WHEN pg.side = 'home' THEN pg.home_sets ELSE pg.away_sets END
-          ELSE 0
-        END), 0) AS sets_won,
+                        -- FASE REGULAR
+                        WHEN p.id IN (mg.home_player_1_id, mg.home_player_2_id)
+                             AND mg.home_sets > mg.away_sets THEN 15
 
-        COALESCE(SUM(CASE
-          WHEN pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
-          THEN CASE WHEN pg.side = 'home' THEN pg.away_sets ELSE pg.home_sets END
-          ELSE 0
-        END), 0) AS sets_lost,
+                        WHEN p.id IN (mg.away_player_1_id, mg.away_player_2_id)
+                             AND mg.away_sets > mg.home_sets THEN 20
 
-        AVG(CASE
-          WHEN pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
-          THEN CASE WHEN pg.side = 'home' THEN pg.home_sets ELSE pg.away_sets END
-        END) AS avg_sets_won,
+                        WHEN p.id IN (mg.home_player_1_id, mg.home_player_2_id)
+                             AND mg.home_sets < mg.away_sets THEN -15
 
-        AVG(CASE
-          WHEN pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
-          THEN CASE WHEN pg.side = 'home' THEN pg.away_sets ELSE pg.home_sets END
-        END) AS avg_sets_lost,
+                        WHEN p.id IN (mg.away_player_1_id, mg.away_player_2_id)
+                             AND mg.away_sets < mg.home_sets THEN -10
 
-        COUNT(CASE
-          WHEN pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
-           AND pg.player_team_id = pg.home_team_id
-          THEN 1
-        END) AS home_matches,
+                        ELSE 0
+                    END
+                ), 0) AS ranking_points
 
-        COUNT(CASE
-          WHEN pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
-           AND pg.player_team_id = pg.away_team_id
-          THEN 1
-        END) AS away_matches,
-
-        COUNT(CASE
-          WHEN pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
-           AND pg.player_team_id = pg.home_team_id
-           AND (
-             (pg.side = 'home' AND pg.home_sets > pg.away_sets) OR
-             (pg.side = 'away' AND pg.away_sets > pg.home_sets)
-           )
-          THEN 1
-        END) AS home_wins,
-
-        COUNT(CASE
-          WHEN pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
-           AND pg.player_team_id = pg.away_team_id
-           AND (
-             (pg.side = 'home' AND pg.home_sets > pg.away_sets) OR
-             (pg.side = 'away' AND pg.away_sets > pg.home_sets)
-           )
-          THEN 1
-        END) AS away_wins,
-
-        COUNT(CASE
-          WHEN pg.game_number = 3
-           AND pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
-          THEN 1
-        END) AS super_tiebreak_played,
-
-        COUNT(CASE
-          WHEN pg.game_number = 3
-           AND pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
-           AND (
-             (pg.side = 'home' AND pg.home_sets > pg.away_sets) OR
-             (pg.side = 'away' AND pg.away_sets > pg.home_sets)
-           )
-          THEN 1
-        END) AS super_tiebreak_won,
-
-        COUNT(CASE
-          WHEN pg.game_number = 3
-           AND pg.home_sets IS NOT NULL AND pg.away_sets IS NOT NULL
-           AND (
-             (pg.side = 'home' AND pg.home_sets < pg.away_sets) OR
-             (pg.side = 'away' AND pg.away_sets < pg.home_sets)
-           )
-          THEN 1
-        END) AS super_tiebreak_lost
-
-      FROM player_games_with_team pg
-      GROUP BY pg.player_id
-    ),
-    player_points AS (
-      SELECT
-        pg.player_id,
-        COALESCE(SUM(
-          CASE
-            WHEN pg.home_sets IS NULL OR pg.away_sets IS NULL THEN 0
-
-            WHEN (
-              (pg.side = 'home' AND pg.home_sets > pg.away_sets) OR
-              (pg.side = 'away' AND pg.away_sets > pg.home_sets)
+            FROM players p
+            LEFT JOIN team_players tp ON tp.player_id = p.id
+            LEFT JOIN teams t ON t.id = tp.team_id
+            LEFT JOIN clubs c ON c.id = t.club_id
+            LEFT JOIN match_games mg ON p.id IN (
+                mg.home_player_1_id,
+                mg.home_player_2_id,
+                mg.away_player_1_id,
+                mg.away_player_2_id
             )
-            THEN
-              CASE
-                WHEN pg.round_number = 7 AND pg.player_team_id = pg.home_team_id THEN 12
-                WHEN pg.round_number = 7 AND pg.player_team_id = pg.away_team_id THEN 14
-                WHEN pg.player_team_id = pg.home_team_id THEN 6
-                WHEN pg.player_team_id = pg.away_team_id THEN 8
-                ELSE 0
-              END
-
-            ELSE 0
-          END
-        ), 0) AS ranking_points
-      FROM player_games_with_team pg
-      GROUP BY pg.player_id
-    )
-
-    SELECT
-      p.id AS player_id,
-      p.first_name,
-      p.last_name,
-      p.nickname,
-      p.category,
-      p.position,
-      p.photo_url,
-      COALESCE(pp.ranking_points, 0) AS ranking_points,
-      pt.team_id,
-      t.name AS team_name,
-      c.name AS club_name,
-      COALESCE(ps.matches_played, 0) AS matches_played,
-      COALESCE(ps.wins, 0) AS wins,
-      COALESCE(ps.losses, 0) AS losses,
-      COALESCE(ps.sets_won, 0) AS sets_won,
-      COALESCE(ps.sets_lost, 0) AS sets_lost,
-      COALESCE(ROUND(ps.avg_sets_won::numeric, 2), 0) AS avg_sets_won,
-      COALESCE(ROUND(ps.avg_sets_lost::numeric, 2), 0) AS avg_sets_lost,
-      CASE
-        WHEN COALESCE(ps.home_matches, 0) = 0 THEN 0
-        ELSE ROUND((ps.home_wins::numeric / ps.home_matches::numeric) * 100, 1)
-      END AS home_win_pct,
-      CASE
-        WHEN COALESCE(ps.away_matches, 0) = 0 THEN 0
-        ELSE ROUND((ps.away_wins::numeric / ps.away_matches::numeric) * 100, 1)
-      END AS away_win_pct,
-      COALESCE(ps.super_tiebreak_played, 0) AS super_tiebreak_played,
-      COALESCE(ps.super_tiebreak_won, 0) AS super_tiebreak_won,
-      COALESCE(ps.super_tiebreak_lost, 0) AS super_tiebreak_lost
-    FROM players p
-    LEFT JOIN player_team pt
-      ON pt.player_id = p.id
-    LEFT JOIN teams t
-      ON t.id = pt.team_id
-    LEFT JOIN clubs c
-      ON c.id = t.club_id
-    LEFT JOIN player_stats ps
-      ON ps.player_id = p.id
-    LEFT JOIN player_points pp
-      ON pp.player_id = p.id
-    ORDER BY
-      p.category NULLS LAST,
-      COALESCE(pp.ranking_points, 0) DESC,
-      p.last_name,
-      p.first_name
+            LEFT JOIN matches m ON m.id = mg.match_id
+            GROUP BY
+                p.id, p.first_name, p.last_name, p.nickname,
+                p.category, p.position, p.photo_url,
+                t.id, t.name, c.name
+        )
+        SELECT *
+        FROM player_points
+        ORDER BY ranking_points DESC, wins DESC, sets_won DESC, first_name ASC;
     """)
 
-    try:
-        with engine.connect() as conn:
-            result = conn.execute(query)
-            rows = [dict(row._mapping) for row in result]
-        return rows
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error obteniendo estadísticas de jugadores: {str(e)}")
-
+    with engine.connect() as conn:
+        result = conn.execute(query)
+        return [dict(row._mapping) for row in result]
 
 
 
