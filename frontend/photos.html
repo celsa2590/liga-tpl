@@ -359,6 +359,13 @@
   color: rgba(255,255,255,0.65);
 }
 
+.banner-logo {
+  width: 100%;
+  height: 160px;        /* 👈 controla altura */
+  object-fit: contain;
+  padding: 20px;
+}
+
   </style>
 </head>
 
@@ -467,28 +474,28 @@
         <div class="photos-grid">
 
           <div class="photo-card" onclick="loadGallery('espacio')">
-            <img src="/assets/logos/espacio_active.png" style="object-fit: contain; padding:20px;">
+            <img src="/assets/logos/espacio-active.png" class="banner-logo">
             <div class="photo-info">
               <p class="photo-title">Espacio Active</p>
             </div>
           </div>
 
           <div class="photo-card" onclick="loadGallery('arena')">
-            <img src="/assets/logos/1.png">
+            <img src="/assets/logos/1.png" class="banner-logo">
             <div class="photo-info">
               <p class="photo-title">Arena</p>
             </div>
           </div>
 
           <div class="photo-card" onclick="loadGallery('propadel')">
-            <img src="/assets/logos/propadel.png">
+            <img src="/assets/logos/propadel.png" class="banner-logo">
             <div class="photo-info">
               <p class="photo-title">Propadel</p>
             </div>
           </div>
 
           <div class="photo-card" onclick="loadGallery('revueltas')">
-            <img src="/assets/logos/Revueltas.PNG">
+            <img src="/assets/logos/Revueltas.PNG" class="banner-logo">
             <div class="photo-info">
               <p class="photo-title">Revueltas</p>
             </div>
