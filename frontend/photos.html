@@ -454,143 +454,153 @@
 
       <div class="panel-head">
         <div>
-          <h2 class="panel-title">Selectivos Espacio Active</h2>
+          <h2 class="panel-title">Selectivos</h2>
           <p class="panel-subtitle">
-            Jornada de selectivos en Espacio Active.
+            Selecciona un club para ver fotos destacadas.
           </p>
         </div>
       </div>
 
       <div class="panel-body">
 
+        <!-- BANNERS -->
         <div class="photos-grid">
 
-          <article class="photo-card">
+          <div class="photo-card" onclick="loadGallery('espacio')">
+            <img src="/assets/photos/selectivos-espacio-active/7.jpg">
+            <div class="photo-info">
+              <p class="photo-title">Espacio Active</p>
+            </div>
+          </div>
 
-  <img src="/assets/photos/selectivos-espacio-active/7.jpg"
-       alt="Campeonas D/C selectivo"
-       style="object-position: center 40%;"
-       onclick="openLightbox(this.src, this.alt)">
+          <div class="photo-card" onclick="loadGallery('arena')">
+            <img src="/assets/photos/selectivos-arena/1.jpg">
+            <div class="photo-info">
+              <p class="photo-title">Arena</p>
+            </div>
+          </div>
 
-  <div class="photo-info">
-    <p class="photo-title">Marce·Sol - Nuestras Campeona D/C</p>
-    <p class="photo-meta">Espacio Active · Abril 2026 · Categoría D/C</p>
-  </div>
-          </article>
+          <div class="photo-card" onclick="loadGallery('propadel')">
+            <img src="/assets/photos/selectivos-propadel/1.jpg">
+            <div class="photo-info">
+              <p class="photo-title">Propadel</p>
+            </div>
+          </div>
 
-
-          <article class="photo-card">
-
-  <img src="/assets/photos/selectivos-espacio-active/9.jpg"
-       alt="Campeonas C/B del selectivo"
-       style="object-position: center 15%;"
-       onclick="openLightbox(this.src, this.alt)">
-
-  <div class="photo-info">
-    <p class="photo-title">Kari·Jaz - Nuestras Campeona C/B</p>
-    <p class="photo-meta">Espacio Active · Abril 2026 · Categoría C/B</p>
-  </div>
-          </article>
-
-
-
-
-
-
-          <article class="photo-card">
-
-  <img src="/assets/photos/selectivos-espacio-active/1.jpg"
-       alt="Parejas participantes del selectivo"
-       style="object-position: center 40%;"
-       onclick="openLightbox(this.src, this.alt)">
-
-  <div class="photo-info">
-    <p class="photo-title">Miri·Yanni vs Tei·Naty</p>
-    <p class="photo-meta">Espacio Active · Abril 2026 · Categoría D/C</p>
-  </div>
-          </article>
-
-
-          <article class="photo-card">
-  <img src="/assets/photos/selectivos-espacio-active/8.jpg"
-       alt="Parejas participantes del selectivo"
-       style="object-position: center 30%;"
-       onclick="openLightbox(this.src, this.alt)">
-
-  <div class="photo-info">
-    <p class="photo-title">Michelle·Marina vs Yanni·Miri</p>
-    <p class="photo-meta">Espacio Active · Abril 2026 · Categoría D/C</p>
-  </div>
-          </article>
-
-
-          <article class="photo-card">
-  <img src="/assets/photos/selectivos-espacio-active/3.jpg"
-       alt="Parejas participantes del selectivo"
-       style="object-position: center 40%;"
-       onclick="openLightbox(this.src, this.alt)">
-
-  <div class="photo-info">
-    <p class="photo-title">Dani·Leona vs Kari·Jaz - FINAL</p>
-    <p class="photo-meta">Espacio Active · Abril 2026 · Categoría C/B</p>
-  </div>
-          </article>
-
-          <article class="photo-card">
-
-  <img src="/assets/photos/selectivos-espacio-active/4.jpg"
-       alt="Parejas participantes del selectivo"
-       style="object-position: center 40%;"
-       onclick="openLightbox(this.src, this.alt)">
-
-  <div class="photo-info">
-    <p class="photo-title">Carla·Dave vs Kari·Jaz</p>
-    <p class="photo-meta">Espacio Active · Abril 2026 · Categoría C/B</p>
-  </div>
-          </article>
-
-          <article class="photo-card">
-
-  <img src="/assets/photos/selectivos-espacio-active/5.jpg"
-       alt="Parejas participantes del selectivo"
-       style="object-position: center 45%;"
-       onclick="openLightbox(this.src, this.alt)">
-
-  <div class="photo-info">
-    <p class="photo-title">Karina·Nitza vs Coni·Macjory</p>
-    <p class="photo-meta">Espacio Active · Abril 2026 · Categoría C/B</p>
-  </div>
-          </article>
-
-          <article class="photo-card">
-
-  <img src="/assets/photos/selectivos-espacio-active/6.jpg"
-       alt="Parejas participantes del selectivo"
-       style="object-position: center 45%;"
-       onclick="openLightbox(this.src, this.alt)">
-
-  <div class="photo-info">
-    <p class="photo-title">Lis·Paty vs Karina·Nitza - Definiendo 3er lugar</p>
-    <p class="photo-meta">Espacio Active · Abril 2026 · Categoría C/B</p>
-  </div>
-          </article>
+          <div class="photo-card" onclick="loadGallery('revueltas')">
+            <img src="/assets/photos/selectivos-revueltas/1.jpg">
+            <div class="photo-info">
+              <p class="photo-title">Revueltas</p>
+            </div>
+          </div>
 
         </div>
 
-        <div style="margin-top:18px;">
-          <a class="nav-link admin"
-             href="https://drive.google.com/drive/u/0/folders/1m4vS-clZmwaEiRmVkDlf-oQ__s_oO69d"
-             target="_blank">
-            Ver todas las fotos / Descargar
-          </a>
-        </div>
+        <!-- CONTENEDOR DINÁMICO -->
+        <div id="galleryContainer" style="margin-top:24px;"></div>
 
       </div>
-
     </div>
   </div>
 </section>
 
+
+
+
+<script>
+function loadGallery(club) {
+  const container = document.getElementById("galleryContainer");
+
+  let html = "";
+
+  if (club === "espacio") {
+    html = `
+      <h3>Espacio Active</h3>
+      <div class="photos-grid">
+
+        ${photo("/assets/photos/selectivos-espacio-active/7.jpg", "Campeonas D/C")}
+        ${photo("/assets/photos/selectivos-espacio-active/9.jpg", "Campeonas C/B")}
+        ${photo("/assets/photos/selectivos-espacio-active/8.jpg", "Participantes")}
+        ${photo("/assets/photos/selectivos-espacio-active/5.jpg", "Participantes")}
+
+      </div>
+
+      ${driveButton("https://drive.google.com/drive/u/0/folders/1m4vS-clZmwaEiRmVkDlf-oQ__s_oO69d")}
+    `;
+  }
+
+  if (club === "arena") {
+    html = `
+      <h3>Arena</h3>
+      <div class="photos-grid">
+
+        ${photo("/assets/photos/selectivos-arena/1.jpg", "Partido")}
+        ${photo("/assets/photos/selectivos-arena/2.jpg", "Acción")}
+        ${photo("/assets/photos/selectivos-arena/3.jpg", "Juego")}
+        ${photo("/assets/photos/selectivos-arena/4.jpg", "Momento")}
+
+      </div>
+
+      ${driveButton("LINK_DRIVE_ARENA")}
+    `;
+  }
+
+  if (club === "propadel") {
+    html = `
+      <h3>Propadel</h3>
+      <div class="photos-grid">
+
+        ${photo("/assets/photos/selectivos-propadel/1.jpg", "Partido")}
+        ${photo("/assets/photos/selectivos-propadel/2.jpg", "Acción")}
+        ${photo("/assets/photos/selectivos-propadel/3.jpg", "Juego")}
+        ${photo("/assets/photos/selectivos-propadel/4.jpg", "Momento")}
+
+      </div>
+
+      ${driveButton("LINK_DRIVE_PROPADDEL")}
+    `;
+  }
+
+  if (club === "revueltas") {
+    html = `
+      <h3>Revueltas</h3>
+      <div class="photos-grid">
+
+        ${photo("/assets/photos/selectivos-revueltas/1.jpg", "Partido")}
+        ${photo("/assets/photos/selectivos-revueltas/2.jpg", "Acción")}
+        ${photo("/assets/photos/selectivos-revueltas/3.jpg", "Juego")}
+        ${photo("/assets/photos/selectivos-revueltas/4.jpg", "Momento")}
+
+      </div>
+
+      ${driveButton("LINK_DRIVE_REVUELTAS")}
+    `;
+  }
+
+  container.innerHTML = html;
+}
+
+function photo(src, title) {
+  return `
+    <article class="photo-card">
+      <img src="${src}" onclick="openLightbox('${src}', '${title}')">
+      <div class="photo-info">
+        <p class="photo-title">${title}</p>
+      </div>
+    </article>
+  `;
+}
+
+function driveButton(link) {
+  return `
+    <div style="margin-top:18px;">
+      <a class="nav-link admin" href="${link}" target="_blank">
+        Ver todas las fotos / Drive
+      </a>
+    </div>
+  `;
+}
+</script>
 
 
 
