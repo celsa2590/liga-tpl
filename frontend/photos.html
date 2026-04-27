@@ -360,8 +360,8 @@
 }
 
 .banner-logo {
-  max-width: 80%;
-  max-height: 80%;
+  max-width: 70%;
+  max-height: 70%;
   object-fit: contain;
 }
 
@@ -370,10 +370,25 @@
 }
 
 .banner-card {
+  aspect-ratio: 1 / 1;   /* 🔥 esto las hace cuadradas */
   display: flex;
   align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: linear-gradient(145deg, #0f172a, #1e293b);
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.banner-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+.folders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 20px;
-  padding: 18px;
 }
 
 .banner-logo-container {
