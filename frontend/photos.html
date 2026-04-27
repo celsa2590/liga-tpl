@@ -467,28 +467,28 @@
         <div class="photos-grid">
 
           <div class="photo-card" onclick="loadGallery('espacio')">
-            <img src="/assets/photos/selectivos-espacio-active/7.jpg">
+            <img src="/assets/logos/espacio_active.png" style="object-fit: contain; padding:20px;">
             <div class="photo-info">
               <p class="photo-title">Espacio Active</p>
             </div>
           </div>
 
           <div class="photo-card" onclick="loadGallery('arena')">
-            <img src="/assets/photos/selectivos-arena/1.jpg">
+            <img src="/assets/logos/1.png">
             <div class="photo-info">
               <p class="photo-title">Arena</p>
             </div>
           </div>
 
           <div class="photo-card" onclick="loadGallery('propadel')">
-            <img src="/assets/photos/selectivos-propadel/1.jpg">
+            <img src="/assets/logos/propadel.png">
             <div class="photo-info">
               <p class="photo-title">Propadel</p>
             </div>
           </div>
 
           <div class="photo-card" onclick="loadGallery('revueltas')">
-            <img src="/assets/photos/selectivos-revueltas/1.jpg">
+            <img src="/assets/logos/Revueltas.PNG">
             <div class="photo-info">
               <p class="photo-title">Revueltas</p>
             </div>
@@ -518,10 +518,10 @@ function loadGallery(club) {
       <h3>Espacio Active</h3>
       <div class="photos-grid">
 
-        ${photo("/assets/photos/selectivos-espacio-active/7.jpg", "Campeonas D/C")}
-        ${photo("/assets/photos/selectivos-espacio-active/9.jpg", "Campeonas C/B")}
-        ${photo("/assets/photos/selectivos-espacio-active/8.jpg", "Participantes")}
-        ${photo("/assets/photos/selectivos-espacio-active/5.jpg", "Participantes")}
+        ${photo("/assets/photos/selectivos-espacio-active/7.jpg", "Campeonas D/C", "center 40%")}
+        ${photo("/assets/photos/selectivos-espacio-active/9.jpg", "Campeonas C/B", "center 15%")}
+        ${photo("/assets/photos/selectivos-espacio-active/8.jpg", "Participantes", "center 30%")}
+        ${photo("/assets/photos/selectivos-espacio-active/5.jpg", "Participantes", "center 45%")}
 
       </div>
 
@@ -580,16 +580,22 @@ function loadGallery(club) {
   container.innerHTML = html;
 }
 
-function photo(src, title) {
+
+function photo(src, title, position = "center center") {
   return `
     <article class="photo-card">
-      <img src="${src}" onclick="openLightbox('${src}', '${title}')">
+      <img 
+        src="${src}" 
+        style="object-position: ${position};"
+        onclick="openLightbox('${src}', '${title}')"
+      >
       <div class="photo-info">
         <p class="photo-title">${title}</p>
       </div>
     </article>
   `;
 }
+
 
 function driveButton(link) {
   return `
