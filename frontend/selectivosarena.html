@@ -1208,9 +1208,22 @@ function onArenaDateChange() {
   currentArenaCategoryId = selected.id;
   currentArenaViewMode = selected.mode || "group";
 
-  loadArenaStandings(selected.id, currentArenaCategoryKey);
-  loadArenaMatches(selected.id, currentArenaCategoryKey, currentArenaViewMode);
-  loadArenaFinalists(selected.id, currentArenaCategoryKey);
+if (currentArenaViewMode === "final") {
+  document.getElementById("finalistsContainer").innerHTML =
+    '<div class="empty">Vista de final seleccionada.</div>';
+
+  document.getElementById("leaderContainer").innerHTML = "";
+  document.getElementById("topThreeContainer").innerHTML = "";
+  document.getElementById("standingsContainer").innerHTML =
+    '<div class="empty">La tabla del selectivo no se muestra en la vista de final.</div>';
+
+  loadArenaMatches(selected.id, currentArenaCategoryKey, "final");
+  return;
+}
+
+loadArenaStandings(selected.id, currentArenaCategoryKey);
+loadArenaMatches(selected.id, currentArenaCategoryKey, "group");
+loadArenaFinalists(selected.id, currentArenaCategoryKey);
 }
 
 
@@ -1365,9 +1378,12 @@ async function loadArenaMatches(categoryId, categoryKey, viewMode = "group") {
               <div class="match-pair">${match.pair_2_name || "Pareja por definir"}</div>
             </div>
 
-            <div class="match-score">
-              ${(match.pair_1_games ?? "-")} - ${(match.pair_2_games ?? "-")}
-            </div>
+
+<div class="match-score">
+  ${match.result_status === "finished"
+    ? `${match.pair_1_games ?? "-"} - ${match.pair_2_games ?? "-"}`
+    : "Resultado por definir"}
+</div>
 
             <div class="match-status">${normalizeArenaStatus(match.result_status)}</div>
           </div>
