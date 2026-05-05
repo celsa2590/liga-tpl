@@ -1110,20 +1110,30 @@ th.num {
   const API = "https://liga-backend-f08y.onrender.com";
 
   const arenaCategoryMap = {
-    dc: [{ id: 5, label: "25/04 · 14:30 a 16:30" }],
-    cb: [{ id: 6, label: "25/04 · 17:00 a 19:00" }],
+    dc: [
+        { id: 5, label: "Fecha 1 · 25/04 · 14:30 a 16:30", mode: "group" },
+        { id: 17, label: "Fecha 2 · 02/05 · 14:30 a 16:30", mode: "group" },
+        { id: 17, label: "Final · 09/05", mode: "final" }
+    ],
+    cb: [
+        { id: 6, label: "Fecha 1 · 25/04 · 17:00 a 19:00", mode: "group" },
+        { id: 6, label: "Final · 09/05", mode: "final" }
+    ],
     quinta: [
       { id: 11, label: "Fecha 1 · 26/04 · 14:30 a 16:30" },
-      { id: 13, label: "Fecha 2 · 02/05 · 14:30 a 16:30" }
+      { id: 13, label: "Fecha 2 · 02/05 · 14:30 a 16:30" },
+      { id: 13, label: "Final · 09/05", mode: "final" }
     ],
     cuarta: [
       { id: 12, label: "Fecha 1 · 26/04 · 17:00 a 19:00" },
-      { id: 14, label: "Fecha 2 · 02/05 · 17:00 a 19:00" }
+      { id: 14, label: "Fecha 2 · 02/05 · 17:00 a 19:00" },
+      { id: 14, label: "Final · 09/05", mode: "final" }
     ]
   };
 
   let currentArenaCategoryKey = null;
   let currentArenaCategoryId = null;
+  let currentArenaViewMode = "group";
 
   function selectCategory(categoryKey, button) {
     document.querySelectorAll(".category-btn").forEach(btn => btn.classList.remove("active"));
@@ -1176,7 +1186,9 @@ th.num {
 
     dateWrap.style.display = "block";
     dateSelect.innerHTML = '<option value="">Selecciona una fecha</option>' +
-      options.map(item => `<option value="${item.id}">${item.label}</option>`).join("");
+      options.map((item, index) => `
+        <option value="${index}">${item.label}</option>
+      `).join("");
 
     currentArenaCategoryId = null;
     document.getElementById("standingsContainer").innerHTML = '<div class="empty">Selecciona una fecha para ver la tabla.</div>';
@@ -1184,19 +1196,22 @@ th.num {
     document.getElementById("finalistsContainer").innerHTML = '<div class="empty">Selecciona una fecha para ver las parejas clasificadas.</div>';
   }
 
-  function onArenaDateChange() {
-    const dateSelect = document.getElementById("arenaDateSelect");
-    const categoryId = parseInt(dateSelect.value, 10);
 
-    if (!categoryId || !currentArenaCategoryKey) return;
+function onArenaDateChange() {
+  const dateSelect = document.getElementById("arenaDateSelect");
+  const selectedIndex = parseInt(dateSelect.value, 10);
 
-    currentArenaCategoryId = categoryId;
+  if (Number.isNaN(selectedIndex) || !currentArenaCategoryKey) return;
 
-    loadArenaStandings(categoryId, currentArenaCategoryKey);
-    loadArenaMatches(categoryId, currentArenaCategoryKey);
-    loadArenaFinalists(categoryId, currentArenaCategoryKey);
-  }
+  const selected = arenaCategoryMap[currentArenaCategoryKey][selectedIndex];
 
+  currentArenaCategoryId = selected.id;
+  currentArenaViewMode = selected.mode || "group";
+
+  loadArenaStandings(selected.id, currentArenaCategoryKey);
+  loadArenaMatches(selected.id, currentArenaCategoryKey, currentArenaViewMode);
+  loadArenaFinalists(selected.id, currentArenaCategoryKey);
+}
 
 
 async function loadArenaStandings(categoryId, categoryKey) {
@@ -1297,7 +1312,7 @@ async function loadArenaStandings(categoryId, categoryKey) {
 
  
 
-async function loadArenaMatches(categoryId, categoryKey) {
+async function loadArenaMatches(categoryId, categoryKey, viewMode = "group") {
   const container = document.getElementById("matchesContainer");
   if (!container) return;
 
@@ -1415,7 +1430,15 @@ async function loadArenaMatches(categoryId, categoryKey) {
       </div>
     ` : "";
 
-    container.innerHTML = groupHtml + finalsHtml;
+if (viewMode === "final") {
+  container.innerHTML = finalMatches.length
+    ? finalsHtml
+    : '<div class="empty">Aún no hay final cargada para esta categoría.</div>';
+  return;
+}
+
+container.innerHTML = groupHtml;
+
   } catch (error) {
     console.error("Error cargando partidos:", error);
     container.innerHTML = '<div class="empty">No se pudieron cargar los partidos.</div>';
