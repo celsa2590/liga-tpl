@@ -1,14 +1,573 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Bases Liga TPL</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bases Liga TPL Chile 2026</title>
+  <meta name="description" content="Resumen de las bases oficiales de la Liga TPL Chile 2026." />
+
+  <style>
+    :root {
+      --bg: #05080f;
+      --panel: rgba(255,255,255,0.05);
+      --line: rgba(255,255,255,0.10);
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.72);
+      --gold: #d4af6a;
+      --gold-2: #e6c98f;
+      --radius: 22px;
+      --shadow: 0 18px 48px rgba(0,0,0,0.28);
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top right, #0f1b2d, #06090f),
+        linear-gradient(180deg, #05080f 0%, #07101b 100%);
+      color: var(--text);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      width: min(var(--max), calc(100% - 28px));
+      margin: 0 auto;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(5, 8, 15, 0.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(214,176,106,0.1);
+    }
+
+    .site-header-inner {
+      width: min(var(--max), calc(100% - 28px));
+      min-height: 78px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+      border-radius: 50%;
+    }
+
+    .brand-title {
+      font-size: 1.05rem;
+      font-weight: 900;
+      line-height: 1.1;
+    }
+
+    .brand-subtitle {
+      margin-top: 4px;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.55);
+    }
+
+    .main-nav {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-link {
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      background: rgba(214,176,106,0.12);
+      color: var(--gold-2);
+    }
+
+    .nav-link.admin {
+      background: var(--gold);
+      color: #081120;
+    }
+
+    .hero {
+      padding: 58px 0 26px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 86% 18%, rgba(214,176,106,0.18), transparent 22%),
+        radial-gradient(circle at 12% 84%, rgba(147,197,253,0.08), transparent 18%);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      gap: 28px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(214,176,106,0.1);
+      border: 1px solid rgba(214,176,106,0.24);
+      color: var(--gold-2);
+      font-size: 0.84rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.3rem, 5vw, 4.4rem);
+      line-height: 1.03;
+      letter-spacing: -0.02em;
+    }
+
+    .highlight { color: var(--gold); }
+
+    .hero p {
+      margin: 18px 0 0;
+      max-width: 650px;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .hero-card,
+    .section-card,
+    .mini-card,
+    details {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      padding: 22px;
+    }
+
+    .hero-card h2 {
+      margin: 0;
+      font-size: 1.35rem;
+    }
+
+    .hero-card p {
+      margin: 10px 0 0;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 12px 18px;
+      border-radius: 999px;
+      font-weight: 900;
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, #d4af6a, #b8964f);
+      color: #081120;
+    }
+
+    .btn.secondary {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--text);
+    }
+
+    .content {
+      padding: 22px 0 46px;
+    }
+
+    .section {
+      padding-top: 24px;
+    }
+
+    .section-card {
+      padding: 24px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: clamp(1.35rem, 2vw, 2rem);
+    }
+
+    .section-subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .grid {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .mini-card {
+      padding: 18px;
+    }
+
+    .mini-card h3 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .mini-card p,
+    .mini-card ul {
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.94rem;
+    }
+
+    .mini-card ul {
+      padding-left: 18px;
+    }
+
+    .value {
+      margin-top: 12px;
+      color: var(--gold-2);
+      font-size: 1.25rem;
+      font-weight: 900;
+    }
+
+    .accordion {
+      margin-top: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    details {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    summary {
+      cursor: pointer;
+      padding: 18px;
+      font-weight: 900;
+      color: var(--text);
+      list-style: none;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+
+    details[open] summary {
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      color: var(--gold-2);
+    }
+
+    .detail-body {
+      padding: 0 18px 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .detail-body ul {
+      margin: 10px 0 0;
+      padding-left: 18px;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: rgba(255,255,255,0.55);
+      padding: 26px 0 0;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 900px) {
+      .hero-inner,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .site-header-inner {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 12px 0;
+      }
+
+      .main-nav {
+        justify-content: flex-start;
+      }
+    }
+  </style>
 </head>
-<body style="background:#05080f; color:white; font-family:Inter; padding:40px;">
 
-<h1>📜 Bases Liga TPL</h1>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="brand" href="/">
+        <img class="brand-logo" src="/assets/logos/tpl_logo_trans.png" alt="TPL Chile" />
+        <div>
+          <div class="brand-title">TPL Chile</div>
+          <div class="brand-subtitle">Liga interclubes de pádel</div>
+        </div>
+      </a>
 
-<h2>Próximamente</h2>
+      <nav class="main-nav">
+        <a class="nav-link" href="/">Inicio</a>
+        <a class="nav-link" href="/teams.html">Equipos</a>
+        <a class="nav-link" href="/players.html">Jugadores</a>
+        <a class="nav-link" href="/selectivos.html">Selectivos</a>
+        <a class="nav-link" href="/photos.html">Fotos</a>
+        <a class="nav-link active" href="/bases.html">Bases</a>
+        <a class="nav-link" href="/sponsors.html">Auspiciadores</a>
+        <a class="nav-link admin" href="/admin.html">Admin</a>
+      </nav>
+    </div>
+  </header>
 
+  <section class="hero">
+    <div class="container hero-inner">
+      <div>
+        <div class="badge">📜 Documento oficial</div>
+        <h1>Bases <span class="highlight">Liga TPL Chile 2026</span></h1>
+        <p>
+          Revisa un resumen de las reglas, formato de competencia, sistema de puntaje,
+          costos, premios y condiciones generales de participación.
+        </p>
+
+        <div class="actions">
+          <a class="btn primary" href="/assets/docs/Bases_TPL.pdf" target="_blank" rel="noopener">
+            Descargar bases oficiales
+          </a>
+          <a class="btn secondary" href="/">
+            Volver al inicio
+          </a>
+        </div>
+      </div>
+
+      <aside class="hero-card">
+        <h2>Resumen rápido</h2>
+        <p>
+          La Liga TPL Chile 2026 reúne clubes en cuatro categorías:
+          <strong>3era/4ta, 5ta, C/B y D/C</strong>.
+        </p>
+        <p>
+          Cada enfrentamiento contempla cuatro partidos, uno por categoría,
+          y la temporada culmina con una Gran Final.
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <main class="content">
+    <div class="container">
+
+      <section class="section">
+        <div class="section-card">
+          <h2 class="section-title">Puntos clave</h2>
+          <p class="section-subtitle">
+            Información principal para jugadores, clubes y capitanes.
+          </p>
+
+          <div class="grid">
+            <article class="mini-card">
+              <h3>🎾 Categorías</h3>
+              <ul>
+                <li>3era/4ta</li>
+                <li>5ta</li>
+                <li>C/B</li>
+                <li>D/C</li>
+              </ul>
+            </article>
+
+            <article class="mini-card">
+              <h3>🏆 Formato</h3>
+              <p>
+                Cada fecha se juega como enfrentamiento entre clubes,
+                con cuatro partidos: uno por cada categoría.
+              </p>
+            </article>
+
+            <article class="mini-card">
+              <h3>💰 Costos</h3>
+              <p>Inscripción por jugador/a:</p>
+              <div class="value">$20.000</div>
+              <p>Valor por partido:</p>
+              <div class="value">$5.000</div>
+            </article>
+
+            <article class="mini-card">
+              <h3>🎁 Premios</h3>
+              <ul>
+                <li>3era/4ta: $200.000</li>
+                <li>C/B: $140.000</li>
+                <li>5ta: $100.000</li>
+                <li>D/C: $80.000</li>
+              </ul>
+            </article>
+
+            <article class="mini-card">
+              <h3>⏰ Horarios</h3>
+              <p>
+                3era/4ta y C/B: 14:30 hrs<br>
+                5ta y D/C: 16:00 hrs<br>
+                En MaiClub: todas las categorías 14:30 hrs.
+              </p>
+            </article>
+
+            <article class="mini-card">
+              <h3>📅 Fechas</h3>
+              <p>
+                Temporada regular desde mayo a julio 2026.
+                Gran Final: <strong>01 de agosto de 2026</strong>.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-card">
+          <h2 class="section-title">Resumen de reglas</h2>
+          <p class="section-subtitle">
+            Este resumen no reemplaza el documento oficial. Para detalles completos,
+            descarga el PDF.
+          </p>
+
+          <div class="accordion">
+            <details open>
+              <summary>Objetivo de la liga</summary>
+              <div class="detail-body">
+                La TPL Chile 2026 busca fomentar la competencia deportiva en un ambiente
+                de respeto, compañerismo y sana convivencia entre clubes.
+              </div>
+            </details>
+
+            <details>
+              <summary>Equipos y nóminas</summary>
+              <div class="detail-body">
+                Cada club participa en cuatro categorías y debe inscribir una pareja titular
+                y una pareja suplente por categoría. Las nóminas deben entregarse con al menos
+                72 horas de anticipación a cada fecha.
+              </div>
+            </details>
+
+            <details>
+              <summary>Uso de suplentes</summary>
+              <div class="detail-body">
+                Se permite reemplazar una pareja completa o un jugador de la pareja titular.
+                El suplente debe haber participado en el proceso de selectivo del club y ser
+                de la misma categoría o inferior.
+              </div>
+            </details>
+
+            <details>
+              <summary>Formato de competencia</summary>
+              <div class="detail-body">
+                Cada enfrentamiento entre clubes se compone de cuatro partidos, uno por categoría.
+                Los partidos se disputan al mejor de tres sets. En caso de 6-6, se juega tie break
+                a 7 puntos con diferencia mínima de 2.
+              </div>
+            </details>
+
+            <details>
+              <summary>Sistema de puntaje por club</summary>
+              <div class="detail-body">
+                Cada partido ganado otorga un punto al club. Si un club gana los cuatro partidos
+                de la fecha, obtiene un punto bonus adicional.
+                <ul>
+                  <li>4-0: club ganador suma 5 puntos.</li>
+                  <li>3-1: club ganador suma 3 puntos y perdedor 1 punto.</li>
+                  <li>2-2: ambos clubes suman 2 puntos.</li>
+                </ul>
+              </div>
+            </details>
+
+            <details>
+              <summary>Desempates</summary>
+              <div class="detail-body">
+                Los empates en la tabla se resuelven considerando diferencia de partidos,
+                partidos ganados, enfrentamiento directo, diferencia de sets, sets ganados
+                y, finalmente, sorteo de la organización.
+              </div>
+            </details>
+
+            <details>
+              <summary>Reprogramaciones y W.O.</summary>
+              <div class="detail-body">
+                No se permite reprogramar partidos salvo condiciones climáticas extremas o fuerza mayor.
+                Los atrasos tienen sanciones progresivas: advertencia, set perdido y W.O.
+              </div>
+            </details>
+
+            <details>
+              <summary>Gran Final</summary>
+              <div class="detail-body">
+                La Gran Final se disputará el 01 de agosto de 2026. El club campeón será el que gane
+                más partidos en la final. Si el resultado global es 2-2, se juega un Super Tie Break
+                Mixto para definir al campeón.
+              </div>
+            </details>
+
+            <details>
+              <summary>Ranking individual TPL Rated</summary>
+              <div class="detail-body">
+                Todos los jugadores parten con 1.000 puntos. El puntaje varía según victoria,
+                derrota, condición de local o visita y resultados en la final.
+              </div>
+            </details>
+
+            <details>
+              <summary>Conducta y uso de imagen</summary>
+              <div class="detail-body">
+                Se exige respeto y fair play. La participación autoriza a la organización a registrar
+                fotos y videos para redes sociales, sitio web y comunicaciones oficiales.
+              </div>
+            </details>
+          </div>
+
+          <div class="actions">
+            <a class="btn primary" href="/assets/docs/Bases_TPL.pdf" target="_blank" rel="noopener">
+              Descargar PDF oficial
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <p class="footer-note">Liga TPL Chile 2026 · Documento oficial disponible en PDF.</p>
+    </div>
+  </main>
 </body>
 </html>
