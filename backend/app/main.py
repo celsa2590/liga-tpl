@@ -1450,6 +1450,8 @@ def approve_pending_player(pending_id: int, authorization: str = Header(None)):
             category,
             position,
             photo_url,
+            rut,
+            email,
             ranking_points
         ) VALUES (
             :first_name,
@@ -1458,6 +1460,8 @@ def approve_pending_player(pending_id: int, authorization: str = Header(None)):
             :category,
             :position,
             :photo_url,
+            :rut,
+            :email,
             0
         )
         RETURNING id
@@ -1501,6 +1505,8 @@ def approve_pending_player(pending_id: int, authorization: str = Header(None)):
                     "category": pending.category,
                     "position": pending.position,
                     "photo_url": None,
+                    "rut": pending.rut,
+                    "email": pending.contact_email,
                 }
             ).fetchone()
 
