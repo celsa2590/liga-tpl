@@ -215,7 +215,8 @@ def get_matches():
             away_player_2,
             home_sets,
             away_sets,
-            result_status
+            result_status,
+            is_rescheduled
         FROM match_schedule
         WHERE season_name = 'Liga San Miguel 2026'
         ORDER BY round_number, scheduled_at
@@ -624,7 +625,8 @@ def get_home_data():
             away_player_2,
             home_sets,
             away_sets,
-            result_status
+            result_status,
+            is_rescheduled
         FROM match_schedule
         WHERE season_name = 'Liga San Miguel 2026'
         ORDER BY round_number, scheduled_at

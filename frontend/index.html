@@ -1060,6 +1060,32 @@
   flex-wrap: wrap;
 }
 
+.final-block {
+  border-color: rgba(214,176,106,0.32);
+  background:
+    radial-gradient(circle at top right, rgba(214,176,106,0.12), transparent 34%),
+    linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025));
+}
+
+.final-block .round-title {
+  color: var(--gold-2);
+}
+
+.rescheduled-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(253,186,116,0.12);
+  border: 1px solid rgba(253,186,116,0.22);
+  color: var(--orange);
+  font-size: 0.7rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
   </style>
 </head>
 <body>
@@ -1616,11 +1642,26 @@
                 <div class="detail-label">Detalle del cruce</div>
                 <div class="games-grid">
                   ${tie.games.map(game => `
+
+
                     <div class="game-card">
                       <div class="game-head">
-                        <span>${game.category || `Partido ${game.game_number}`}</span>
-                        <span>${(game.home_sets != null && game.away_sets != null) ? `${game.home_sets} - ${game.away_sets}` : formatTime(game.scheduled_at)}</span>
+
+                        <span>
+                          ${game.category || `Partido ${game.game_number}`}
+                          ${game.is_rescheduled ? `<span class="rescheduled-badge">Reprogramado</span>` : ""}
+                        </span>
+
+                        <span>
+                          ${(game.home_sets != null && game.away_sets != null)
+                            ? `${game.home_sets} - ${game.away_sets}`
+                            : `${formatDate(game.scheduled_at)} · ${formatTime(game.scheduled_at)}`
+                          }
+                        </span>
                       </div>
+
+
+
                       <div class="game-pair">
                         <div class="game-side">
                           <strong>${teamPlayers(game.home_player_1, game.home_player_2)}</strong>
@@ -1649,6 +1690,67 @@
         `;
 
         container.appendChild(block);
+
+
+const finalBlock = document.createElement("section");
+finalBlock.className = "round-block final-block";
+
+finalBlock.innerHTML = `
+  <div class="round-head">
+    <div>
+      <div class="round-title">Gran Final TPL Chile 2026</div>
+      <div class="round-date">Sábado, 01 de agosto</div>
+    </div>
+    <span class="event-status scheduled">Por definir</span>
+  </div>
+
+  <details class="tie-item">
+    <summary>
+      <div class="tie-summary">
+        <div class="tie-main">
+          <div class="tie-teams">Final de la temporada</div>
+          <div class="tie-meta">
+            <span class="tie-chip">📍 Club sede por definir</span>
+            <span class="tie-chip">🕒 Horario por definir</span>
+          </div>
+        </div>
+        <div class="tie-side">
+          <span class="tie-score">Gran Final</span>
+          <span class="tie-toggle"></span>
+        </div>
+      </div>
+    </summary>
+
+    <div class="tie-details">
+      <div class="detail-label">Detalle de la Gran Final</div>
+      <div class="games-grid">
+        ${["3era/4ta", "4ta/5ta", "C/B", "D/C"].map(category => `
+          <div class="game-card">
+            <div class="game-head">
+              <span>${category}</span>
+              <span>Horario por definir</span>
+            </div>
+            <div class="game-pair">
+              <div class="game-side">
+                <strong>Club finalista 1</strong>
+                <span>Pareja por confirmar</span>
+              </div>
+              <div class="game-score">vs</div>
+              <div class="game-side">
+                <strong>Club finalista 2</strong>
+                <span>Pareja por confirmar</span>
+              </div>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+  </details>
+`;
+
+container.appendChild(finalBlock);
+
+
       });
     }
 
