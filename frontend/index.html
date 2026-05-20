@@ -1086,6 +1086,52 @@
   letter-spacing: 0.05em;
 }
 
+.sponsors-strip {
+  padding: 18px 24px 24px;
+}
+
+.sponsors-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 18px;
+  align-items: center;
+}
+
+.sponsor-item {
+  height: 90px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: 0.2s ease;
+}
+
+.sponsor-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(214,176,106,0.25);
+}
+
+.sponsor-item img {
+  max-width: 75%;
+  max-height: 55px;
+  object-fit: contain;
+  filter: brightness(1.05);
+}
+
+@media (max-width: 760px) {
+  .sponsors-grid {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+  }
+
+  .sponsor-item {
+    height: 82px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -1147,6 +1193,34 @@
  </div>
 
   </section>
+
+<section class="section" id="sponsors-home">
+  <div class="section-card">
+
+    <div class="section-head">
+      <div>
+        <h2 class="section-title">Auspiciadores oficiales</h2>
+        <p class="section-subtitle">
+          Empresas y marcas que apoyan el crecimiento de TPL Chile.
+        </p>
+      </div>
+    </div>
+
+    <div class="sponsors-strip">
+      <div class="sponsors-grid">
+
+        <a class="sponsor-item" href="#">
+          <img src="/assets/sponsors/Logo_REGD.png" alt="Sponsor 1">
+        </a>
+
+
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
 
   <main class="content">
     <div class="container">
