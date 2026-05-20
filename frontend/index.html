@@ -1132,6 +1132,50 @@
   }
 }
 
+#sponsors-home .section-card::before {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  left: 12%;
+  width: 76%;
+  height: 1px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(214,176,106,0.9),
+    transparent
+  );
+
+  box-shadow: 0 0 14px rgba(214,176,106,0.45);
+}
+
+.sponsor-item {
+  width: 180px;
+  height: 78px;
+
+  border-radius: 18px;
+
+  background: rgba(255,255,255,0.025);
+
+  border: 1px solid rgba(255,255,255,0.07);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: 0.22s ease;
+}
+
+.sponsor-item:hover {
+  transform: translateY(-2px);
+
+  border-color: rgba(214,176,106,0.28);
+
+  background: rgba(255,255,255,0.045);
+}
+
   </style>
 </head>
 <body>
@@ -1213,8 +1257,13 @@
     <div class="sponsors-strip">
       <div class="sponsors-grid">
 
-        <a class="sponsor-item" href="#">
-          <img src="/assets/sponsors/Logo_REGD.png" alt="Sponsor 1">
+        <a
+         class="sponsor-item"
+         href="https://www.instagram.com/creativehouse_ch?igsh=enhtcjkzazMwcGdo"
+         target="_blank"
+         rel="noopener noreferrer"
+        >
+          <img src="/assets/sponsors/Ramon_blanco.png" alt="Sponsor 1">
         </a>
 
 
