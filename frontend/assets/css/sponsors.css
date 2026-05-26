@@ -1,0 +1,88 @@
+body{
+  background:#05080f;
+  color:white;
+  font-family:Inter,sans-serif;
+  margin:0;
+}
+
+.sponsor-page{
+  max-width:900px;
+  margin:auto;
+  padding:60px 20px;
+}
+
+.sponsor-header{
+  text-align:center;
+}
+
+.sponsor-header img{
+  width:220px;
+  max-width:80%;
+  margin-bottom:24px;
+}
+
+.sponsor-header h1{
+  font-size:48px;
+  margin-bottom:12px;
+}
+
+.sponsor-header p{
+  color:#b8b8b8;
+  max-width:700px;
+  margin:auto;
+  line-height:1.7;
+}
+
+.sponsor-actions{
+  margin-top:40px;
+  display:flex;
+  gap:16px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+.sponsor-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  padding:14px 22px;
+
+  border-radius:999px;
+
+  font-weight:700;
+
+  transition:0.2s ease;
+
+  text-decoration:none;
+}
+
+.sponsor-btn.primary{
+  background:#d4af6a;
+  color:#081120;
+}
+
+.sponsor-btn.secondary{
+  background:rgba(255,255,255,0.06);
+  color:white;
+  border:1px solid rgba(255,255,255,0.08);
+}
+
+.sponsor-btn:hover{
+  transform:translateY(-2px);
+}
+
+@media (max-width:760px){
+
+  .sponsor-header h1{
+    font-size:34px;
+  }
+
+  .sponsor-actions{
+    flex-direction:column;
+  }
+
+  .sponsor-btn{
+    width:100%;
+  }
+}
