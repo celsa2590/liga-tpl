@@ -1782,7 +1782,7 @@
         list.innerHTML = '<div class="empty">No hay encuentros próximos cargados por ahora.</div>';
         return;
       }
-
+    
 
 
 
@@ -1808,7 +1808,7 @@ nextMatches.forEach(tie => {
   `;
   list.appendChild(item);
 });
-
+}
 
 
     function getStatusMeta(tie) {
@@ -1987,7 +1987,7 @@ container.appendChild(finalBlock);
       const data = await response.json();
 
       document.getElementById("standingsBadge").textContent = `${data.length} equipos`;
-      document.getElementById("heroTeamsCount").textContent = data.length;
+//      document.getElementById("heroTeamsCount").textContent = data.length;
 
       renderDesktopStandings(data);
       renderMobileStandings(data);
