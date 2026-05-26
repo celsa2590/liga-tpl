@@ -1783,23 +1783,33 @@
         return;
       }
 
-      const firstDate = upcoming[0].scheduled_at;
-      title.textContent = `Próxima jornada: ${formatDate(firstDate)}`;
-      text.textContent = "Aquí verás los encuentros más cercanos de la temporada y su horario general.";
 
-      upcoming.forEach(tie => {
-        const item = document.createElement("div");
-        item.className = "hero-next-item";
-        item.innerHTML = `
-          <div>
-            <div class="hero-next-match">${tie.home_team_name} vs ${tie.away_team_name}</div>
-            <div class="hero-next-meta">Sede ${tie.venue_club}</div>
-          </div>
-          <div class="hero-next-time">${formatTime(tie.scheduled_at)}</div>
-        `;
-        list.appendChild(item);
-      });
-    }
+
+
+const firstDate = upcoming[0].scheduled_at;
+const nextDay = firstDate.slice(0, 10); // YYYY-MM-DD
+
+const nextMatches = upcoming.filter(tie => {
+  return tie.scheduled_at.slice(0, 10) === nextDay;
+});
+
+title.textContent = `Próxima jornada: ${formatDate(firstDate)}`;
+text.textContent = "Aquí verás los encuentros más cercanos de la temporada y su horario general.";
+
+nextMatches.forEach(tie => {
+  const item = document.createElement("div");
+  item.className = "hero-next-item";
+  item.innerHTML = `
+    <div>
+      <div class="hero-next-match">${tie.home_team_name} vs ${tie.away_team_name}</div>
+      <div class="hero-next-meta">Sede ${tie.venue_club}</div>
+    </div>
+    <div class="hero-next-time">${formatTime(tie.scheduled_at)}</div>
+  `;
+  list.appendChild(item);
+});
+
+
 
     function getStatusMeta(tie) {
       if (tie.status === "finished") return { label: "Finalizado", className: "finished" };
