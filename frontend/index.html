@@ -1771,10 +1771,15 @@
       const text = document.getElementById("heroNextText");
       list.innerHTML = "";
 
-      const upcoming = ties
-        .filter(tie => tie.status !== "finished")
-        .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at))
-        .slice(0, 2);
+
+const now = new Date();
+
+const upcoming = ties
+  .filter(tie => {
+    return tie.scheduled_at && new Date(tie.scheduled_at) >= now;
+  })
+  .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
+
 
       if (!upcoming.length) {
         title.textContent = "La temporada sigue avanzando";
