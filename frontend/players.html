@@ -1078,8 +1078,19 @@
         sets_diff: setsWon - setsLost,
         avg_sets_won: Number.isFinite(Number(player.avg_sets_won)) ? Number(player.avg_sets_won) : (matches ? setsWon / matches : 0),
         avg_sets_lost: Number.isFinite(Number(player.avg_sets_lost)) ? Number(player.avg_sets_lost) : (matches ? setsLost / matches : 0),
-        home_win_pct: Number.isFinite(Number(player.home_win_pct)) ? Number(player.home_win_pct) : 0,
-        away_win_pct: Number.isFinite(Number(player.away_win_pct)) ? Number(player.away_win_pct) : 0,
+
+home_win_pct: Number.isFinite(Number(player.home_win_pct))
+  ? Number(player.home_win_pct)
+  : (safeNumber(player.home_matches) > 0
+      ? (safeNumber(player.home_wins) / safeNumber(player.home_matches)) * 100
+      : 0),
+
+away_win_pct: Number.isFinite(Number(player.away_win_pct))
+  ? Number(player.away_win_pct)
+  : (safeNumber(player.away_matches) > 0
+      ? (safeNumber(player.away_wins) / safeNumber(player.away_matches)) * 100
+      : 0),
+
         super_tiebreak_played: safeNumber(player.super_tiebreak_played ?? player.tiebreaks_played),
         super_tiebreak_won: safeNumber(player.super_tiebreak_won ?? player.tiebreaks_won),
         super_tiebreak_lost: safeNumber(player.super_tiebreak_lost),

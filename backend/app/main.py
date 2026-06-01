@@ -1281,6 +1281,28 @@ def get_players_stats():
                     )
                 ), 0) AS losses,
 
+                COALESCE(COUNT(mg.id) FILTER (
+                    WHERE p.id IN (mg.home_player_1_id, mg.home_player_2_id)
+                      AND mg.home_sets IS NOT NULL
+                      AND mg.away_sets IS NOT NULL
+                ), 0) AS home_matches,
+
+                COALESCE(COUNT(mg.id) FILTER (
+                    WHERE p.id IN (mg.home_player_1_id, mg.home_player_2_id)
+                      AND mg.home_sets > mg.away_sets
+                ), 0) AS home_wins,
+
+                COALESCE(COUNT(mg.id) FILTER (
+                    WHERE p.id IN (mg.away_player_1_id, mg.away_player_2_id)
+                      AND mg.home_sets IS NOT NULL
+                      AND mg.away_sets IS NOT NULL
+                ), 0) AS away_matches,
+
+                COALESCE(COUNT(mg.id) FILTER (
+                    WHERE p.id IN (mg.away_player_1_id, mg.away_player_2_id)
+                      AND mg.away_sets > mg.home_sets
+                ), 0) AS away_wins,
+
                 COALESCE(SUM(
                     CASE
                         WHEN p.id IN (mg.home_player_1_id, mg.home_player_2_id) THEN mg.home_sets
