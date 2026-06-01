@@ -1213,6 +1213,26 @@
   background: rgba(255,255,255,0.045);
 }
 
+.match-result {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  text-align: center;
+}
+
+.match-winner {
+  color: var(--gold-2);
+  font-weight: 900;
+  font-size: 0.92rem;
+}
+
+.match-sets {
+  margin-top: 4px;
+  color: var(--text);
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
   </style>
 </head>
 <body>
@@ -1662,6 +1682,47 @@
       return players.length ? players.join(" / ") : "Pareja por confirmar";
     }
 
+function formatSetResults(game) {
+  const sets = [];
+
+  if (game.set1_home_games != null && game.set1_away_games != null) {
+    sets.push(`${game.set1_home_games}-${game.set1_away_games}`);
+  }
+
+  if (game.set2_home_games != null && game.set2_away_games != null) {
+    sets.push(`${game.set2_home_games}-${game.set2_away_games}`);
+  }
+
+  if (game.set3_home_games != null && game.set3_away_games != null) {
+    sets.push(`${game.set3_home_games}-${game.set3_away_games}`);
+  }
+
+  return sets.join(" / ");
+}
+
+function getGameWinnerName(game, tie) {
+  if (game.home_sets == null || game.away_sets == null) return null;
+
+  if (game.home_sets > game.away_sets) return tie.home_team_name;
+  if (game.away_sets > game.home_sets) return tie.away_team_name;
+
+  return null;
+}
+
+function renderGameResult(game, tie) {
+  const winner = getGameWinnerName(game, tie);
+  const sets = formatSetResults(game);
+
+  if (!winner || !sets) return "";
+
+  return `
+    <div class="match-result">
+      <div class="match-winner">🏆 ${winner} gana</div>
+      <div class="match-sets">${sets}</div>
+    </div>
+  `;
+}
+
     function normalizeStatus(value) {
       const status = (value || "").toLowerCase();
       if (["finalizado", "finished", "played", "resultado", "closed"].includes(status)) return "finished";
@@ -1925,12 +1986,13 @@ nextMatches.forEach(tie => {
                           ${game.is_rescheduled ? `<span class="rescheduled-badge">Reprogramado</span>` : ""}
                         </span>
 
-                        <span>
-                          ${(game.home_sets != null && game.away_sets != null)
-                            ? `${game.home_sets} - ${game.away_sets}`
-                            : `${formatDate(game.scheduled_at)} · ${formatTime(game.scheduled_at)}`
-                          }
-                        </span>
+<span>
+  ${(game.home_sets != null && game.away_sets != null)
+    ? "Resultado"
+    : `${formatDate(game.scheduled_at)} · ${formatTime(game.scheduled_at)}`
+  }
+</span>
+
                       </div>
 
 
@@ -1946,6 +2008,7 @@ nextMatches.forEach(tie => {
                           <span>${tie.away_team_name}</span>
                         </div>
                       </div>
+                      ${renderGameResult(game, tie)}
                     </div>
                   `).join("")}
                 </div>

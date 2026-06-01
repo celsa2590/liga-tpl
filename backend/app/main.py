@@ -198,29 +198,45 @@ def get_standings():
 def get_matches():
     query = text("""
         SELECT
-            match_id,
-            season_name,
-            round_number,
-            home_team_id,
-            home_team_name,
-            away_team_id,
-            away_team_name,
-            game_number,
-            category,
-            venue_club,
-            scheduled_at,
-            home_player_1,
-            home_player_2,
-            away_player_1,
-            away_player_2,
-            home_sets,
-            away_sets,
-            result_status,
-            is_rescheduled
-        FROM match_schedule
-        WHERE season_name = 'Liga San Miguel 2026'
-        ORDER BY round_number, scheduled_at
+            ms.match_id,
+            ms.season_name,
+            ms.round_number,
+            ms.home_team_id,
+            ms.home_team_name,
+            ms.away_team_id,
+            ms.away_team_name,
+            ms.game_number,
+            ms.category,
+            ms.venue_club,
+            ms.scheduled_at,
+            ms.home_player_1,
+            ms.home_player_2,
+            ms.away_player_1,
+            ms.away_player_2,
+            ms.home_sets,
+            ms.away_sets,
+            ms.result_status,
+            ms.is_rescheduled,
+            s1.home_games AS set1_home_games,
+            s1.away_games AS set1_away_games,
+            s2.home_games AS set2_home_games,
+            s2.away_games AS set2_away_games,
+            s3.home_games AS set3_home_games,
+            s3.away_games AS set3_away_games
+        FROM match_schedule ms
+        JOIN match_games mg
+          ON mg.match_id = ms.match_id
+         AND mg.game_number = ms.game_number
+        LEFT JOIN match_game_sets s1
+          ON s1.match_game_id = mg.id AND s1.set_number = 1
+        LEFT JOIN match_game_sets s2
+          ON s2.match_game_id = mg.id AND s2.set_number = 2
+        LEFT JOIN match_game_sets s3
+          ON s3.match_game_id = mg.id AND s3.set_number = 3
+        WHERE ms.season_name = 'Liga San Miguel 2026'
+        ORDER BY ms.round_number, ms.scheduled_at
     """)
+
 
     with engine.connect() as conn:
         result = conn.execute(query)
@@ -608,29 +624,45 @@ def get_home_data():
 
     matches_query = text("""
         SELECT
-            match_id,
-            season_name,
-            round_number,
-            home_team_id,
-            home_team_name,
-            away_team_id,
-            away_team_name,
-            game_number,
-            category,
-            venue_club,
-            scheduled_at,
-            home_player_1,
-            home_player_2,
-            away_player_1,
-            away_player_2,
-            home_sets,
-            away_sets,
-            result_status,
-            is_rescheduled
-        FROM match_schedule
-        WHERE season_name = 'Liga San Miguel 2026'
-        ORDER BY round_number, scheduled_at
+            ms.match_id,
+            ms.season_name,
+            ms.round_number,
+            ms.home_team_id,
+            ms.home_team_name,
+            ms.away_team_id,
+            ms.away_team_name,
+            ms.game_number,
+            ms.category,
+            ms.venue_club,
+            ms.scheduled_at,
+            ms.home_player_1,
+            ms.home_player_2,
+            ms.away_player_1,
+            ms.away_player_2,
+            ms.home_sets,
+            ms.away_sets,
+            ms.result_status,
+            ms.is_rescheduled,
+            s1.home_games AS set1_home_games,
+            s1.away_games AS set1_away_games,
+            s2.home_games AS set2_home_games,
+            s2.away_games AS set2_away_games,
+            s3.home_games AS set3_home_games,
+            s3.away_games AS set3_away_games
+        FROM match_schedule ms
+        JOIN match_games mg
+          ON mg.match_id = ms.match_id
+         AND mg.game_number = ms.game_number
+        LEFT JOIN match_game_sets s1
+          ON s1.match_game_id = mg.id AND s1.set_number = 1
+        LEFT JOIN match_game_sets s2
+          ON s2.match_game_id = mg.id AND s2.set_number = 2
+        LEFT JOIN match_game_sets s3
+          ON s3.match_game_id = mg.id AND s3.set_number = 3
+        WHERE ms.season_name = 'Liga San Miguel 2026'
+        ORDER BY ms.round_number, ms.scheduled_at
     """)
+
 
     next_round_query = text("""
         SELECT
