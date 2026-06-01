@@ -974,6 +974,22 @@ img {
   color: rgba(255,255,255,0.9);
 }
 
+.mini-result {
+  margin-top: 8px;
+  color: rgba(255,255,255,0.88);
+  font-size: 0.86rem;
+}
+
+.mini-winner {
+  color: #e8c98a;
+  font-weight: 800;
+}
+
+.mini-sets {
+  margin-top: 3px;
+  font-weight: 800;
+  color: #ffffff;
+}
 
   </style>
 </head>
@@ -1013,14 +1029,12 @@ img {
 
 <div class="table-help">
   <strong>Cómo leer la tabla:</strong>
-  <span><b>PJ</b>: partidos jugados</span>
-  <span><b>PG</b>: partidos ganados</span>
-  <span><b>PP</b>: partidos perdidos</span>
-  <span><b>PF</b>: partidos a favor</span>
-  <span><b>PC</b>: partidos en contra</span>
-  <span><b>Dif</b>: diferencia de partidos</span>
-  <span><b>Bonus</b>: punto extra por ganar 4-0</span>
-  <span><b>Pts</b>: puntos totales</span>
+<span><b>PJ</b>: partidos jugados</span>
+<span><b>PG</b>: partidos ganados</span>
+<span><b>PP</b>: partidos perdidos</span>
+<span><b>Dif</b>: PG - PP</span>
+<span><b>Bonus</b>: punto extra por ganar 4-0</span>
+<span><b>Pts</b>: puntos totales</span>
 </div>
 
   </div>
@@ -1031,19 +1045,17 @@ img {
         <tr>
           <th class="num">Pos</th>
           <th>Equipo</th>
-          <th class="num">PJ</th>
-          <th class="num">PG</th>
-          <th class="num">PP</th>
-          <th class="num">PF</th>
-          <th class="num">PC</th>
-          <th class="num">Dif</th>
-          <th class="num">Bonus</th>
-          <th class="num">Pts</th>
+<th class="num">PJ</th>
+<th class="num">PG</th>
+<th class="num">PP</th>
+<th class="num">Dif</th>
+<th class="num">Bonus</th>
+<th class="num">Pts</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td colspan="10" class="loading">Cargando tabla...</td>
+          <td colspan="8" class="loading">Cargando tabla...</td>
         </tr>
       </tbody>
     </table>
@@ -1272,6 +1284,7 @@ requestAnimationFrame(() => {
           <div class="mini-left">
             <div class="mini-label">Categoría ${game.category || game.game_number}</div>
             <div class="mini-players">${getTeamPlayersForGame(game, teamId, tie)}</div>
+            ${renderMiniGameResult(game, teamId, tie)}
           </div>
           <div class="mini-score">${tie.home_team_id === teamId ? (game.home_sets ?? '—') + ' - ' + (game.away_sets ?? '—') : (game.away_sets ?? '—') + ' - ' + (game.home_sets ?? '—')}</div>
         </div>
@@ -1365,7 +1378,60 @@ function renderTeamLinks(teams, activeTeamId) {
   });
 }
 
+function formatSetResults(game, teamId, tie) {
+  const sets = [];
 
+  const isHomeTeam = tie.home_team_id === teamId;
+
+  const pushSet = (home, away) => {
+    if (home == null || away == null) return;
+    sets.push(isHomeTeam ? `${home}-${away}` : `${away}-${home}`);
+  };
+
+  pushSet(game.set1_home_games, game.set1_away_games);
+  pushSet(game.set2_home_games, game.set2_away_games);
+  pushSet(game.set3_home_games, game.set3_away_games);
+
+  return sets.join(" / ");
+}
+
+function getGameWinnerForTeamView(game, teamId, tie) {
+  if (game.home_sets == null || game.away_sets == null) return null;
+
+  const isHomeTeam = tie.home_team_id === teamId;
+
+  if (game.home_sets > game.away_sets) {
+    return {
+      winnerName: tie.home_team_name,
+      wonBySelectedTeam: isHomeTeam
+    };
+  }
+
+  if (game.away_sets > game.home_sets) {
+    return {
+      winnerName: tie.away_team_name,
+      wonBySelectedTeam: !isHomeTeam
+    };
+  }
+
+  return null;
+}
+
+function renderMiniGameResult(game, teamId, tie) {
+  const result = getGameWinnerForTeamView(game, teamId, tie);
+  const sets = formatSetResults(game, teamId, tie);
+
+  if (!result || !sets) return "";
+
+  return `
+    <div class="mini-result">
+      <div class="mini-winner">
+        🏆 ${result.winnerName} ${game.is_wo ? "gana por WO" : "gana"}
+      </div>
+      <div class="mini-sets">${sets}</div>
+    </div>
+  `;
+}
 
 
 function renderClubSummary(teamId, ties) {
@@ -1486,14 +1552,12 @@ function renderStandingsTable(standings) {
           </div>
         </div>
       </td>
-      <td class="num">${team.played_games ?? 0}</td>
-      <td class="num">${team.won_games ?? 0}</td>
-      <td class="num">${team.lost_games ?? 0}</td>
-      <td class="num">${team.sets_for ?? 0}</td>
-      <td class="num">${team.sets_against ?? 0}</td>
-      <td class="num">${team.sets_diff ?? 0}</td>
-      <td class="num">${team.bonus_points ?? 0}</td>
-      <td class="num"><strong>${team.total_points ?? 0}</strong></td>
+<td class="num">${team.played_games ?? 0}</td>
+<td class="num">${team.won_games ?? 0}</td>
+<td class="num">${team.lost_games ?? 0}</td>
+<td class="num">${(team.won_games ?? 0) - (team.lost_games ?? 0)}</td>
+<td class="num">${team.bonus_points ?? 0}</td>
+<td class="num"><strong>${team.total_points ?? 0}</strong></td>
     `;
 
     tbody.appendChild(row);
@@ -1534,7 +1598,7 @@ async function loadData() {
     if (tbody) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="10" class="loading">No se pudo cargar la tabla.</td>
+          <td colspan="8" class="loading">No se pudo cargar la tabla.</td>
         </tr>
       `;
     }
