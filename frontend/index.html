@@ -1717,7 +1717,10 @@ function renderGameResult(game, tie) {
 
   return `
     <div class="match-result">
-      <div class="match-winner">🏆 ${winner} gana</div>
+
+<div class="match-winner">
+  🏆 ${winner} ${game.is_wo ? "gana por WO" : "gana"}
+</div>
       <div class="match-sets">${sets}</div>
     </div>
   `;
@@ -1988,7 +1991,7 @@ nextMatches.forEach(tie => {
 
 <span>
   ${(game.home_sets != null && game.away_sets != null)
-    ? "Resultado"
+    ? `${game.home_sets} - ${game.away_sets}`
     : `${formatDate(game.scheduled_at)} · ${formatTime(game.scheduled_at)}`
   }
 </span>
