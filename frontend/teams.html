@@ -1497,7 +1497,10 @@ function renderClubSummary(teamId, ties) {
               </div>
             </div>
             <div class="pill">
-              ${tie.isFinished ? `${getTeamGamesWon(tie, teamId)} - ${getOpponentGamesWon(tie, teamId)}` : "Programado"}
+              ${(getTeamGamesWon(tie, teamId) + getOpponentGamesWon(tie, teamId)) > 0
+                ? `${getTeamGamesWon(tie, teamId)} - ${getOpponentGamesWon(tie, teamId)}`
+                : "Programado"
+              }
             </div>
           </div>
 
@@ -1506,6 +1509,7 @@ function renderClubSummary(teamId, ties) {
               <div class="mini-left">
                 <div class="mini-label">Categoría ${game.category || game.game_number}</div>
                 <div class="mini-players">${getTeamPlayersForGame(game, teamId, tie)}</div>
+                ${renderMiniGameResult(game, teamId, tie)}
               </div>
               <div class="mini-score">
                 ${game.scheduled_at ? new Date(game.scheduled_at).toLocaleTimeString("es-CL", {
