@@ -1032,7 +1032,9 @@ img {
 <span><b>PJ</b>: partidos jugados</span>
 <span><b>PG</b>: partidos ganados</span>
 <span><b>PP</b>: partidos perdidos</span>
-<span><b>Dif</b>: PG - PP</span>
+<span><b>GF</b>: games a favor</span>
+<span><b>GC</b>: games en contra</span>
+<span><b>DG</b>: GF - GC</span>
 <span><b>Bonus</b>: punto extra por ganar 4-0</span>
 <span><b>Pts</b>: puntos totales</span>
 </div>
@@ -1560,6 +1562,9 @@ function renderStandingsTable(standings) {
 <td class="num">${team.won_games ?? 0}</td>
 <td class="num">${team.lost_games ?? 0}</td>
 <td class="num">${(team.won_games ?? 0) - (team.lost_games ?? 0)}</td>
+<td class="num">${team.games_for ?? 0}</td>
+<td class="num">${team.games_against ?? 0}</td>
+<td class="num">${team.games_diff ?? 0}</td>
 <td class="num">${team.bonus_points ?? 0}</td>
 <td class="num"><strong>${team.total_points ?? 0}</strong></td>
     `;
