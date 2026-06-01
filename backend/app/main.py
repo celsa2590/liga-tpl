@@ -169,7 +169,6 @@ def get_standings():
             played_games,
             won_games,
             lost_games,
-            (won_games - lost_games) AS games_diff,
             games_for,
             games_against,
             games_diff,
@@ -182,10 +181,9 @@ def get_standings():
         WHERE season_name = 'Liga San Miguel 2026'
         ORDER BY
             total_points DESC,
-            (won_games - lost_games) DESC,
             won_games DESC,
-            sets_diff DESC,
-            sets_for DESC,
+            games_diff DESC,
+            won_games DESC,
             team_name ASC
     """)
 
